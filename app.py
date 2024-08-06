@@ -8,7 +8,7 @@ import re
 
 from langdetect import detect
 
-from scripts.openai_api_requests import case_study_ai, social_media_ai
+from js.openai_api_requests import case_study_ai, social_media_ai
 
 app = Flask(__name__)
 CORS(app)
