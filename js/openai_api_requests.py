@@ -12,7 +12,7 @@ import os
 load_dotenv()
 
 # Access the API key
-api_key = os.getenv('API_KEY')
+api_key = os.getenv('OPENAI_API_KEY')
 
 client = OpenAI(api_key=api_key)
 
