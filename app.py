@@ -405,4 +405,4 @@ def image_analysis():
 #     return render_template('privacy_policy.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
