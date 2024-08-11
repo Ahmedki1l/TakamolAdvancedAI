@@ -8,7 +8,8 @@ import re
 
 from langdetect import detect
 
-from js.openai_api_requests import case_study_ai, social_media_ai
+from scripts.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
+    image_analyzer
 
 app = Flask(__name__)
 CORS(app)
@@ -37,16 +38,16 @@ case_study_training_context_english = """
                                 Don't talk with the user about anything other than this.
                                 Don't suggest anything and Don't talk freely, only provide these data.
                                 You have to follow the json format only as the example above. 
-                               
+
                                 If the customer asks to generate a social media content plan for a period of time then you are a real estate marketing consultant specialized in creating digital content for social media platforms. You are programmed to generate a comprehensive collection of social media posts in a strictly structured JSON format. The posts must be relevant, targeted, and adapted to specific platforms as requested by the user. Here is what you must include:
 
                                 - You must Generate the exact number of posts that the user requests.
                                 - Each post must be tailored to the specific platform it is intended for.
                                 - The format of your response must strictly follow JSON structure. Each piece of data, including platform names and post content, must be encapsulated in double quotes.
                                 - All posts must contain hashtags and emojis related to the targeted platform.
-                                
+
                                 Your response must be structured as follows, ensuring each post and all metadata are included within the designated JSON format:
-                                
+
                                 {
                                     "Facebook": [
                                         {"Post1": "Content of post 1"},
@@ -80,7 +81,7 @@ case_study_training_context_english = """
                                 Do not provide empty posts, you must create all the desired number of posts per each platform.
                                 You have to create all the posts.
                                 Do not deviate from the JSON format. Do not include any additional commentary, hyperlinks, or unrelated content. Each response should focus solely on delivering structured post content as specified. The format must be strictly maintained with all data enclosed in double quotes, adhering to JSON standards.
-                                
+
                                 """
 
 # Initialize a Context to train GPT-4 on
@@ -103,7 +104,6 @@ case_study_training_context_arabic = """
                                لا تتحدث مع المستخدم عن أي شيء آخر غير هذا.
                                """
 
-
 social_media_plan_training_context = """
                                 When the Client asks about the social media marketing plan for a certain period of time,
                                 then create the posts' content for the each platform ( 3 posts per week ).
@@ -120,6 +120,7 @@ social_media_plan_training_context = """
                                 """
 
 context = []
+
 
 @app.route('/chat/casestudy', methods=['POST'])
 def case_study_chat():
@@ -205,6 +206,7 @@ def case_study_chat():
                 print(e)
                 return jsonify({"error": str(e)}), 500
 
+
 @app.route('/chat/socialmediaplan', methods=['POST'])
 def social_media_chat():
     # Check if the request contains JSON data
@@ -227,7 +229,7 @@ def social_media_chat():
             context.pop()
 
             # Add user message to context
-            #context.append({"role": "system", "content": social_media_plan_training_context})
+            # context.append({"role": "system", "content": social_media_plan_training_context})
 
             # Call the chat_with_ai function from the imported module
             try:
@@ -241,7 +243,7 @@ def social_media_chat():
 
         else:
             # Add user message to context
-            #context.append({"role": "system", "content": social_media_plan_training_context})
+            # context.append({"role": "system", "content": social_media_plan_training_context})
 
             # Call the chat_with_ai function from the imported module
             try:
@@ -291,26 +293,116 @@ def social_media_chat():
                 print(e)
                 return jsonify({"error": str(e)}), 500
 
-APP_ID = '882194380611369'
 
-@app.route('/login')
-def login():
-    # This should direct users to the Facebook login URL
-    fb_login_url = f"https://www.facebook.com/v20.0/dialog/oauth?client_id={APP_ID}&redirect_uri=https://ba7a-102-45-247-144.ngrok-free.app/callback&scope=email,public_profile&response_type=code"
-    return redirect(fb_login_url)
+@app.route('/image', methods=['POST'])
+def image_generetor():
+    # Check if the request contains JSON data
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
 
-@app.route('/callback')
-def callback():
-    # Handle the data returned from Facebook
-    code = request.args.get('code')
-    if not code:
-        return "Error: No code provided", 400
-    # Exchange the code for an access token here
-    return f"Code received: {code}", 200
+    data = request.get_json()
 
-@app.route('/privacy-policy')
-def privacy_policy():
-    return render_template('privacy_policy.html')
+    # Check if 'input' key exists in the JSON data
+    if 'input' not in data:
+        return jsonify({"error": "Missing 'input' field"}), 400
+
+    user_input = data['input']
+    try:
+        image_url = image_creator(user_input)
+        return jsonify({"url": image_url}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/prompt-generator', methods=['POST'])
+def prompt_generetor():
+    # Check if the request contains JSON data
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    # Check if 'input' key exists in the JSON data
+    if 'input' not in data:
+        return jsonify({"error": "Missing 'input' field"}), 400
+
+    user_input = data['input']
+    print(user_input)
+    try:
+        image_prompt = prompt_creator(user_input)
+        return image_prompt, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/prompt-enhancer', methods=['POST'])
+def prompt_enhancement():
+    # Check if the request contains JSON data
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    # Check if 'input' key exists in the JSON data
+    if 'input' not in data:
+        return jsonify({"error": "Missing 'input' field"}), 400
+
+    user_input = data['input']
+    print(user_input)
+
+    try:
+        image_prompt = prompt_enhancer(user_input)
+        return image_prompt, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/image-analyzer', methods=['POST'])
+def image_analysis():
+    # Check if the request contains JSON data
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    # Check if 'input' key exists in the JSON data
+    if 'input' not in data:
+        return jsonify({"error": "Missing 'input' field"}), 400
+
+    user_input = data['input']
+    print(user_input)
+
+    try:
+        image_prompt = image_analyzer(user_input)
+        return image_prompt, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
+
+# APP_ID = '882194380611369'
+#
+# @app.route('/login')
+# def login():
+#     # This should direct users to the Facebook login URL
+#     fb_login_url = f"https://www.facebook.com/v20.0/dialog/oauth?client_id={APP_ID}&redirect_uri=https://ba7a-102-45-247-144.ngrok-free.app/callback&scope=email,public_profile&response_type=code"
+#     return redirect(fb_login_url)
+#
+# @app.route('/callback')
+# def callback():
+#     # Handle the data returned from Facebook
+#     code = request.args.get('code')
+#     if not code:
+#         return "Error: No code provided", 400
+#     # Exchange the code for an access token here
+#     return f"Code received: {code}", 200
+#
+# @app.route('/privacy-policy')
+# def privacy_policy():
+#     return render_template('privacy_policy.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
