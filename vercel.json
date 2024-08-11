@@ -4,7 +4,10 @@
     {"src": "/(.*)", "dest": "app.py"}
   ],
   "functions": {
-    "js/openai_api_requests.py": {
+    "api/*.py": {
+      "maxDuration": 300
+    },
+    "src/*.py": {
       "maxDuration": 300
     }
   }

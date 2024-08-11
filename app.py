@@ -8,7 +8,7 @@ import re
 
 from langdetect import detect
 
-from js.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
+from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
     image_analyzer
 
 app = Flask(__name__)
