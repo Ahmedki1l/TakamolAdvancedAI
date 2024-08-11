@@ -8,8 +8,7 @@ import re
 
 from langdetect import detect
 
-from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
-    image_analyzer
+from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, image_analyzer
 
 app = Flask(__name__)
 CORS(app)
@@ -405,4 +404,4 @@ def image_analysis():
 #     return render_template('privacy_policy.html')
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
