@@ -9,3 +9,22 @@ socialmediaplan: generates a social media content plan for the targeted platform
 Inputs: 
 -casestudy: the title and details to make the case study about. ( ex. Palm Hills in October in Egypt )
 -socialmediaplan: the period of time that the plan will work through, and the targeted platforms. ( ex. generate the sociak media content plan for a period of 3 weeks for Facebook, Instagram, Twitter, and LinkedIn )
+
+
+# Endpoints:
+## English:
+- /en/chat/casestudy: English case study
+- /en/chat/socialmediaplan: English Social Media Plan
+- /en/prompt-generator: Generate English Prompt from post content
+- /en/prompt-enhancer: Enhance English Prompt
+- /en/image-analyzer: Analyzing Images and generating English prompt about it
+
+## Arabic:
+- /ar/chat/casestudy: Arabic case study
+- /ar/chat/socialmediaplan: Arabic Social Media Plan
+- /ar/prompt-generator: Generate Arabic Prompt from post content
+- /ar/prompt-enhancer: Enhance Arabic Prompt
+- /ar/image-analyzer: Analyzing Images and generating Arabic prompt about it
+
+## Combine:
+- /image: Create image
