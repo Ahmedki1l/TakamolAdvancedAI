@@ -117,13 +117,10 @@ def encode_image(image_path):
 image_location = "C:/Users/LapTop/Desktop/Residential-building.webp"
 
 
-def image_analyzer(image_path):
+def image_analyzer(image_path, sent_context):
     try:
         base64_image = encode_image(image_path)
-        context = [{"role": "system", "content": """you are a image analyzer and prompt generator, the user will provide an image and you have to analyze it and then generate an image prompt for him that will then used to generated an image using the image that usser gave to you as referenece professionally.
-                                                    the image must be highest quality and be natural and realistic for ecommerce projects
-                                                   your response must be in json format: {"prompt":"your response here"}
-                                                """},
+        context = [{"role": "system", "content": sent_context},
                    {"role": "user", "content":[
                        {
                            'type': 'image_url',
@@ -170,12 +167,10 @@ def image_analyzer(image_path):
 # print(description)
 
 
-def prompt_creator(text):
+def prompt_creator(text, sent_context):
     try:
-        context = [{"role":"system", "content": """you are a image prompt generator, the user will provide a text and you have to generate an image prompt for him professionally.
-                                                   your response must be in json format: {"prompt":"your response here"}
-                                                """},
-                   {"role":"user", "content":text}]
+        context = [{"role": "system", "content": sent_context},
+                   {"role": "user", "content": text}]
         print(context)
         chat_completion = client.chat.completions.create(
             messages=context,
@@ -192,12 +187,10 @@ def prompt_creator(text):
         print(f"An error occurred: {str(e)}")
         return jsonify({"error": str(e)})
 
-def prompt_enhancer(text):
+def prompt_enhancer(text, sent_context):
     try:
-        context = [{"role":"system", "content": """you are a image prompt generator, the user will provide an image prompt and you have to enhance it for him professionally.
-                                                   your response must be in json format: {"prompt":"your response here"}
-                                                """},
-                   {"role":"user", "content":text}]
+        context = [{"role": "system", "content": sent_context},
+                   {"role": "user", "content": text}]
         print(context)
         chat_completion = client.chat.completions.create(
             messages=context,
