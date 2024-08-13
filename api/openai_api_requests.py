@@ -119,13 +119,13 @@ image_location = "C:/Users/LapTop/Desktop/Residential-building.webp"
 
 def image_analyzer(image_path, sent_context):
     try:
-        base64_image = encode_image(image_path)
+        # base64_image = encode_image(image_path)
         context = [{"role": "system", "content": sent_context},
                    {"role": "user", "content":[
                        {
                            'type': 'image_url',
                            'image_url':{
-                               'url':f'data:image/jpeg;base64,{base64_image}'
+                               'url':image_path
                            }
                        }
                    ]
