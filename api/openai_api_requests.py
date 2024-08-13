@@ -96,7 +96,7 @@ def image_creator(prompt):
     try:
         # Generate an image using the DALL-E model from OpenAI
         response = client.images.generate(
-            model="dall-e-3",
+            model="dall-e-2",
             prompt=prompt,
             size="1024x1024",
             quality="hd",
