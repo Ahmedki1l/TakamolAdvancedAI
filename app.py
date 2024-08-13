@@ -206,37 +206,19 @@ def case_study_chat_en():
     user_input = data['input']
 
     # clears the context for a new run
-    if context.__len__() > 0:
-        context.clear()
+    context.clear()
 
-        # Add user message to context
-        context.append({"role": "system", "content": case_study_training_context_english})
+    # Add user message to context
+    context.append({"role": "system", "content": case_study_training_context_english})
 
-        # Call the chat_with_ai function from the imported module
-        try:
-            response, parsed_ai_response, new_context = case_study_ai(user_input, context)
-            context.append({"role": "assistant", "content": response})
-            print("new context: ")
-            return response, 200
-        except Exception as e:
-            print(e)
-            return jsonify({"error": str(e)}), 500
-
-    else:
-        # Add user message to context
-        context.append({"role": "system", "content": case_study_training_context_english})
-
-        # Call the chat_with_ai function from the imported module
-        try:
-            response, parsed_ai_response, new_context = case_study_ai(user_input, context)
-            context.append({"role": "assistant", "content": response})
-
-            print(parsed_ai_response)
-
-            return response, 200
-        except Exception as e:
-            print(e)
-            return jsonify({"error": str(e)}), 500
+    # Call the chat_with_ai function from the imported module
+    try:
+        response, parsed_ai_response, new_context = case_study_ai(user_input, context)
+        print("new context: ")
+        return response, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/ar/chat/casestudy', methods=['POST'])
 def case_study_chat_ar():
@@ -253,36 +235,19 @@ def case_study_chat_ar():
     user_input = data['input']
 
     # clears the context for a new run
-    if context.__len__() > 0:
-        context.clear()
+    context.clear()
 
-        # Add user message to context
-        context.append({"role": "system", "content": case_study_training_context_arabic})
+    # Add user message to context
+    context.append({"role": "system", "content": case_study_training_context_arabic})
 
-        # Call the chat_with_ai function from the imported module
-        try:
-            response, parsed_ai_response, new_context = case_study_ai(user_input, context)
-            context.append({"role": "assistant", "content": response})
-            print("new context: ")
-            return response, 200
-        except Exception as e:
-            print(e)
-            return jsonify({"error": str(e)}), 500
-    else:
-        # Add user message to context
-        context.append({"role": "system", "content": case_study_training_context_arabic})
-
-        # Call the chat_with_ai function from the imported module
-        try:
-            response, parsed_ai_response, new_context = case_study_ai(user_input, context)
-            context.append({"role": "assistant", "content": response})
-
-            print(parsed_ai_response)
-
-            return response, 200
-        except Exception as e:
-            print(e)
-            return jsonify({"error": str(e)}), 500
+    # Call the chat_with_ai function from the imported module
+    try:
+        response, parsed_ai_response, new_context = case_study_ai(user_input, context)
+        print("new context: ")
+        return response, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/en/chat/socialmediaplan', methods=['POST'])
 def social_media_chat_en():
@@ -297,36 +262,24 @@ def social_media_chat_en():
         return jsonify({"error": "Missing 'input' field"}), 400
 
     user_input = data['input']
-
+    history = data['history']
+    previousPrompt = data['previousPrompt']
 
     # clears the context for a new run
-    if context.__len__() > 3:
-        context.pop()
-        context.pop()
-        context.pop()
+    context.clear()
+    context.append({"role": "system", "content": case_study_training_context_english})
+    context.append({"role": "user", "content": previousPrompt})
+    context.append({"role": "assistant", "content": history})
 
-        # Call the chat_with_ai function from the imported module
-        try:
-            response, parsed_ai_response, new_context = social_media_ai(user_input, context)
-            context.append({"role": "assistant", "content": response})
-            print("new context: ")
-            return response, 200
-        except Exception as e:
-            print(e)
-            return jsonify({"error": str(e)}), 500
 
-    else:
-        # Call the chat_with_ai function from the imported module
-        try:
-            response, parsed_ai_response, new_context = social_media_ai(user_input, context)
-            context.append({"role": "assistant", "content": response})
-
-            print(parsed_ai_response)
-
-            return response, 200
-        except Exception as e:
-            print(e)
-            return jsonify({"error": str(e)}), 500
+    # Call the chat_with_ai function from the imported module
+    try:
+        response, parsed_ai_response, new_context = social_media_ai(user_input, context)
+        print("new context: ")
+        return response, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/ar/chat/socialmediaplan', methods=['POST'])
 def social_media_chat_ar():
@@ -341,36 +294,24 @@ def social_media_chat_ar():
         return jsonify({"error": "Missing 'input' field"}), 400
 
     user_input = data['input']
+    history = data['history']
+    previousPrompt = data['previousPrompt']
 
     # clears the context for a new run
-    if context.__len__() > 3:
-        context.pop()
-        context.pop()
-        context.pop()
+    context.clear()
+    context.append({"role": "system", "content": case_study_training_context_arabic})
+    context.append({"role": "user", "content": previousPrompt})
+    context.append({"role": "assistant", "content": history})
 
-        # Call the chat_with_ai function from the imported module
-        try:
-            response, parsed_ai_response, new_context = social_media_ai(user_input, context)
-            context.append({"role": "assistant", "content": response})
-            print("new context: ")
-            return response, 200
-        except Exception as e:
-            print(e)
-            return jsonify({"error": str(e)}), 500
 
-    else:
-        # Call the chat_with_ai function from the imported module
-        try:
-            response, parsed_ai_response, new_context = social_media_ai(user_input, context)
-            context.append({"role": "assistant", "content": response})
-
-            print(parsed_ai_response)
-
-            return response, 200
-        except Exception as e:
-            print(e)
-            return jsonify({"error": str(e)}), 500
-
+    # Call the chat_with_ai function from the imported module
+    try:
+        response, parsed_ai_response, new_context = social_media_ai(user_input, context)
+        print("new context: ")
+        return response, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/image', methods=['POST'])
 def image_generator():
