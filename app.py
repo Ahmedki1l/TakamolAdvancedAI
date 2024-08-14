@@ -27,8 +27,16 @@ case_study_training_context_english = """
                                 {
                                 "Case_Study": "your response here", 
                                 "Target_Audience": "your response here", 
-                                "Pros": "your response here", 
-                                "Cons": "your response here", 
+                                "Pros": {
+                                        "1":"your response here",
+                                        "2":"your response here",
+                                        ...    
+                                        }, 
+                                "Cons": {
+                                        "1":"your response here",
+                                        "2":"your response here",
+                                        ...    
+                                        },
                                 "Facebook_Hashtags": "only if provided from the user", 
                                 "Instagram_Hashtags": "only if provided from the user", 
                                 "Twitter_Hashtags": "only if provided from the user", 
@@ -98,8 +106,16 @@ case_study_training_context_arabic = """
                                 {
                                 "Case_Study": "ردك هنا", 
                                 "Target_Audience": "ردك هنا", 
-                                "Pros": "ردك هنا", 
-                                "Cons": "ردك هنا", 
+                                "Pros": {
+                                        "1":"ردك هنا",
+                                        "2":"ردك هنا",
+                                        ...    
+                                        },
+                                "Cons": {
+                                        "1":"ردك هنا",
+                                        "2":"ردك هنا",
+                                        ...    
+                                        }, 
                                 "Facebook_Hashtags": "فقط اذا وفرها العميل", 
                                 "Instagram_Hashtags": "فقط اذا وفرها العميل", 
                                 "Twitter_Hashtags": "فقط اذا وفرها العميل", 
