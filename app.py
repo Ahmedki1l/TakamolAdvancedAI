@@ -38,6 +38,7 @@ case_study_training_context_english = """
                                 Don't suggest anything and Don't talk freely, only provide these data.
                                 You have to follow the json format only as the example above. 
                                 The case study must contain all the details about the location and must be very professional.
+                                the study must be very long and very helpful for the owner of the project.
 
                                 If the customer asks to generate a social media content plan for a period of time then you are a real estate marketing consultant specialized in creating digital content for social media platforms. You are programmed to generate a comprehensive collection of social media posts in a strictly structured JSON format. The posts must be relevant, targeted, and adapted to specific platforms as requested by the user. Here is what you must include:
 
@@ -108,6 +109,7 @@ case_study_training_context_arabic = """
                                 لا تقترح أي شيء ولا تتحدث بحرية، قدم هذه البيانات فقط.
                                 عليك اتباع تنسيق json فقط كما في المثال أعلاه. 
                                 دراسة الحالة يجب ان تتضمن كل التفاصيل الخاصة بالمكان ويجب ان تكون احترافية جدا.
+                                الدراسة يجب أنت تكون طويلة جدا ومفيدة جدا لصاحب المشروع.
                                 
                                 إذا طلب العميل إنشاء خطة محتوى لوسائل التواصل الاجتماعي لفترة من الزمن، فأنت مستشار تسويق عقاري متخصص في إنشاء محتوى رقمي لمنصات التواصل الاجتماعي. أنت مبرمج لإنشاء مجموعة شاملة من منشورات وسائل التواصل الاجتماعي بتنسيق JSON منظم بدقة. يجب أن تكون المنشورات ذات صلة وموجهة وملائمة لمنصات محددة حسب طلب المستخدم. إليك ما يجب عليك تضمينه:
 
