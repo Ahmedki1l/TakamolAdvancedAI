@@ -41,7 +41,7 @@ def case_study_ai(user_input, context):
         chat_completion = client.chat.completions.create(
             messages=context,
             model="gpt-4o-mini",
-            temperature=0.1,
+            temperature=0.3,
             response_format={"type":"json_object"},
             max_tokens=16384
         )
@@ -72,7 +72,7 @@ def social_media_ai(user_input, context):
         chat_completion = client.chat.completions.create(
             messages=context,
             model="gpt-4o-mini",
-            temperature=0.1,
+            temperature=0.3,
             response_format={"type":"json_object"},
             max_tokens=16384
         )
@@ -134,7 +134,7 @@ def image_analyzer(image_path, sent_context):
         chat_completion = client.chat.completions.create(
             messages=context,
             model="gpt-4o-mini",
-            temperature=0.1,
+            temperature=0.3,
             response_format={"type": "json_object"},
             max_tokens=300
         )
@@ -176,7 +176,7 @@ def prompt_creator(text, sent_context):
         chat_completion = client.chat.completions.create(
             messages=context,
             model="gpt-4o-mini",
-            temperature=0.1,
+            temperature=0.3,
             response_format={"type":"json_object"},
             max_tokens=16384
         )
@@ -196,7 +196,7 @@ def prompt_enhancer(text, sent_context):
         chat_completion = client.chat.completions.create(
             messages=context,
             model="gpt-4o-mini",
-            temperature=0.1,
+            temperature=0.3,
             response_format={"type":"json_object"},
             max_tokens=16384
         )
@@ -204,6 +204,118 @@ def prompt_enhancer(text, sent_context):
         prompt = json.loads(response)
         print(prompt)
         return response
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return jsonify({"error": str(e)})
+
+
+# Investments Website APIs
+def investment_generator(user_input):
+    try:
+        context = [
+            {
+                "role":"system",
+                "content":"""
+                            You are a helpful Investment Consultant, you will be provided a location and land space, 
+                            you should make a full complete case study and provide this in json format:
+                            {
+                                "Basic Data": {
+                                    "Location": "Al Narges District, Riyadh",
+                                    "Area": "2000 sqm"
+                                },
+                                "Number of Floors": "Considering the area and purpose of building a house, it is recommended to construct a single-family home consisting of 2-3 floors.",
+                                "Average Land Cost": {
+                                    "Land cost in Al Narges District, Riyadh": "SR 5,700 per sqm",
+                                    "Total land cost for 2000 sqm": "SR 11,400,000 (5,700 x 2000)"
+                                },
+                                "Construction Cost for Recommended Floors": [
+                                    {
+                                        "2-Story Single-Family Home": {
+                                            "Cost per sqm": "SR 1,200",
+                                            "Total construction cost": "SR 2,400,000 (1,200 x 2000)"
+                                        }
+                                    },
+                                    {
+                                        "3-Story Single-Family Home": {
+                                            "Cost per sqm": "SR 1,400",
+                                            "Total construction cost": "SR 2,800,000 (1,400 x 2000)"
+                                        }
+                                    }
+                                ],
+                                "Building on Columns": "Not applicable for a single-family home.",
+                                "Cumulative Price Increase": "Riyadh's real estate market has experienced a cumulative increase of approximately 10% over the past five years.",
+                                "Property Value Estimate": [
+                                    {
+                                        "2-Story Single-Family Home": "SR 10,000,000 (5,000 x 2000)"
+                                    },
+                                    {
+                                        "3-Story Single-Family Home": "SR 12,000,000 (5,000 x 2000)"
+                                    }
+                                ],
+                                "Total Investment and Expected Profit": [
+                                    {
+                                        "2-story single-family home": {
+                                            "Total investment": "SR 13,800,000 (land cost + construction cost)",
+                                            "Estimated profit if sold": "-SR 3,800,000 (SR 10,000,000 - SR 13,800,000)"
+                                        }
+                                    },
+                                    {
+                                        "3-story single-family home": {
+                                            "Total investment": "SR 14,200,000 (land cost + construction cost)",
+                                            "Estimated profit if sold": "-SR 2,200,000 (SR 12,000,000 - SR 14,200,000)"
+                                        }
+                                    }
+                                ],
+                                "Recommendations": "Building a 2 to 3-story single-family home in Al Narges is a viable option given the size of the land. However, it is important to factor in the additional costs and consider the current market conditions before making a final decision. For similar properties, potential buyers may consider the following areas in Riyadh: Nozha Neighborhood, Al Arid District, King Abdullah District, Rahmaniyah Neighborhood"
+                            }
+
+                            The prices for each location are: 
+                            Al Narges District: 5,700 riyals
+                                Riyadh: 
+                                    Al Narges District: 5,700 riyals
+                                    Nozha Neighborhood: 5,795 riyals
+                                    Al Arid District: 4,508 riyals
+                                    Salah El-Din Neighborhood: 5,126 riyals
+                                    Al Malqa Neighborhood: 8,334 riyals
+                                    Al-Yasmeen District: 6,995 riyals
+                                    Roses District: 4,981 riyals
+                                    King Abdullah District: 5,203 riyals
+                                    Rahmaniyah Neighborhood: 5,367 riyals
+                                    Al Waha Neighborhood: 6,008 riyals
+                                    Al Bawadi Neighborhood: 3,021 riyals
+                                    Salhiya Neighborhood: 1,548 riyals
+                                    Al-Falah Neighborhood: 4,633 riyals
+                                    Al-Hamdaniya District: 1,736 riyals
+                                    Riyadh District: 1,001 riyals
+                                    Al Samer Neighborhood: 2,430 riyals
+                                
+                                Jeddah:
+                                    Marsa District: 2,010 riyals
+                                    Al-Faisaliah Neighborhood: 3,819 riyals
+                                    North Obhur District: 2,552 riyals
+                                    Pearl District: 2,323 riyals
+                                    Al Safa Neighborhood: 3,398 riyals
+                            """
+            },
+            {
+                "role":"user",
+                "content":user_input
+            }
+        ]
+
+        print(context)
+        chat_completion = client.chat.completions.create(
+            messages=context,
+            model="gpt-4o-mini",
+            temperature=0.3,
+            response_format={"type": "json_object"},
+            max_tokens=16384
+        )
+        response = chat_completion.choices[0].message.content
+        prompt = json.loads(response)
+        print(prompt)
+        return response
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return jsonify({"error": str(e)})
