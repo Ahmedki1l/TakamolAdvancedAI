@@ -298,7 +298,7 @@ def investment_generator(user_input):
                                     Pearl District: 2,323 riyals
                                     Al Safa Neighborhood: 3,398 riyals
                                     
-                                
+                            Your response should be in English unless the user sends some Arabic words.
                             If the user talked with you in arabic, then your response should have arabic content for the contents only ( not the keys of the json format ).
                             """
             },
