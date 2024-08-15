@@ -268,6 +268,8 @@ def investment_generator(user_input):
                                 ],
                                 "Recommendations": "Building a 2 to 3-story single-family home in Al Narges is a viable option given the size of the land. However, it is important to factor in the additional costs and consider the current market conditions before making a final decision. For similar properties, potential buyers may consider the following areas in Riyadh: Nozha Neighborhood, Al Arid District, King Abdullah District, Rahmaniyah Neighborhood"
                             }
+                            
+                            For all the calculations please provide what is calculated and from what.
 
                             The prices for each location are: 
                             Al Narges District: 5,700 riyals
