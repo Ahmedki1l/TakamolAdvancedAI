@@ -297,6 +297,9 @@ def investment_generator(user_input):
                                     North Obhur District: 2,552 riyals
                                     Pearl District: 2,323 riyals
                                     Al Safa Neighborhood: 3,398 riyals
+                                    
+                                
+                            If the user talked with you in arabic, then your response should have arabic content for the contents only ( not the keys of the json format ).
                             """
             },
             {
