@@ -28,3 +28,6 @@ Inputs:
 
 ## Combine:
 - /image: Create image
+
+# AI Investment:
+- /investment: create an investment consultation
