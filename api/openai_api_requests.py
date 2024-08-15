@@ -217,7 +217,7 @@ def investment_generator(user_input):
                 "role":"system",
                 "content":"""
                             You are a helpful Investment Consultant, you will be provided a location and land space, 
-                            you should make a full complete case study and provide this in json format:
+                            you should make a full complete case study and provide this in json format, for example only:
                             {
                                 "Basic Data": {
                                     "Location": "Al Narges District, Riyadh",
