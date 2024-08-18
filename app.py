@@ -776,9 +776,9 @@ def ai_investment_ar():
 
 
 #Twitter
-CLIENT_ID = 'cEdwUVA3V0psR1FQNkFPdk9CMEY6MTpjaQ'
-CLIENT_SECRET = 'pej3TAOiJHgcjQoi_Ey9jqEvGsw6JekCtmXgpVKoKatEc12ZDe'
-REDIRECT_URI = 'https://aistudio.deal360.co/twitter-callback'
+CLIENT_ID = os.getenv('TWITTER_CLIENT_ID')
+CLIENT_SECRET = os.getenv('TWITTER_CLIENT_SECRET')
+REDIRECT_URI = 'https://takamol-advanced-ai-mu.vercel.app/twitter-callback'
 
 def generate_code_verifier():
     return base64.urlsafe_b64encode(os.urandom(40)).decode('utf-8').replace('=', '')
@@ -883,104 +883,104 @@ def delete_tweet(tweet_id, access_token):
     response = requests.delete(url, headers=headers)
     return response.status_code == 200
 
-
-#linked in
-
-# Constants
-linkedIn_CLIENT_ID = '86p817es4p0t7k'
-linkedIn_CLIENT_SECRET = 'nx0MIQgvEAUmD2Ca'
-linkedIn_REDIRECT_URI = 'https://aistudio.deal360.co/linkedin-callback'
-
-@app.route('/linkedin-login')
-def login():
-    state = base64.urlsafe_b64encode(os.urandom(32)).decode('utf-8')
-    session['linkedin-state'] = state
-    linkedin_auth_url = "https://www.linkedin.com/oauth/v2/authorization?response_type=code"
-    linkedin_auth_url += f"&client_id={linkedIn_CLIENT_ID}"
-    linkedin_auth_url += f"&redirect_uri={linkedIn_REDIRECT_URI}"
-    linkedin_auth_url += f"&state={state}"
-    linkedin_auth_url += "&scope=profile%20email%20openid%20w_member_social"
-    return redirect(linkedin_auth_url)
-
-@app.route('/linkedin-callback')
-def linkedin_callback():
-    error = request.args.get('error')
-    if error:
-        error_description = request.args.get('error_description')
-        return jsonify({'error': error, 'description': error_description}), 400
-
-    code = request.args.get('code')
-    if not code:
-        return jsonify({'error': 'Authorization code not found'}), 400
-
-    returned_state = request.args.get('state')
-    if returned_state != session.pop('linkedin-state', None):
-        return jsonify(error="Unauthorized"), 401
-
-    token_url = 'https://www.linkedin.com/oauth/v2/accessToken'
-    token_data = {
-        'grant_type': 'authorization_code',
-        'code': code,
-        'redirect_uri': linkedIn_REDIRECT_URI,
-        'client_id': linkedIn_CLIENT_ID,
-        'client_secret': linkedIn_CLIENT_SECRET
-    }
-    token_headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-
-    try:
-        token_response = requests.post(token_url, data=token_data, headers=token_headers)
-        token_response.raise_for_status()
-        access_token = token_response.json().get('access_token')
-        scope = token_response.json().get('scope')
-        session['linkedin_access_token'] = access_token
-
-        try:
-            # Fetch and store the user's URN
-            profile_url = 'https://api.linkedin.com/v2/userinfo'
-            profile_headers = {'Authorization': f'Bearer {access_token}'}
-            profile_response = requests.get(profile_url, headers=profile_headers)
-            profile_response.raise_for_status()
-            session['linkedin_urn'] = profile_response.json().get('sub')
-
-            return redirect(url_for('post'))
-        except requests.exceptions.RequestException as e:
-            return jsonify({'error': str(e), 'details': 'Failed to get user profile'}), 400
-    except requests.exceptions.RequestException as e:
-        return jsonify({'error': str(e), 'details': 'Failed to get access token'}), 400
-
-@app.route('/linkedin-post')
-def post():
-    if 'linkedin_access_token' not in session or 'linkedin_urn' not in session:
-        return redirect(url_for('linkedin-login'))
-    access_token = session['linkedin_access_token']
-    user_urn = session['linkedin_urn']
-    post_url = 'https://api.linkedin.com/v2/ugcPosts'
-    post_headers = {
-        'Authorization': f"Bearer {access_token}",
-        'Content-Type': 'application/json',
-        'X-Restli-Protocol-Version': '2.0.0'
-    }
-    post_data = {
-        "author": f"urn:li:person:{user_urn}",
-        "lifecycleState": "PUBLISHED",
-        "specificContent": {
-            "com.linkedin.ugc.ShareContent": {
-                "shareCommentary": {
-                    "text": "Hello, LinkedIn world from Flask!"
-                },
-                "shareMediaCategory": "NONE"
-            }
-        },
-        "visibility": {
-            "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
-        }
-    }
-    try:
-        response = requests.post(post_url, headers=post_headers, json=post_data)
-        response.raise_for_status()
-        return 'Posted to LinkedIn!'
-    except requests.exceptions.RequestException as e:
-        return jsonify({'error': str(e)}), 400
+#
+# #linked in
+#
+# # Constants
+# linkedIn_CLIENT_ID = '86p817es4p0t7k'
+# linkedIn_CLIENT_SECRET = 'nx0MIQgvEAUmD2Ca'
+# linkedIn_REDIRECT_URI = 'https://aistudio.deal360.co/linkedin-callback'
+#
+# @app.route('/linkedin-login')
+# def login():
+#     state = base64.urlsafe_b64encode(os.urandom(32)).decode('utf-8')
+#     session['linkedin-state'] = state
+#     linkedin_auth_url = "https://www.linkedin.com/oauth/v2/authorization?response_type=code"
+#     linkedin_auth_url += f"&client_id={linkedIn_CLIENT_ID}"
+#     linkedin_auth_url += f"&redirect_uri={linkedIn_REDIRECT_URI}"
+#     linkedin_auth_url += f"&state={state}"
+#     linkedin_auth_url += "&scope=profile%20email%20openid%20w_member_social"
+#     return redirect(linkedin_auth_url)
+#
+# @app.route('/linkedin-callback')
+# def linkedin_callback():
+#     error = request.args.get('error')
+#     if error:
+#         error_description = request.args.get('error_description')
+#         return jsonify({'error': error, 'description': error_description}), 400
+#
+#     code = request.args.get('code')
+#     if not code:
+#         return jsonify({'error': 'Authorization code not found'}), 400
+#
+#     returned_state = request.args.get('state')
+#     if returned_state != session.pop('linkedin-state', None):
+#         return jsonify(error="Unauthorized"), 401
+#
+#     token_url = 'https://www.linkedin.com/oauth/v2/accessToken'
+#     token_data = {
+#         'grant_type': 'authorization_code',
+#         'code': code,
+#         'redirect_uri': linkedIn_REDIRECT_URI,
+#         'client_id': linkedIn_CLIENT_ID,
+#         'client_secret': linkedIn_CLIENT_SECRET
+#     }
+#     token_headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+#
+#     try:
+#         token_response = requests.post(token_url, data=token_data, headers=token_headers)
+#         token_response.raise_for_status()
+#         access_token = token_response.json().get('access_token')
+#         scope = token_response.json().get('scope')
+#         session['linkedin_access_token'] = access_token
+#
+#         try:
+#             # Fetch and store the user's URN
+#             profile_url = 'https://api.linkedin.com/v2/userinfo'
+#             profile_headers = {'Authorization': f'Bearer {access_token}'}
+#             profile_response = requests.get(profile_url, headers=profile_headers)
+#             profile_response.raise_for_status()
+#             session['linkedin_urn'] = profile_response.json().get('sub')
+#
+#             return redirect(url_for('post'))
+#         except requests.exceptions.RequestException as e:
+#             return jsonify({'error': str(e), 'details': 'Failed to get user profile'}), 400
+#     except requests.exceptions.RequestException as e:
+#         return jsonify({'error': str(e), 'details': 'Failed to get access token'}), 400
+#
+# @app.route('/linkedin-post')
+# def post():
+#     if 'linkedin_access_token' not in session or 'linkedin_urn' not in session:
+#         return redirect(url_for('linkedin-login'))
+#     access_token = session['linkedin_access_token']
+#     user_urn = session['linkedin_urn']
+#     post_url = 'https://api.linkedin.com/v2/ugcPosts'
+#     post_headers = {
+#         'Authorization': f"Bearer {access_token}",
+#         'Content-Type': 'application/json',
+#         'X-Restli-Protocol-Version': '2.0.0'
+#     }
+#     post_data = {
+#         "author": f"urn:li:person:{user_urn}",
+#         "lifecycleState": "PUBLISHED",
+#         "specificContent": {
+#             "com.linkedin.ugc.ShareContent": {
+#                 "shareCommentary": {
+#                     "text": "Hello, LinkedIn world from Flask!"
+#                 },
+#                 "shareMediaCategory": "NONE"
+#             }
+#         },
+#         "visibility": {
+#             "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
+#         }
+#     }
+#     try:
+#         response = requests.post(post_url, headers=post_headers, json=post_data)
+#         response.raise_for_status()
+#         return 'Posted to LinkedIn!'
+#     except requests.exceptions.RequestException as e:
+#         return jsonify({'error': str(e)}), 400
 
 
 
