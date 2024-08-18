@@ -885,21 +885,22 @@ def twitter_callback():
         return jsonify(error="Failed to retrieve access token", details=response.json()), 400
     session['access_token'] = response.json().get('access_token')
     session['user_id'] = response.json().get('user_id')
-    return redirect('/post-tweet')
+    return jsonify({"access_token": session['access_token']})
 
 
 @app.route('/post-tweet', methods=['POST'])  # Ensure the method is POST
 def post_tweet():
-    access_token = session.get('access_token')
+
+    data = request.get_json()  # Get the JSON data
+    tweet_text = data.get('text')  # Extract the tweet text
+
+    access_token = data.get('access_token')
     if not access_token:
         return jsonify({"error": "Access token is missing"}), 401
 
     # Check if the request contains JSON data
     if not request.is_json:
         return jsonify({"error": "Missing JSON in request"}), 400
-
-    data = request.get_json()  # Get the JSON data
-    tweet_text = data.get('text')  # Extract the tweet text
 
     # Validate tweet text
     if not tweet_text:
