@@ -270,6 +270,7 @@ def investment_generator(user_input):
                                     Pearl District: 2,323 riyals
                                     Al Safa Neighborhood: 3,398 riyals
                                     
+                            Your response must be in JSON format only.
                             Your response must be in English only.
                             """
             },
