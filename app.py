@@ -208,6 +208,236 @@ image_analyzer_arabic_context = """أنت محلل للصور ومولد موج�
                                     يجب أن يكون ردك باللغة العربية فقط
                                     """
 
+investment_english_context = """
+                            You are a helpful Investment Consultant, you will be provided a location and land space, 
+                            You must provide an investment case study. 
+                            your response must be in JSON format and look like this example: 
+                            {
+                                "investment_analysis_report": {
+                                    "introduction": "This detailed investment analysis evaluates the feasibility and profitability of developing a high-end single-family residential project in Al Narges District, Riyadh. The analysis includes both sale and rental strategies, examining current market dynamics, cost projections, and revenue potentials.",
+                                    "project_details": {
+                                        "location": "Al Narges District, Riyadh",
+                                        "total_land_area": "2000 sqm",
+                                        "project_type": "Single-Family Residential Development",
+                                        "zoning_regulations": "Residential R3, allowing for up to 3 stories"
+                                    },
+                                    "development_parameters": {
+                                        "build_coverage_ratio": "60%",
+                                        "effective_build_area": "total_land_area * build_coverage_ratio = 2000 * 0.60",
+                                        "effective_build_area_result": "1200 sqm",
+                                        "suggested_floors": "(suggest a number here)",
+                                        "total_constructed_area": "effective_build_area * total_floors = 1200 * suggested_floors",
+                                        "total_constructed_area_result": "(result of above)",
+                                        "unit_size_range": "109-150 sqm",
+                                        "proposed_units": "total_constructed_area / average_unit_size = 3600 / 125",
+                                        "proposed_units_result": "28 units"
+                                    },
+                                    "financial_forecast": {
+                                        "land_acquisition_cost": {
+                                            "cost_per_sqm": "SR 5,700",
+                                            "total_cost": "total_land_area * cost_per_sqm = 2000 * 5700",
+                                            "total_cost_result": "SR 11,400,000"
+                                        },
+                                        "construction_costs": {
+                                            "base_cost_per_sqm": "SR 1,400",
+                                            "total_construction_cost": "total_constructed_area * base_cost_per_sqm = 3600 * 1400",
+                                            "total_construction_cost_result": "SR 5,040,000",
+                                            "additional_costs": {
+                                                "architectural_design": "SR 200,000",
+                                                "legal_and_administrative": "SR 150,000",
+                                                "landscaping": "SR 100,000"
+                                            },
+                                            "total": "total_construction_cost + architectural_design + legal_and_administrative + landscaping = 5,040,000 + 200,000 + 150,000 + 100,000",
+                                            "total_result": "SR 5,490,000"
+                                        },
+                                        "total_investment": "total_land_cost + total_construction_costs.total = 11,400,000 + 5,490,000",
+                                        "total_investment_result": "SR 16,890,000",
+                                        "sales_revenue_forecast": {
+                                            "selling_price_per_sqm": "SR 5,000",
+                                            "total_potential_revenue": "total_constructed_area * selling_price_per_sqm = 3600 * 5000",
+                                            "total_potential_revenue_result": "SR 18,000,000",
+                                            "gross_margin": "total_potential_revenue - total_investment = 18,000,000 - 16,890,000",
+                                            "gross_margin_result": "SR 1,110,000",
+                                            "gross_margin_percentage": "gross_margin / total_potential_revenue * 100 = 1,110,000 / 18,000,000 * 100",
+                                            "gross_margin_percentage_result": "6.57%"
+                                        },
+                                        "rental_revenue_forecast": {
+                                            "expected_monthly_rent_per_sqm": "SR 50",
+                                            "total_annual_rent": "total_constructed_area * expected_monthly_rent_per_sqm * 12 = 3600 * 50 * 12",
+                                            "total_annual_rent_result": "SR 2,160,000",
+                                            "operating_expenses": "20% of total_annual_rent = 0.20 * 2,160,000",
+                                            "operating_expenses_result": "SR 432,000",
+                                            "net_annual_rent": "total_annual_rent - operating_expenses = 2,160,000 - 432,000",
+                                            "net_annual_rent_result": "SR 1,728,000",
+                                            "roi_from_renting": "net_annual_rent / total_investment * 100 = 1,728,000 / 16,890,000 * 100",
+                                            "roi_from_renting_result": "10.24%"
+                                        }
+                                    },
+                                    "risk_assessment": {
+                                        "market_volatility": "Medium - Real estate in Riyadh faces cyclical fluctuations.",
+                                        "regulatory_changes": "Low Risk - Stable regulatory environment with minimal changes anticipated.",
+                                        "economic_factors": "High - Economic diversification and public investment could significantly influence property values."
+                                    },
+                                    "strategic_considerations": {
+                                        "market_trends": "The Riyadh real estate market is currently on an upward trajectory, supported by economic reforms and increasing foreign investment.",
+                                        "investment_timing": "Optimal - Current market conditions and projected economic growth present a favorable environment for initiating development.",
+                                        "long_term_outlook": "The long-term value appreciation potential is strong, making this an attractive investment for both immediate and future returns."
+                                    },
+                                    "executive_summary": "The proposed development in Al Narges District represents a strategically sound investment with a dual revenue strategy through sales and rentals. The financial forecasts indicate a solid return on investment with manageable risks, aligning with current market dynamics and future growth prospects. The project is recommended for immediate commencement to capitalize on favorable market conditions.",
+                                    "recommendations": "Proceed with the acquisition and development, ensuring rigorous cost management and adherence to projected timelines to maximize profitability. Continuous monitoring of market conditions and regular reassessment of strategic directions are advised."
+                                }
+                            }
+
+                            
+                            For all the calculations please provide what is calculated and from what.
+
+                            The prices for each location are: 
+                            Al Narges District: 5,700 riyals
+                                Riyadh: 
+                                    Al Narges District: 5,700 riyals
+                                    Nozha Neighborhood: 5,795 riyals
+                                    Al Arid District: 4,508 riyals
+                                    Salah El-Din Neighborhood: 5,126 riyals
+                                    Al Malqa Neighborhood: 8,334 riyals
+                                    Al-Yasmeen District: 6,995 riyals
+                                    Roses District: 4,981 riyals
+                                    King Abdullah District: 5,203 riyals
+                                    Rahmaniyah Neighborhood: 5,367 riyals
+                                    Al Waha Neighborhood: 6,008 riyals
+                                    Al Bawadi Neighborhood: 3,021 riyals
+                                    Salhiya Neighborhood: 1,548 riyals
+                                    Al-Falah Neighborhood: 4,633 riyals
+                                    Al-Hamdaniya District: 1,736 riyals
+                                    Riyadh District: 1,001 riyals
+                                    Al Samer Neighborhood: 2,430 riyals
+                                
+                                Jeddah:
+                                    Marsa District: 2,010 riyals
+                                    Al-Faisaliah Neighborhood: 3,819 riyals
+                                    North Obhur District: 2,552 riyals
+                                    Pearl District: 2,323 riyals
+                                    Al Safa Neighborhood: 3,398 riyals
+                                    
+                            Your response must be in English only.
+                            """
+
+investment_arabic_context = """
+                            
+                            أنت مستشار استثماري مفيد، سيتم تزويدك بموقع ومساحة أرض،
+                            يجب أن توفر دراسة حالة استثمارية.
+                            يجب أن تكون استجابتك بتنسيق JSON وتبدو مثل هذا المثال:
+                            
+                            {
+                                "investment_analysis_report": {
+                                    "introduction": "هذه التحليل الاستثماري المفصل يقيم قابلية وربحية تطوير مشروع سكني فردي فاخر في حي النرجس بالرياض. التحليل يشمل استراتيجيات البيع والإيجار، مع النظر في ديناميكيات السوق الحالية وتقديرات التكاليف والإمكانيات الإيرادية.",
+                                    "project_details": {
+                                        "location": "حي النرجس، الرياض",
+                                        "total_land_area": "2000 متر مربع",
+                                        "project_type": "تطوير سكني فردي",
+                                        "zoning_regulations": "سكني R3، يسمح ببناء حتى 3 طوابق"
+                                    },
+                                    "development_parameters": {
+                                        "build_coverage_ratio": "60%",
+                                        "effective_build_area": "total_land_area * build_coverage_ratio = 2000 * 0.60",
+                                        "effective_build_area_result": "1200 متر مربع",
+                                        "suggested_floors": "(اقترح عددا هنا)",
+                                        "total_constructed_area": "effective_build_area * total_floors = 1200 * suggested_floors",
+                                        "total_constructed_area_result": "(نتيجة الحساب السابق)",
+                                        "unit_size_range": "109-150 متر مربع",
+                                        "proposed_units": "total_constructed_area / average_unit_size = 3600 / 125",
+                                        "proposed_units_result": "28 وحدة"
+                                    },
+                                    "financial_forecast": {
+                                        "land_acquisition_cost": {
+                                            "cost_per_sqm": "5700 ريال سعودي",
+                                            "total_cost": "total_land_area * cost_per_sqm = 2000 * 5700",
+                                            "total_cost_result": "11400000 ريال سعودي"
+                                        },
+                                        "construction_costs": {
+                                            "base_cost_per_sqm": "1400 ريال سعودي",
+                                            "total_construction_cost": "total_constructed_area * base_cost_per_sqm = 3600 * 1400",
+                                            "total_construction_cost_result": "5040000 ريال سعودي",
+                                            "additional_costs": {
+                                                "architectural_design": "200000 ريال سعودي",
+                                                "legal_and_administrative": "150000 ريال سعودي",
+                                                "landscaping": "100000 ريال سعودي"
+                                            },
+                                            "total": "total_construction_cost + architectural_design + legal_and_administrative + landscaping = 5040000 + 200000 + 150000 + 100000",
+                                            "total_result": "5490000 ريال سعودي"
+                                        },
+                                        "total_investment": "total_land_cost + total_construction_costs.total = 11400000 + 5490000",
+                                        "total_investment_result": "16890000 ريال سعودي",
+                                        "sales_revenue_forecast": {
+                                            "selling_price_per_sqm": "5000 ريال سعودي",
+                                            "total_potential_revenue": "total_constructed_area * selling_price_per_sqm = 3600 * 5000",
+                                            "total_potential_revenue_result": "18000000 ريال سعودي",
+                                            "gross_margin": "total_potential_revenue - total_investment = 18000000 - 16890000",
+                                            "gross_margin_result": "1110000 ريال سعودي",
+                                            "gross_margin_percentage": "gross_margin / total_potential_revenue * 100 = 1110000 / 18000000 * 100",
+                                            "gross_margin_percentage_result": "6.17%"
+                                        },
+                                        "rental_revenue_forecast": {
+                                            "expected_monthly_rent_per_sqm": "50 ريال سعودي",
+                                            "total_annual_rent": "total_constructed_area * expected_monthly_rent_per_sqm * 12 = 3600 * 50 * 12",
+                                            "total_annual_rent_result": "2160000 ريال سعودي",
+                                            "operating_expenses": "20% of total_annual_rent = 0.20 * 2160000",
+                                            "operating_expenses_result": "432000 ريال سعودي",
+                                            "net_annual_rent": "total_annual_rent - operating_expenses = 2160000 - 432000",
+                                            "net_annual_rent_result": "1728000 ريال سعودي",
+                                            "roi_from_renting": "net_annual_rent / total_investment * 100 = 1728000 / 16890000 * 100",
+                                            "roi_from_renting_result": "10.23%"
+                                        }
+                                    },
+                                    "risk_assessment": {
+                                        "market_volatility": "متوسط - يواجه سوق العقارات في الرياض تقلبات دورية.",
+                                        "regulatory_changes": "مخاطر منخفضة - بيئة تنظيمية مستقرة مع توقعات بتغييرات طفيفة.",
+                                        "economic_factors": "عالي - قد تؤثر التنويع الاقتصادي والاستثمار العام بشكل كبير على قيم العقارات."
+                                    },
+                                    "strategic_considerations": {
+                                        "market_trends": "يشهد سوق العقارات في الرياض حالياً اتجاهاً تصاعدياً، مدعوماً بالإصلاحات الاقتصادية وزيادة الاستثمار الأجنبي.",
+                                        "investment_timing": "مثالي - تقدم ظروف السوق الحالية والنمو الاقتصادي المتوقع بيئة مواتية لبدء التطوير.",
+                                        "long_term_outlook": "إمكانية تقدير القيمة طويلة الأمد قوية، مما يجعلها استثمارًا جذابًا لكل من العوائد الفورية والمستقبلية."
+                                    },
+                                    "executive_summary": "يمثل التطوير المقترح في حي النرجس استثمارًا استراتيجيًا سليمًا مع استراتيجية إيرادية مزدوجة من خلال المبيعات والإيجارات. تشير التوقعات المالية إلى عائد استثماري صلب مع مخاطر قابلة للإدارة، متماشية مع ديناميكيات السوق الحالية وآفاق النمو المستقبلية. يُوصى ببدء المشروع على الفور للاستفادة من ظروف السوق المواتية.",
+                                    "recommendations": "المضي قدماً في الاستحواذ والتطوير، مع ضمان إدارة صارمة للتكاليف والالتزام بالجداول الزمنية المتوقعة لتعظيم الربحية. يُنصح بمراقبة مستمرة لظروف السوق وإعادة تقييم منتظمة للاتجاهات الاستراتيجية."
+                                }
+                            }
+                            
+                            لجميع الحسابات، يرجى تقديم ما يتم حسابه ومن ماذا.
+
+                            الأسعار لكل موقع هي:
+                            الرياض:
+                            حي النرجس: 5700 ريال
+                            حي النزهة: 5795 ريال
+                            حي العارض: 4508 ريال
+                            حي صلاح الدين: 5126 ريال
+                            حي الملقا: 8334 ريال
+                            حي الياسمين: 6995 ريال
+                            حي الورود: 4981 ريال
+                            حي الملك عبدالله: 5203 ريال
+                            حي الرحمانية: 5367 ريال
+                            حي الواحة: 6008 ريال
+                            حي البوادي: 3021 ريال
+                            حي الصالحية: 1548 ريال
+                            حي الفلاح: 4633 ريال
+                            حي الحمدانية: 1736 ريال
+                            حي الرياض: 1001 ريال
+                            حي السامر: 2430 ريال
+                            
+                            جدة:
+                            حي المرسى: 2010 ريال
+                            حي الفيصلية: 3819 ريال
+                            حي أبحر الشمالية: 2552 ريال
+                            حي اللؤلؤ: 2323 ريال
+                            حي الصفا: 3398 ريال
+                            
+                            يجب أن تكون استجابتك باللغة العربية فقط.
+
+
+
+                            """
+
+
 context = []
 
 
@@ -486,8 +716,8 @@ def image_analysis_ar():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/investment', methods=['POST'])
-def ai_investment():
+@app.route('/en/investment', methods=['POST'])
+def ai_investment_en():
     # Check if the request contains JSON data
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
@@ -502,7 +732,29 @@ def ai_investment():
     print(user_input)
 
     try:
-        image_prompt = investment_generator(user_input)
+        image_prompt = investment_generator(user_input, investment_english_context)
+        return image_prompt, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/ar/investment', methods=['POST'])
+def ai_investment_ar():
+    # Check if the request contains JSON data
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    # Check if 'input' key exists in the JSON data
+    if 'input' not in data:
+        return jsonify({"error": "Missing 'input' field"}), 400
+
+    user_input = data['input']
+    print(user_input)
+
+    try:
+        image_prompt = investment_generator(user_input, investment_arabic_context)
         return image_prompt, 200
     except Exception as e:
         print(e)

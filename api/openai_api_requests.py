@@ -210,123 +210,12 @@ def prompt_enhancer(text, sent_context):
 
 
 # Investments Website APIs
-def investment_generator(user_input):
+def investment_generator(user_input, sent_context):
     try:
         context = [
             {
                 "role":"system",
-                "content":"""
-                            You are a helpful Investment Consultant, you will be provided a location and land space, 
-                            You must provide an investment case study. 
-                            your response must be in JSON format and look like this example: 
-                            {
-                                "investment_analysis_report": {
-                                    "introduction": "This detailed investment analysis evaluates the feasibility and profitability of developing a high-end single-family residential project in Al Narges District, Riyadh. The analysis includes both sale and rental strategies, examining current market dynamics, cost projections, and revenue potentials.",
-                                    "project_details": {
-                                        "location": "Al Narges District, Riyadh",
-                                        "total_land_area": "2000 sqm",
-                                        "project_type": "Single-Family Residential Development",
-                                        "zoning_regulations": "Residential R3, allowing for up to 3 stories"
-                                    },
-                                    "development_parameters": {
-                                        "build_coverage_ratio": "60%",
-                                        "effective_build_area": "total_land_area * build_coverage_ratio = 2000 * 0.60",
-                                        "effective_build_area_result": "1200 sqm",
-                                        "suggested_floors": "(suggest a number here)",
-                                        "total_constructed_area": "effective_build_area * total_floors = 1200 * suggested_floors",
-                                        "total_constructed_area_result": "(result of above)",
-                                        "unit_size_range": "109-150 sqm",
-                                        "proposed_units": "total_constructed_area / average_unit_size = 3600 / 125",
-                                        "proposed_units_result": "28 units"
-                                    },
-                                    "financial_forecast": {
-                                        "land_acquisition_cost": {
-                                            "cost_per_sqm": "SR 5,700",
-                                            "total_cost": "total_land_area * cost_per_sqm = 2000 * 5700",
-                                            "total_cost_result": "SR 11,400,000"
-                                        },
-                                        "construction_costs": {
-                                            "base_cost_per_sqm": "SR 1,400",
-                                            "total_construction_cost": "total_constructed_area * base_cost_per_sqm = 3600 * 1400",
-                                            "total_construction_cost_result": "SR 5,040,000",
-                                            "additional_costs": {
-                                                "architectural_design": "SR 200,000",
-                                                "legal_and_administrative": "SR 150,000",
-                                                "landscaping": "SR 100,000"
-                                            },
-                                            "total": "total_construction_cost + architectural_design + legal_and_administrative + landscaping = 5,040,000 + 200,000 + 150,000 + 100,000",
-                                            "total_result": "SR 5,490,000"
-                                        },
-                                        "total_investment": "total_land_cost + total_construction_costs.total = 11,400,000 + 5,490,000",
-                                        "total_investment_result": "SR 16,890,000",
-                                        "sales_revenue_forecast": {
-                                            "selling_price_per_sqm": "SR 5,000",
-                                            "total_potential_revenue": "total_constructed_area * selling_price_per_sqm = 3600 * 5000",
-                                            "total_potential_revenue_result": "SR 18,000,000",
-                                            "gross_margin": "total_potential_revenue - total_investment = 18,000,000 - 16,890,000",
-                                            "gross_margin_result": "SR 1,110,000",
-                                            "gross_margin_percentage": "gross_margin / total_potential_revenue * 100 = 1,110,000 / 18,000,000 * 100",
-                                            "gross_margin_percentage_result": "6.57%"
-                                        },
-                                        "rental_revenue_forecast": {
-                                            "expected_monthly_rent_per_sqm": "SR 50",
-                                            "total_annual_rent": "total_constructed_area * expected_monthly_rent_per_sqm * 12 = 3600 * 50 * 12",
-                                            "total_annual_rent_result": "SR 2,160,000",
-                                            "operating_expenses": "20% of total_annual_rent = 0.20 * 2,160,000",
-                                            "operating_expenses_result": "SR 432,000",
-                                            "net_annual_rent": "total_annual_rent - operating_expenses = 2,160,000 - 432,000",
-                                            "net_annual_rent_result": "SR 1,728,000",
-                                            "roi_from_renting": "net_annual_rent / total_investment * 100 = 1,728,000 / 16,890,000 * 100",
-                                            "roi_from_renting_result": "10.24%"
-                                        }
-                                    },
-                                    "risk_assessment": {
-                                        "market_volatility": "Medium - Real estate in Riyadh faces cyclical fluctuations.",
-                                        "regulatory_changes": "Low Risk - Stable regulatory environment with minimal changes anticipated.",
-                                        "economic_factors": "High - Economic diversification and public investment could significantly influence property values."
-                                    },
-                                    "strategic_considerations": {
-                                        "market_trends": "The Riyadh real estate market is currently on an upward trajectory, supported by economic reforms and increasing foreign investment.",
-                                        "investment_timing": "Optimal - Current market conditions and projected economic growth present a favorable environment for initiating development.",
-                                        "long_term_outlook": "The long-term value appreciation potential is strong, making this an attractive investment for both immediate and future returns."
-                                    },
-                                    "executive_summary": "The proposed development in Al Narges District represents a strategically sound investment with a dual revenue strategy through sales and rentals. The financial forecasts indicate a solid return on investment with manageable risks, aligning with current market dynamics and future growth prospects. The project is recommended for immediate commencement to capitalize on favorable market conditions.",
-                                    "recommendations": "Proceed with the acquisition and development, ensuring rigorous cost management and adherence to projected timelines to maximize profitability. Continuous monitoring of market conditions and regular reassessment of strategic directions are advised."
-                                }
-                            }
-
-                            
-                            For all the calculations please provide what is calculated and from what.
-
-                            The prices for each location are: 
-                            Al Narges District: 5,700 riyals
-                                Riyadh: 
-                                    Al Narges District: 5,700 riyals
-                                    Nozha Neighborhood: 5,795 riyals
-                                    Al Arid District: 4,508 riyals
-                                    Salah El-Din Neighborhood: 5,126 riyals
-                                    Al Malqa Neighborhood: 8,334 riyals
-                                    Al-Yasmeen District: 6,995 riyals
-                                    Roses District: 4,981 riyals
-                                    King Abdullah District: 5,203 riyals
-                                    Rahmaniyah Neighborhood: 5,367 riyals
-                                    Al Waha Neighborhood: 6,008 riyals
-                                    Al Bawadi Neighborhood: 3,021 riyals
-                                    Salhiya Neighborhood: 1,548 riyals
-                                    Al-Falah Neighborhood: 4,633 riyals
-                                    Al-Hamdaniya District: 1,736 riyals
-                                    Riyadh District: 1,001 riyals
-                                    Al Samer Neighborhood: 2,430 riyals
-                                
-                                Jeddah:
-                                    Marsa District: 2,010 riyals
-                                    Al-Faisaliah Neighborhood: 3,819 riyals
-                                    North Obhur District: 2,552 riyals
-                                    Pearl District: 2,323 riyals
-                                    Al Safa Neighborhood: 3,398 riyals
-                                    
-                            Your response must be in English only.
-                            """
+                "content": sent_context
             },
             {
                 "role":"user",
