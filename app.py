@@ -900,7 +900,7 @@ def twitter_callback():
     <script>
       window.opener.postMessage(
         {{ type: 'TWITTER_AUTH_SUCCESS', accessToken: '{access_token}' }},
-        'http://localhost:3000' // Ensure this matches your parent window origin
+        '{os.getenv('DOMAIN_ORIGIN')}' // Ensure this matches your parent window origin
       );
       window.close();
     </script>
@@ -984,14 +984,16 @@ linkedIn_CLIENT_SECRET = os.getenv('LINKEDIN_CLIENT_SECRET')
 linkedIn_REDIRECT_URI = 'https://takamol-advanced-ai-mu.vercel.app/linkedin-callback'
 
 @app.route('/linkedin-login')
-def login():
+def linkedin_login():
     state = base64.urlsafe_b64encode(os.urandom(32)).decode('utf-8')
     session['linkedin-state'] = state
-    linkedin_auth_url = "https://www.linkedin.com/oauth/v2/authorization?response_type=code"
-    linkedin_auth_url += f"&client_id={linkedIn_CLIENT_ID}"
-    linkedin_auth_url += f"&redirect_uri={linkedIn_REDIRECT_URI}"
-    linkedin_auth_url += f"&state={state}"
-    linkedin_auth_url += "&scope=profile%20email%20openid%20w_member_social"
+    linkedin_auth_url = (
+        "https://www.linkedin.com/oauth/v2/authorization?response_type=code"
+        f"&client_id={linkedIn_CLIENT_ID}"
+        f"&redirect_uri={linkedIn_REDIRECT_URI}"
+        f"&state={state}"
+        "&scope=profile%20email%20openid%20w_member_social"
+    )
     return redirect(linkedin_auth_url)
 
 @app.route('/linkedin-callback')
@@ -1023,18 +1025,27 @@ def linkedin_callback():
         token_response = requests.post(token_url, data=token_data, headers=token_headers)
         token_response.raise_for_status()
         access_token = token_response.json().get('access_token')
-        scope = token_response.json().get('scope')
         session['linkedin_access_token'] = access_token
 
+        # Optionally, fetch user's URN or profile data
         try:
-            # Fetch and store the user's URN
-            profile_url = 'https://api.linkedin.com/v2/userinfo'
+            profile_url = 'https://api.linkedin.com/v2/me'
             profile_headers = {'Authorization': f'Bearer {access_token}'}
             profile_response = requests.get(profile_url, headers=profile_headers)
             profile_response.raise_for_status()
-            session['linkedin_urn'] = profile_response.json().get('sub')
+            linkedin_urn = profile_response.json().get('id')  # Get the LinkedIn ID
+            session['linkedin_urn'] = linkedin_urn
 
-            return redirect(url_for('post'))
+            # JavaScript snippet to send the token back to the parent window
+            return f"""
+            <script>
+                window.opener.postMessage(
+                    {{ type: 'LINKEDIN_AUTH_SUCCESS', accessToken: '{access_token}', urn: '{linkedin_urn}' }},
+                    '{os.getenv('DOMAIN_ORIGIN')}'
+                );
+                window.close();
+            </script>
+            """
         except requests.exceptions.RequestException as e:
             return jsonify({'error': str(e), 'details': 'Failed to get user profile'}), 400
     except requests.exceptions.RequestException as e:
