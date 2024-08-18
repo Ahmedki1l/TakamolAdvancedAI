@@ -1029,12 +1029,13 @@ def linkedin_callback():
 
         # Optionally, fetch user's URN or profile data
         try:
-            profile_url = 'https://api.linkedin.com/v2/me'
+            # Fetch and store the user's URN
+            profile_url = 'https://api.linkedin.com/v2/userinfo'
             profile_headers = {'Authorization': f'Bearer {access_token}'}
             profile_response = requests.get(profile_url, headers=profile_headers)
             profile_response.raise_for_status()
-            linkedin_urn = profile_response.json().get('id')  # Get the LinkedIn ID
-            session['linkedin_urn'] = linkedin_urn
+            session['linkedin_urn'] = profile_response.json().get('sub')
+            linkedin_urn = session['linkedin_urn']
 
             # JavaScript snippet to send the token back to the parent window
             return f"""
