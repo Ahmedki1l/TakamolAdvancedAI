@@ -868,6 +868,8 @@ def twitter_login():
 def twitter_callback():
     code = request.args.get('code')
     returned_state = request.args.get('state')
+
+    # Check state
     if returned_state != session.pop('state', None):
         return jsonify(error="State mismatch"), 400
 
@@ -882,6 +884,8 @@ def twitter_callback():
         'redirect_uri': REDIRECT_URI,
         'code_verifier': session.pop('code_verifier', None)
     }
+
+    # Make a POST request to get the access token
     response = requests.post("https://api.twitter.com/2/oauth2/token", headers=headers, data=urlencode(data))
 
     if response.status_code != 200:
@@ -889,14 +893,14 @@ def twitter_callback():
 
     access_token = response.json().get('access_token')
 
-    print(access_token);
+    print(access_token)
 
-    # JavaScript snippet to send the token back to the parent window
+    # Ensure the correct origin is used in the postMessage
     return f"""
     <script>
       window.opener.postMessage(
         {{ type: 'TWITTER_AUTH_SUCCESS', accessToken: '{access_token}' }},
-        '{REDIRECT_URI}'
+        'http://localhost:3000' // Ensure this matches your parent window origin
       );
       window.close();
     </script>
