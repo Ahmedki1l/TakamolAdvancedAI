@@ -889,6 +889,8 @@ def twitter_callback():
 
     access_token = response.json().get('access_token')
 
+    print(access_token);
+
     # JavaScript snippet to send the token back to the parent window
     return f"""
     <script>
