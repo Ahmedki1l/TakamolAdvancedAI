@@ -31,24 +31,52 @@ case_study_training_context_english = """
                                 You have to focus on what you do, provide the user with all the details. 
                                 You must provide how much payment for the social media plan that the user should pay and how, give him a full strategy. 
                                 Your response must be in json format and should look like this: 
-                                {
-                                "Case_Study": "your response here", 
-                                "Target_Audience": "your response here", 
-                                "Pros": {
-                                        "1":"your response here",
-                                        "2":"your response here",
-                                        ...    
-                                        }, 
-                                "Cons": {
-                                        "1":"your response here",
-                                        "2":"your response here",
-                                        ...    
+                               {
+                                    "Case_Study": "This in-depth analysis focuses on a cutting-edge residential project in Riyadh, featuring AI-enhanced smart apartments tailored to meet the demands of modern, environmentally conscious, and tech-savvy buyers. Each of the five buildings within the complex houses 10 luxury apartments, with each unit spanning 100 square meters and incorporating state-of-the-art home automation systems, sustainable energy solutions, and top-tier security technologies.",
+                                    "Target_Audience": "This project is geared towards tech enthusiasts and progressive families aged between 25 to 45, primarily consisting of professionals in technology, finance, and creative sectors, who prioritize sustainability, security, and modern conveniences in their living spaces.",
+                                    "Pros": {
+                                        "1": "Advanced AI systems facilitate seamless daily operations, enhancing lifestyle and efficiency.",
+                                        "2": "Eco-friendly technologies reduce carbon footprint and operational costs, attracting eco-conscious buyers.",
+                                        "3": "Located in a prestigious area known for its economic growth potential, ensuring property value appreciation.",
+                                        "4": "High-tech security features offer unmatched safety and privacy."
+                                    },
+                                    "Cons": {
+                                        "1": "High capital expenditure for integrating advanced tech may affect the project's initial affordability.",
+                                        "2": "Technical reliance could deter less tech-savvy segments of the market.",
+                                        "3": "Risk of rapid technological obsolescence necessitates ongoing updates, increasing long-term maintenance costs."
+                                    },
+                                    "Market_Strategy": {
+                                        "Overview": "Our approach integrates digital and traditional marketing channels to maximize project visibility and engagement. We aim to position this development as the premier choice for future-focused living in Riyadh.",
+                                        "Digital_Marketing": {
+                                            "Google_Ads": "Focusing on high-intent keywords with an expected CPC of SAR 15 to drive targeted traffic.",
+                                            "Social_Media_Advertising": "Utilizing demographic and psychographic targeting on platforms like Facebook, Instagram, and LinkedIn to reach our ideal customer profile.",
+                                            "Content_Marketing": "Creating high-quality, engaging content that highlights the unique features of the apartments through blogs, videos, and interactive virtual tours."
                                         },
-                                "Social_Media_Strategy: " your response here ",
-                                "Facebook_Hashtags": "only if provided from the user", 
-                                "Instagram_Hashtags": "only if provided from the user", 
-                                "Twitter_Hashtags": "only if provided from the user", 
-                                "LinkedIn_Hashtags": "only if provided from the user", 
+                                        "Traditional_Marketing": {
+                                            "Outdoor_Advertising": "Strategically placed billboards and signage in high-traffic areas within Riyadh.",
+                                            "Print_Media": "Ads in leading newspapers and real estate magazines, targeting affluent neighborhoods."
+                                        },
+                                        "Budget_Allocation": {
+                                            "Total_Annual_Budget": "SAR 3,000,000",
+                                            "Digital_Marketing": "SAR 1,800,000 (60%)",
+                                            "Traditional_Marketing": "SAR 600,000 (20%)",
+                                            "Content_Creation": "SAR 450,000 (15%)",
+                                            "Market_Research_and_Analytics": "SAR 150,000 (5%)"
+                                        }
+                                    },
+                                    "Performance_Metrics": {
+                                        "Expected_Traffic": "50,000 unique visitors per month via digital campaigns.",
+                                        "Conversion_Rate": "5%, translating to an average of 30 apartment sales per year.",
+                                        "Customer_Acquisition_Cost": "Estimated at SAR 10,000 per sale, based on marketing spend and sales targets."
+                                    },
+                                    "ROI_Calculation": {
+                                        "Annual_Revenue_Projection": "SAR 36,000,000 from apartment sales.",
+                                        "Annual_Marketing_Cost": "SAR 3,000,000",
+                                        "Net_Profit": "SAR 33,000,000 after marketing costs.",
+                                        "ROI_Percentage": "1,100% (Net Profit divided by Marketing Cost)"
+                                    },
+                                    "Strategic_Insights": "Continuous monitoring of market trends and buyer feedback will be crucial. Adjusting marketing strategies in real-time will allow us to respond to market dynamics and optimize performance.",
+                                    "Recommendations": "Focus on enhancing digital engagement through targeted campaigns and high-quality content to solidify the project's position in the market as a leading sustainable and technologically advanced residential option."
                                 }
                                 Don't talk with the user about anything other than this.
                                 Don't suggest anything and Don't talk freely, only provide these data.
@@ -113,24 +141,53 @@ case_study_training_context_arabic = """
                                 عليك أن تعطي العميل القيمة التي يجب أن يدفعها في السوشيال ميديا بلان, أعطه خطة كاملة
                                 يجب أن تكون إجابتك بصيغة json ويجب أن تبدو هكذا: 
                                 {
-                                "Case_Study": "ردك هنا", 
-                                "Target_Audience": "ردك هنا", 
-                                "Pros": {
-                                        "1":"ردك هنا",
-                                        "2":"ردك هنا",
-                                        ...    
+                                    "Case_Study": "هذه الدراسة التفصيلية تركز على مشروع سكني متطور في الرياض، يضم شققًا ذكية معززة بالذكاء الاصطناعي مصممة لتلبية متطلبات المشترين المعاصرين، المهتمين بالبيئة والتكنولوجيا. كل من الخمسة مباني داخل المجمع يضم عشر شقق فاخرة، كل وحدة تغطي 100 متر مربع وتشتمل على أحدث أنظمة الأتمتة المنزلية، حلول الطاقة المستدامة وتقنيات الأمان المتقدمة.",
+                                    "Target_Audience": "الجمهور المستهدف الرئيسي يشمل العائلات والمهنيين الشباب من الطبقة المتوسطة إلى العليا الذين يهتمون بالتكنولوجيا ويقدرون الاستدامة ووسائل الراحة العصرية في مساكنهم. هؤلاء الأفراد عادة ما يكونون مهنيين في مجالات التكنولوجيا، المالية، والقطاعات الإبداعية.",
+                                    "Pros": {
+                                        "1": "أنظمة الذكاء الاصطناعي تسهل العمليات اليومية بكفاءة عالية، مما يعزز نمط الحياة والكفاءة.",
+                                        "2": "التقنيات الصديقة للبيئة تقلل البصمة الكربونية والتكاليف التشغيلية، مما يجذب المشترين المهتمين بالبيئة.",
+                                        "3": "الموقع الاستراتيجي في منطقة تعرف بإمكانيات نموها الاقتصادي، مما يضمن زيادة في قيمة العقارات.",
+                                        "4": "الميزات الأمنية المتقدمة توفر أماناً لا مثيل له، مما يزيد من جاذبيتها للعائلات."
+                                    },
+                                    "Cons": {
+                                        "1": "التكلفة الرأسمالية العالية لدمج التكنولوجيا المتقدمة قد تؤثر على تكلفة المشروع الأولية.",
+                                        "2": "الاعتماد على البائعين التكنولوجيين للصيانة والتحديثات قد يقدم تعقيدات تشغيلية.",
+                                        "3": "المقاومة المحتملة في السوق من المشترين التقليديين الذين يفضلون المنازل التقليدية على المنازل المدعومة بالتكنولوجيا."
+                                    },
+                                    "Market_Strategy": {
+                                        "Overview": "يدمج نهجنا قنوات التسويق الرقمية والتقليدية لتعظيم الرؤية والتفاعل مع المشروع. نهدف إلى تموضع هذا التطوير كالخيار الأول للمعيشة المستقبلية في الرياض.",
+                                        "Digital_Marketing": {
+                                            "Google_Ads": "تركيز على الكلمات المفتاحية عالية النية بتكلفة نقرة متوقعة 15 ريال سعودي لجذب حركة مرور مستهدفة.",
+                                            "Social_Media_Advertising": "استخدام الاستهداف الديموغرافي والنفسي على منصات مثل Facebook، Instagram، وLinkedIn للوصول إلى الملف الشخصي المثالي للعميل.",
+                                            "Content_Marketing": "إنشاء محتوى عالي الجودة، جذاب يسلط الضوء على الميزات الفريدة للشقق من خلال المدونات، الفيديوهات، والجولات الافتراضية التفاعلية."
                                         },
-                                "Cons": {
-                                        "1":"ردك هنا",
-                                        "2":"ردك هنا",
-                                        ...    
-                                        }, 
-                                "Social_Media_Strategy: " your response here ", 
-                                "Facebook_Hashtags": "فقط اذا وفرها العميل", 
-                                "Instagram_Hashtags": "فقط اذا وفرها العميل", 
-                                "Twitter_Hashtags": "فقط اذا وفرها العميل", 
-                                "LinkedIn_Hashtags": "فقط اذا وفرها العميل", 
+                                        "Traditional_Marketing": {
+                                            "Outdoor_Advertising": "لوحات إعلانية موضوعة استراتيجياً في المناطق ذات الحركة العالية داخل الرياض.",
+                                            "Print_Media": "إعلانات في الصحف الرائدة ومجلات العقارات، مستهدفة الأحياء الراقية."
+                                        },
+                                        "Budget_Allocation": {
+                                            "Total_Annual_Budget": "3,000,000 ريال سعودي",
+                                            "Digital_Marketing": "1,800,000 ريال سعودي (60%)",
+                                            "Traditional_Marketing": "600,000 ريال سعودي (20%)",
+                                            "Content_Creation": "450,000 ريال سعودي (15%)",
+                                            "Market_Research_and_Analytics": "150,000 ريال سعودي (5%)"
+                                        }
+                                    },
+                                    "Performance_Metrics": {
+                                        "Expected_Traffic": "50,000 زائر فريد شهرياً عبر الحملات الرقمية.",
+                                        "Conversion_Rate": "5%، مما يعادل بيع 30 شقة سنوياً.",
+                                        "Customer_Acquisition_Cost": "مقدر بـ 10,000 ريال سعودي لكل عملية بيع، بناءً على المصاريف التسويقية وأهداف المبيعات."
+                                    },
+                                    "ROI_Calculation": {
+                                        "Annual_Revenue_Projection": "36,000,000 ريال سعودي من مبيعات الشقق.",
+                                        "Annual_Marketing_Cost": "3,000,000 ريال سعودي",
+                                        "Net_Profit": "33,000,000 ريال سعودي بعد تكاليف التسويق.",
+                                        "ROI_Percentage": "1100% (صافي الربح مقسوماً على تكاليف التسويق)"
+                                    },
+                                    "Strategic_Insights": "مراقبة مستمرة لاتجاهات السوق وتغذية راجعة من العملاء ستكون حاسمة. التعديل المستمر لاستراتيجيات التسويق بناءً على الديناميكيات السوقية سيسمح بتحسين الأداء.",
+                                    "Recommendations": "التركيز على تعزيز التفاعل الرقمي من خلال الحملات المستهدفة والمحتوى عالي الجودة لترسيخ مكانة المشروع في السوق كخيار سكني رائد يتمتع بالاستدامة والتقدم التكنولوجي."
                                 }
+
                                 لا تتحدث مع المستخدم عن أي شيء آخر غير هذا.
                                 لا تقترح أي شيء ولا تتحدث بحرية، قدم هذه البيانات فقط.
                                 عليك اتباع تنسيق json فقط كما في المثال أعلاه. 
