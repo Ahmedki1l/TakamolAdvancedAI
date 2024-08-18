@@ -18,6 +18,7 @@ from api.openai_api_requests import case_study_ai, social_media_ai, image_creato
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
+app.secret_key = os.urandom(24)
 
 # Initialize a Context to train GPT-4 on
 case_study_training_context_english = """
