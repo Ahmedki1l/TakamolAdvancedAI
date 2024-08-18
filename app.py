@@ -863,12 +863,14 @@ def twitter_login():
     url = f"https://twitter.com/i/oauth2/authorize?{urlencode(params)}"
     return redirect(url)
 
+
 @app.route('/twitter-callback')
 def twitter_callback():
     code = request.args.get('code')
     returned_state = request.args.get('state')
     if returned_state != session.pop('state', None):
         return jsonify(error="State mismatch"), 400
+
     headers = {
         'Authorization': f'Basic {base64.urlsafe_b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()}',
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -881,11 +883,22 @@ def twitter_callback():
         'code_verifier': session.pop('code_verifier', None)
     }
     response = requests.post("https://api.twitter.com/2/oauth2/token", headers=headers, data=urlencode(data))
+
     if response.status_code != 200:
         return jsonify(error="Failed to retrieve access token", details=response.json()), 400
-    session['access_token'] = response.json().get('access_token')
-    session['user_id'] = response.json().get('user_id')
-    return jsonify({"access_token": session['access_token']})
+
+    access_token = response.json().get('access_token')
+
+    # JavaScript snippet to send the token back to the parent window
+    return f"""
+    <script>
+      window.opener.postMessage(
+        {{ type: 'TWITTER_AUTH_SUCCESS', accessToken: '{access_token}' }},
+        '{REDIRECT_URI}'
+      );
+      window.close();
+    </script>
+    """
 
 
 @app.route('/post-tweet', methods=['POST'])  # Ensure the method is POST
