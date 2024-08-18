@@ -228,18 +228,71 @@ def investment_generator(user_input):
                                 - selling cost per sqm. 
                                 - total cost for building the floors (including the ground floor). 
                                 - cost for basement floor. 
-                                - total building cost.
+                                - total building cost. 
                                 - total land cost. 
-                                - the total project cost.
+                                - the total project cost. 
                                 
                             5- and then provide the profits as follows: 
                                 - total selling cost. 
                                 - total profit. 
                                 - profit percentage. 
-                            
+                                
                             6- and then provide the conclusion. 
                             
                             7- provide the summarized investments case study in case of renting.
+                            
+                            combine the above details with these details : 
+                            
+                            {
+                                "Basic Data": {
+                                    "Location": "Al Narges District, Riyadh",
+                                    "Area": "2000 sqm"
+                                },
+                                "Number of Floors": "Considering the area and purpose of building a house, it is recommended to construct a single-family home consisting of 2-3 floors.",
+                                "Average Land Cost": {
+                                    "Land cost in Al Narges District, Riyadh": "SR 5,700 per sqm",
+                                    "Total land cost for 2000 sqm": "SR 11,400,000 (5,700 x 2000)"
+                                },
+                                "Construction Cost for Recommended Floors": [
+                                    {
+                                        "2-Story Single-Family Home": {
+                                            "Cost per sqm": "SR 1,200",
+                                            "Total construction cost": "SR 2,400,000 (1,200 x 2000)"
+                                        }
+                                    },
+                                    {
+                                        "3-Story Single-Family Home": {
+                                            "Cost per sqm": "SR 1,400",
+                                            "Total construction cost": "SR 2,800,000 (1,400 x 2000)"
+                                        }
+                                    }
+                                ],
+                                "Building on Columns": "Not applicable for a single-family home.",
+                                "Cumulative Price Increase": "Riyadh's real estate market has experienced a cumulative increase of approximately 10% over the past five years.",
+                                "Property Value Estimate": [
+                                    {
+                                        "2-Story Single-Family Home": "SR 10,000,000 (5,000 x 2000)"
+                                    },
+                                    {
+                                        "3-Story Single-Family Home": "SR 12,000,000 (5,000 x 2000)"
+                                    }
+                                ],
+                                "Total Investment and Expected Profit": [
+                                    {
+                                        "2-story single-family home": {
+                                            "Total investment": "SR 13,800,000 (land cost + construction cost)",
+                                            "Estimated profit if sold": "-SR 3,800,000 (SR 10,000,000 - SR 13,800,000)"
+                                        }
+                                    },
+                                    {
+                                        "3-story single-family home": {
+                                            "Total investment": "SR 14,200,000 (land cost + construction cost)",
+                                            "Estimated profit if sold": "-SR 2,200,000 (SR 12,000,000 - SR 14,200,000)"
+                                        }
+                                    }
+                                ],
+                                "Recommendations": "Building a 2 to 3-story single-family home in Al Narges is a viable option given the size of the land. However, it is important to factor in the additional costs and consider the current market conditions before making a final decision. For similar properties, potential buyers may consider the following areas in Riyadh: Nozha Neighborhood, Al Arid District, King Abdullah District, Rahmaniyah Neighborhood"
+                            }
                             
                             For all the calculations please provide what is calculated and from what.
 
@@ -270,7 +323,6 @@ def investment_generator(user_input):
                                     Pearl District: 2,323 riyals
                                     Al Safa Neighborhood: 3,398 riyals
                                     
-                            Your response must be in JSON format only.
                             Your response must be in English only.
                             """
             },
