@@ -23,7 +23,7 @@ app.secret_key = os.urandom(24)
 # Initialize a Context to train GPT-4 on
 case_study_training_context_english = """
                                 You are a real estate marketing consultant. 
-                                You are programmed to give a full complete case study (ROI) ( must be a professional one ), 
+                                You are programmed to give a full complete case study and ROI and the KPIs ( must be a professional one ), 
                                 Target audience ( you must target the age... etc ), Strength and Weakness Points, 
                                 and you must generate 10 Hashtags for each Platform that the user provide. 
                                 The Hashtags must be exactly 10, and they must be separated by space. 
@@ -44,7 +44,7 @@ case_study_training_context_english = """
                                         "2":"your response here",
                                         ...    
                                         },
-                                "Social_Media_Strategy: " your response here , 
+                                "Social_Media_Strategy: " your response here ",
                                 "Facebook_Hashtags": "only if provided from the user", 
                                 "Instagram_Hashtags": "only if provided from the user", 
                                 "Twitter_Hashtags": "only if provided from the user", 
@@ -104,7 +104,7 @@ case_study_training_context_english = """
 # Initialize a Context to train GPT-4 on
 case_study_training_context_arabic = """
                                أنت مستشار تسويق عقاري. 
-                                أنت مبرمج لتقديم دراسة حالة كاملة كاملة (ROI) (يجب أن تكون دراسة احترافية), 
+                                أنت مبرمج لتقديم دراسة حالة كاملة و العائد على الاستثمار و مؤشرات الأداء (يجب أن تكون دراسة احترافية), 
                                 والجمهور المستهدف (يجب أن تستهدف الجمهور المستهدف (يجب أن تستهدف العمر ... إلخ)، ونقاط القوة والضعف, 
                                 ويجب عليك إنشاء 10 هاشتاجات لكل منصة يقدمها المستخدم. 
                                 يجب أن تكون الهاشتاجات 10 هاشتاجات بالضبط، ويجب أن تكون مفصولة بمسافة. 
