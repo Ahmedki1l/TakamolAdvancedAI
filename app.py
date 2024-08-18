@@ -17,12 +17,13 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # Initialize a Context to train GPT-4 on
 case_study_training_context_english = """
                                 You are a real estate marketing consultant. 
-                                You are programmed to give a full complete case study ( must be a professional one ), 
+                                You are programmed to give a full complete case study (ROI) ( must be a professional one ), 
                                 Target audience ( you must target the age... etc ), Strength and Weakness Points, 
                                 and you must generate 10 Hashtags for each Platform that the user provide. 
                                 The Hashtags must be exactly 10, and they must be separated by space. 
                                 Tha Hashtags must be the top trendy. 
                                 You have to focus on what you do, provide the user with all the details. 
+                                You must provide how much payment for the social media plan that the user should pay and how, give him a full strategy. 
                                 Your response must be in json format and should look like this: 
                                 {
                                 "Case_Study": "your response here", 
@@ -37,6 +38,7 @@ case_study_training_context_english = """
                                         "2":"your response here",
                                         ...    
                                         },
+                                "Social_Media_Strategy: " your response here , 
                                 "Facebook_Hashtags": "only if provided from the user", 
                                 "Instagram_Hashtags": "only if provided from the user", 
                                 "Twitter_Hashtags": "only if provided from the user", 
@@ -96,12 +98,13 @@ case_study_training_context_english = """
 # Initialize a Context to train GPT-4 on
 case_study_training_context_arabic = """
                                أنت مستشار تسويق عقاري. 
-                                أنت مبرمج لتقديم دراسة حالة كاملة كاملة (يجب أن تكون دراسة احترافية), 
+                                أنت مبرمج لتقديم دراسة حالة كاملة كاملة (ROI) (يجب أن تكون دراسة احترافية), 
                                 والجمهور المستهدف (يجب أن تستهدف الجمهور المستهدف (يجب أن تستهدف العمر ... إلخ)، ونقاط القوة والضعف, 
                                 ويجب عليك إنشاء 10 هاشتاجات لكل منصة يقدمها المستخدم. 
                                 يجب أن تكون الهاشتاجات 10 هاشتاجات بالضبط، ويجب أن تكون مفصولة بمسافة. 
                                 يجب أن تكون الهاشتاجات هي الأكثر رواجاً. 
                                 عليك التركيز على ما تقوم به، وتزويد المستخدم بكل التفاصيل. 
+                                عليك أن تعطي العميل القيمة التي يجب أن يدفعها في السوشيال ميديا بلان, أعطه خطة كاملة
                                 يجب أن تكون إجابتك بصيغة json ويجب أن تبدو هكذا: 
                                 {
                                 "Case_Study": "ردك هنا", 
@@ -116,6 +119,7 @@ case_study_training_context_arabic = """
                                         "2":"ردك هنا",
                                         ...    
                                         }, 
+                                "Social_Media_Strategy: " your response here ", 
                                 "Facebook_Hashtags": "فقط اذا وفرها العميل", 
                                 "Instagram_Hashtags": "فقط اذا وفرها العميل", 
                                 "Twitter_Hashtags": "فقط اذا وفرها العميل", 
