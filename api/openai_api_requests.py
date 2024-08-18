@@ -232,9 +232,9 @@ def investment_generator(user_input):
                                         "build_coverage_ratio": "60%",
                                         "effective_build_area": "total_land_area * build_coverage_ratio = 2000 * 0.60",
                                         "effective_build_area_result": "1200 sqm",
-                                        "total_floors": 3,
-                                        "total_constructed_area": "effective_build_area * total_floors = 1200 * 3",
-                                        "total_constructed_area_result": "3600 sqm",
+                                        "suggested_floors": "(suggest a number here)",
+                                        "total_constructed_area": "effective_build_area * total_floors = 1200 * suggested_floors",
+                                        "total_constructed_area_result": "(result of above)",
                                         "unit_size_range": "109-150 sqm",
                                         "proposed_units": "total_constructed_area / average_unit_size = 3600 / 125",
                                         "proposed_units_result": "28 units"
