@@ -281,6 +281,7 @@ investment_english_context = """
                             You must provide an investment case study. 
                             your response must be in JSON format and look like this example: 
                             {
+                                "title":"put a title for the project here"
                                 "investment_analysis_report": {
                                     "introduction": "This detailed investment analysis evaluates the feasibility and profitability of developing a high-end single-family residential project in Al Narges District, Riyadh. The analysis includes both sale and rental strategies, examining current market dynamics, cost projections, and revenue potentials.",
                                     "project_details": {
@@ -396,6 +397,7 @@ investment_arabic_context = """
                             يجب أن تكون استجابتك بتنسيق JSON وتبدو مثل هذا المثال:
                             
                             {
+                                "العنوان":"ضع عنوانا للمشروع هنا"
                                 "تقرير_تحليل_الاستثمار": {
                                     "مقدمة": "هذا التحليل الاستثماري المفصل يقيم جدوى وربحية تطوير مشروع سكني فردي فاخر في حي النرجس بالرياض. يشمل التحليل استراتيجيات البيع والإيجار، مع النظر في ديناميكيات السوق الحالية وتقديرات التكاليف والإمكانيات الإيرادية.",
                                     "تفاصيل_المشروع": {
@@ -1075,10 +1077,14 @@ def linkedin_callback():
 
 @app.route('/linkedin-post')
 def post():
-    if 'linkedin_access_token' not in session or 'linkedin_urn' not in session:
+
+    data = request.get_json()  # Get the JSON data
+    post_text = data.get('text')
+    access_token = data.get('access_token')
+    user_urn = data.get('urn')
+
+    if not access_token:
         return redirect(url_for('linkedin-login'))
-    access_token = session['linkedin_access_token']
-    user_urn = session['linkedin_urn']
     post_url = 'https://api.linkedin.com/v2/ugcPosts'
     post_headers = {
         'Authorization': f"Bearer {access_token}",
@@ -1091,7 +1097,7 @@ def post():
         "specificContent": {
             "com.linkedin.ugc.ShareContent": {
                 "shareCommentary": {
-                    "text": "Hello, LinkedIn world from Flask!"
+                    "text": post_text
                 },
                 "shareMediaCategory": "NONE"
             }
