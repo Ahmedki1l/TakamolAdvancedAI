@@ -111,6 +111,30 @@ def image_creator(prompt):
         print(f"An error occurred while creating an image: {str(e)}")
         return None
 
+
+def investment_image_creator(prompt):
+    try:
+        # Generate an image using the DALL-E model from OpenAI
+        response = client.images.generate(
+            model="dall-e-3",
+            prompt=prompt,
+            size="1024x1024",
+            quality="hd",
+            style="natural",
+            n=1,
+        )
+
+        image_url = response.data[0].url
+        print(image_url)
+        return image_url
+    except Exception as e:
+        print(f"An error occurred while creating an image: {str(e)}")
+        return None
+
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
+
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')

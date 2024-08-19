@@ -13,7 +13,8 @@ import re
 
 from langdetect import detect
 
-from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, image_analyzer, investment_generator
+from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
+    image_analyzer, investment_generator, investment_image_creator
 
 app = Flask(__name__)
 CORS(app)
@@ -646,6 +647,26 @@ def image_generator():
     user_input = data['input']
     try:
         image_url = image_creator(user_input)
+        return jsonify({"url": image_url}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/image2', methods=['POST'])
+def investment_image_generator():
+    # Check if the request contains JSON data
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    # Check if 'input' key exists in the JSON data
+    if 'input' not in data:
+        return jsonify({"error": "Missing 'input' field"}), 400
+
+    user_input = data['input']
+    try:
+        image_url = investment_image_creator(user_input)
         return jsonify({"url": image_url}), 200
     except Exception as e:
         print(e)
