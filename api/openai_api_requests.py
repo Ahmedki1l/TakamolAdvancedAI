@@ -100,7 +100,7 @@ def image_creator(prompt):
             prompt=prompt,
             size="1024x1024",
             quality="hd",
-            style="natural",
+            style="vivid",
             n=1,
         )
 
