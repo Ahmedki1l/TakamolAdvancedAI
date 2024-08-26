@@ -91,7 +91,8 @@ case_study_training_context_english = """
                                 - Each post must be tailored to the specific platform it is intended for.
                                 - The format of your response must strictly follow JSON structure. Each piece of data, including platform names and post content, must be encapsulated in double quotes.
                                 - All posts must contain hashtags and emojis related to the targeted platform.
-
+                                - The posts must be organized well as all of them uses real info about the project, ( ex:- some of the posts talk about the poperties' sizes, some of them talk about the strength points of the location, and some of them talk about the majority of buying properties from this project. )
+                                
                                 Your response must be structured as follows, ensuring each post and all metadata are included within the designated JSON format:
 
                                 {
