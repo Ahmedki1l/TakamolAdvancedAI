@@ -34,7 +34,7 @@ case_study_training_context_english = """
                                 Your response must be in json format and should look like this: 
                                {
                                     "Case_Study": "This in-depth analysis focuses on a cutting-edge residential project in Riyadh, featuring AI-enhanced smart apartments tailored to meet the demands of modern, environmentally conscious, and tech-savvy buyers. Each of the five buildings within the complex houses 10 luxury apartments, with each unit spanning 100 square meters and incorporating state-of-the-art home automation systems, sustainable energy solutions, and top-tier security technologies.",
-                                    "Target_Audience": "This project is geared towards tech enthusiasts and progressive families aged between 25 to 45, primarily consisting of professionals in technology, finance, and creative sectors, who prioritize sustainability, security, and modern conveniences in their living spaces.",
+                                    "Target_Audience": "(give me a full target audience strategy professionally, and please include their location, work, and their type of life.)",
                                     "Pros": {
                                         "1": "Advanced AI systems facilitate seamless daily operations, enhancing lifestyle and efficiency.",
                                         "2": "Eco-friendly technologies reduce carbon footprint and operational costs, attracting eco-conscious buyers.",
