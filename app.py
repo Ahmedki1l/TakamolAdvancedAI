@@ -39,7 +39,7 @@ case_study_training_context_english = """
                                                               "primary": "Increase awareness of the real estate project in Al Yasmin district in Riyadh, Kingdom of Saudi Arabia",
                                                               "secondary": "Encourage the target audience to contact the sales team to arrange a visit or book a residential unit"
                                                             },
-                                                            "target_audience": [
+                                                            "target_audience": {
                                                                 "Middle to high-income families": "Families looking for residential spaces ranging from 200-350 square meters in the Kingdom of Saudi Arabia"
                                                               ,
                                                                 "Young couples": "Couples about to marry or newly married looking for modern residential apartments ranging from 100-150 square meters in the Kingdom of Saudi Arabia"
@@ -50,8 +50,8 @@ case_study_training_context_english = """
                                                               ,
                                                                 "Expatriates and foreign residents": "Individuals who want to live in upscale neighborhoods with easy access to amenities and services in the Kingdom of Saudi Arabia"
                                                               
-                                                            ],
-                                                            "advertisements": [
+                                                            },
+                                                            "advertisements": {
                                                             
                                                               "First Group":{
                                                                 "target_group": "Middle to high-income families",
@@ -78,7 +78,7 @@ case_study_training_context_english = """
                                                                 "text": "Looking for your perfect home in Riyadh! Al Yasmin compound offers you residential apartments with international standards and an ideal location close to everything you need. Enjoy the life you love. #AlYasmin_ForExpatriates",
                                                                 "media": "Video showing a comfortable life in a stylish apartment in a prime location"
                                                               }
-                                                            ],
+                                                            },
                                                             "advertising_channels": "Facebook, Instagram, Twitter, LinkedIn, YouTube",
                                                             "paid_advertising_strategy": {
                                                               "total_marketing_budget": "375,000 Saudi Riyals",
@@ -225,7 +225,7 @@ case_study_training_context_arabic = """
                                                               "الأساسية": "زيادة الوعي بالمشروع العقاري في حي الياسمين بالرياض، المملكة العربية السعودية",
                                                               "الثانوية": "تشجيع الجمهور المستهدف على التواصل مع فريق المبيعات لترتيب زيارة أو حجز وحدة سكنية"
                                                             },
-                                                            "الجمهور المستهدف": [
+                                                            "الجمهور المستهدف": {
                                                                 "العائلات ذات الدخل المتوسط إلى العالي": "عائلات تبحث عن مساحات سكنية تتراوح بين 200-350 متر مربع في المملكة العربية السعودية"
                                                               ,
                                                                 "الأزواج الشباب": "أزواج على وشك الزواج أو متزوجون حديثا يبحثون عن شقق سكنية عصرية تتراوح مساحاتها بين 100-150 متر مربع في المملكة العربية السعودية"
@@ -236,8 +236,8 @@ case_study_training_context_arabic = """
                                                               ,
                                                                 "المغتربين والأجانب المقيمين": "أفراد يرغبون في العيش في أحياء راقية مع سهولة الوصول إلى المرافق والخدمات في المملكة العربية السعودية"
                                                               
-                                                            ],
-                                                            "الإعلانات": [
+                                                            },
+                                                            "الإعلانات": {
                                                               "المجموعة الأولى":{
                                                                 "المجموعة المستهدفة": "العائلات ذات الدخل المتوسط إلى العالي",
                                                                 "النص": "هل تبحث عن المنزل العائلي المثالي في الرياض؟ يوفر لك مجمع الياسمين أنت وعائلتك الراحة والرفاهية التي تستحقونها! بمساحات تصل إلى 350 متر مربع، اختر منزلك الجديد اليوم. #حلم_الياسمين",
@@ -263,7 +263,7 @@ case_study_training_context_arabic = """
                                                                 "النص": "ابحث عن منزلك المثالي في الرياض! يوفر لك مجمع الياسمين شقق سكنية بمواصفات عالمية وموقع مثالي بالقرب من كل ما تحتاج. استمتع بالحياة التي تحبها. #الياسمين_للوافدين",
                                                                 "الوسائط": "فيديو يعرض حياة مريحة في شقة أنيقة بموقع مميز"
                                                               }
-                                                            ],
+                                                            },
                                                             "القنوات الإعلانية": "فيسبوك , إنستغرام , تويتر, لينكد إن, يوتيوب",
                                                             "استراتيجية الإعلانات المدفوعة": {
                                                               "ميزانية التسويق الكلية": "375,000 ريال سعودي",
