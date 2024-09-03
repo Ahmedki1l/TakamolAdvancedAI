@@ -39,20 +39,14 @@ case_study_training_context_english = """
                                                               "primary": "Increase awareness of the real estate project in Al Yasmin district in Riyadh, Kingdom of Saudi Arabia",
                                                               "secondary": "Encourage the target audience to contact the sales team to arrange a visit or book a residential unit"
                                                             },
-                                                            "target_audience": [
-                                                                "Middle to high-income families": "Families looking for residential spaces ranging from 200-350 square meters in the Kingdom of Saudi Arabia"
-                                                              ,
-                                                                "Young couples": "Couples about to marry or newly married looking for modern residential apartments ranging from 100-150 square meters in the Kingdom of Saudi Arabia"
-                                                                ,
-                                                                "Businessmen and executives": "Individuals looking for villas or luxurious residential apartments in an upscale area in the Kingdom of Saudi Arabia"
-                                                              ,
-                                                                "Real estate investors": "Individuals and companies looking for high-quality real estate investments in the Kingdom of Saudi Arabia"
-                                                              ,
+                                                            "target_audience": {
+                                                                "Middle to high-income families": "Families looking for residential spaces ranging from 200-350 square meters in the Kingdom of Saudi Arabia",
+                                                                "Young couples": "Couples about to marry or newly married looking for modern residential apartments ranging from 100-150 square meters in the Kingdom of Saudi Arabia",
+                                                                "Businessmen and executives": "Individuals looking for villas or luxurious residential apartments in an upscale area in the Kingdom of Saudi Arabia",
+                                                                "Real estate investors": "Individuals and companies looking for high-quality real estate investments in the Kingdom of Saudi Arabia",
                                                                 "Expatriates and foreign residents": "Individuals who want to live in upscale neighborhoods with easy access to amenities and services in the Kingdom of Saudi Arabia"
-                                                              
-                                                            ],
-                                                            "advertisements": [
-                                                            
+                                                            },
+                                                            "advertisements": {
                                                               "First Group":{
                                                                 "target_group": "Middle to high-income families",
                                                                 "text": "Are you looking for the perfect family home in Riyadh? Al Yasmin compound offers you and your family the comfort and luxury you deserve! With spaces up to 350 square meters, choose your new home today. #AlYasmin_Dream",
@@ -78,7 +72,7 @@ case_study_training_context_english = """
                                                                 "text": "Looking for your perfect home in Riyadh! Al Yasmin compound offers you residential apartments with international standards and an ideal location close to everything you need. Enjoy the life you love. #AlYasmin_ForExpatriates",
                                                                 "media": "Video showing a comfortable life in a stylish apartment in a prime location"
                                                               }
-                                                            ],
+                                                            },
                                                             "advertising_channels": "Facebook, Instagram, Twitter, LinkedIn, YouTube",
                                                             "paid_advertising_strategy": {
                                                               "total_marketing_budget": "375,000 Saudi Riyals",
@@ -225,19 +219,14 @@ case_study_training_context_arabic = """
                                                               "الأساسية": "زيادة الوعي بالمشروع العقاري في حي الياسمين بالرياض، المملكة العربية السعودية",
                                                               "الثانوية": "تشجيع الجمهور المستهدف على التواصل مع فريق المبيعات لترتيب زيارة أو حجز وحدة سكنية"
                                                             },
-                                                            "الجمهور المستهدف": [
-                                                                "العائلات ذات الدخل المتوسط إلى العالي": "عائلات تبحث عن مساحات سكنية تتراوح بين 200-350 متر مربع في المملكة العربية السعودية"
-                                                              ,
-                                                                "الأزواج الشباب": "أزواج على وشك الزواج أو متزوجون حديثا يبحثون عن شقق سكنية عصرية تتراوح مساحاتها بين 100-150 متر مربع في المملكة العربية السعودية"
-                                                              ,
-                                                                "رجال الأعمال والمديرين التنفيذيين": "أفراد يبحثون عن فيلات أو شقق سكنية فاخرة في منطقة راقية بالمملكة العربية السعودية"
-                                                              ,
-                                                                "المستثمرين العقاريين": "أفراد وشركات تبحث عن استثمارات عقارية عالية الجودة في المملكة العربية السعودية"
-                                                              ,
+                                                            "الجمهور المستهدف": {
+                                                                "العائلات ذات الدخل المتوسط إلى العالي": "عائلات تبحث عن مساحات سكنية تتراوح بين 200-350 متر مربع في المملكة العربية السعودية",
+                                                                "الأزواج الشباب": "أزواج على وشك الزواج أو متزوجون حديثا يبحثون عن شقق سكنية عصرية تتراوح مساحاتها بين 100-150 متر مربع في المملكة العربية السعودية",
+                                                                "رجال الأعمال والمديرين التنفيذيين": "أفراد يبحثون عن فيلات أو شقق سكنية فاخرة في منطقة راقية بالمملكة العربية السعودية",
+                                                                "المستثمرين العقاريين": "أفراد وشركات تبحث عن استثمارات عقارية عالية الجودة في المملكة العربية السعودية",
                                                                 "المغتربين والأجانب المقيمين": "أفراد يرغبون في العيش في أحياء راقية مع سهولة الوصول إلى المرافق والخدمات في المملكة العربية السعودية"
-                                                              
-                                                            ],
-                                                            "الإعلانات": [
+                                                            },
+                                                            "الإعلانات": {
                                                               "المجموعة الأولى":{
                                                                 "المجموعة المستهدفة": "العائلات ذات الدخل المتوسط إلى العالي",
                                                                 "النص": "هل تبحث عن المنزل العائلي المثالي في الرياض؟ يوفر لك مجمع الياسمين أنت وعائلتك الراحة والرفاهية التي تستحقونها! بمساحات تصل إلى 350 متر مربع، اختر منزلك الجديد اليوم. #حلم_الياسمين",
@@ -263,7 +252,7 @@ case_study_training_context_arabic = """
                                                                 "النص": "ابحث عن منزلك المثالي في الرياض! يوفر لك مجمع الياسمين شقق سكنية بمواصفات عالمية وموقع مثالي بالقرب من كل ما تحتاج. استمتع بالحياة التي تحبها. #الياسمين_للوافدين",
                                                                 "الوسائط": "فيديو يعرض حياة مريحة في شقة أنيقة بموقع مميز"
                                                               }
-                                                            ],
+                                                            },
                                                             "القنوات الإعلانية": "فيسبوك , إنستغرام , تويتر, لينكد إن, يوتيوب",
                                                             "استراتيجية الإعلانات المدفوعة": {
                                                               "ميزانية التسويق الكلية": "375,000 ريال سعودي",
