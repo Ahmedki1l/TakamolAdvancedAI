@@ -34,7 +34,93 @@ case_study_training_context_english = """
                                 Your response must be in json format and should look like this: 
                                {
                                     "Case_Study": "This in-depth analysis focuses on a cutting-edge residential project in Riyadh, featuring AI-enhanced smart apartments tailored to meet the demands of modern, environmentally conscious, and tech-savvy buyers. Each of the five buildings within the complex houses 10 luxury apartments, with each unit spanning 100 square meters and incorporating state-of-the-art home automation systems, sustainable energy solutions, and top-tier security technologies.",
-                                    "Target_Audience": "(give me a full target audience strategy professionally, and please include their location, work, and their type of life.)",
+                                    "Target_Audience": {
+                                                            "objectives": {
+                                                              "primary": "Increase awareness of the real estate project in Al Yasmin district in Riyadh, Kingdom of Saudi Arabia",
+                                                              "secondary": "Encourage the target audience to contact the sales team to arrange a visit or book a residential unit"
+                                                            },
+                                                            "target_audience": [
+                                                              {
+                                                                "Middle to high-income families": "Families looking for residential spaces ranging from 200-350 square meters in the Kingdom of Saudi Arabia"
+                                                              },
+                                                              {
+                                                                "Young couples": "Couples about to marry or newly married looking for modern residential apartments ranging from 100-150 square meters in the Kingdom of Saudi Arabia"
+                                                              },
+                                                              {
+                                                                "Businessmen and executives": "Individuals looking for villas or luxurious residential apartments in an upscale area in the Kingdom of Saudi Arabia"
+                                                              },
+                                                              {
+                                                                "Real estate investors": "Individuals and companies looking for high-quality real estate investments in the Kingdom of Saudi Arabia"
+                                                              },
+                                                              {
+                                                                "Expatriates and foreign residents": "Individuals who want to live in upscale neighborhoods with easy access to amenities and services in the Kingdom of Saudi Arabia"
+                                                              }
+                                                            ],
+                                                            "advertisements": [
+                                                              {
+                                                                "target_group": "Middle to high-income families",
+                                                                "text": "Are you looking for the perfect family home in Riyadh? Al Yasmin compound offers you and your family the comfort and luxury you deserve! With spaces up to 350 square meters, choose your new home today. #AlYasmin_Dream",
+                                                                "media": "Image or video showing a happy family in a modern and spacious home with a green garden and community facilities"
+                                                              },
+                                                              {
+                                                                "target_group": "Young couples",
+                                                                "text": "Start your married life in a modern and contemporary home. Our apartments in Al Yasmin compound in Riyadh offer you comfort and luxury with areas starting from 100 square meters. Book now and enjoy a new life. #AlYasmin_NewBeginning",
+                                                                "media": "Short video showing a modern designed apartment with romantic ambiance for couples"
+                                                              },
+                                                              {
+                                                                "target_group": "Businessmen and executives",
+                                                                "text": "Privacy, luxury, central location. Al Yasmin compound in Riyadh offers you villas and luxurious residential apartments with areas up to 350 square meters. Book your unit now! #AlYasmin_Luxury",
+                                                                "media": "Image or video of a luxurious villa with elegant and modern details"
+                                                              },
+                                                              {
+                                                                "target_group": "Real estate investors",
+                                                                "text": "Your next real estate investment in a strategic location in Al Yasmin district in Riyadh. Luxurious units with high future value. Contact us for more details. #AlYasmin_SecureInvestment",
+                                                                "media": "Image or video showing the entire project with aerial shots of the site and buildings"
+                                                              },
+                                                              {
+                                                                "target_group": "Expatriates and foreign residents",
+                                                                "text": "Looking for your perfect home in Riyadh! Al Yasmin compound offers you residential apartments with international standards and an ideal location close to everything you need. Enjoy the life you love. #AlYasmin_ForExpatriates",
+                                                                "media": "Video showing a comfortable life in a stylish apartment in a prime location"
+                                                              }
+                                                            ],
+                                                            "advertising_channels": [
+                                                              "Facebook",
+                                                              "Instagram",
+                                                              "Twitter",
+                                                              "LinkedIn",
+                                                              "YouTube"
+                                                            ],
+                                                            "paid_advertising_strategy": {
+                                                              "total_marketing_budget": "375,000 Saudi Riyals",
+                                                              "budget_allocation": {
+                                                                "Facebook_and_Instagram": "187,500 Saudi Riyals",
+                                                                "LinkedIn": "75,000 Saudi Riyals",
+                                                                "YouTube": "75,000 Saudi Riyals",
+                                                                "Twitter": "37,500 Saudi Riyals"
+                                                              },
+                                                              "suggested_initial_payment": "75,000 Saudi Riyals",
+                                                              "initial_payment_impact": {
+                                                                "Boost early engagement and rapidly reach a wide audience on Facebook and Instagram",
+                                                                "Effectively target professional and business segments on LinkedIn"
+                                                              }
+                                                            },
+                                                            "campaign_timeline": {
+                                                              "week_1": "Launch main promotional ads (Facebook, Instagram, Twitter)",
+                                                              "week_2": "Launch promotional video on YouTube and share detailed content on LinkedIn",
+                                                              "week_3": "Retarget audience who interacted with initial ads with special and exclusive offers",
+                                                              "week_4": "Analyze performance and adjust strategy based on results"
+                                                            },
+                                                            "performance_indicators": {
+                                                              "engagement_rate": "Measure of likes, comments, and shares",
+                                                              "website_visits": "Number of visitors directed from the ads",
+                                                              "click_through_rate": "Percentage of clicks on ads compared to number of impressions",
+                                                              "inquiries_and_sales": "Number of people who contacted the sales team or booked a residential unit"
+                                                            },
+                                                            "performance_analysis_and_strategy_adjustment": {
+                                                              "result_analysis": "Use tools like Google Analytics and Facebook Insights to analyze ad performance",
+                                                              "campaign_adjustment": "Based on performance, adjust ad texts, improve audience targeting, or redistribute budget to more effective channels"
+                                                            }
+                                                        },
                                     "Pros": {
                                         "1": "Advanced AI systems facilitate seamless daily operations, enhancing lifestyle and efficiency.",
                                         "2": "Eco-friendly technologies reduce carbon footprint and operational costs, attracting eco-conscious buyers.",
@@ -144,7 +230,93 @@ case_study_training_context_arabic = """
                                 يجب أن تكون إجابتك بصيغة json ويجب أن تبدو هكذا: 
                                 {
                                     "Case_Study": "(أعطني دراسة مشروع كاملة)",
-                                    "Target_Audience": "(أعطني تارجت سيجمنت كامل عن المشروع)",
+                                    "Target_Audience": {
+                                                            "الأهداف": {
+                                                              "الأساسية": "زيادة الوعي بالمشروع العقاري في حي الياسمين بالرياض، المملكة العربية السعودية",
+                                                              "الثانوية": "تشجيع الجمهور المستهدف على التواصل مع فريق المبيعات لترتيب زيارة أو حجز وحدة سكنية"
+                                                            },
+                                                            "الجمهور المستهدف": [
+                                                              {
+                                                                "العائلات ذات الدخل المتوسط إلى العالي": "عائلات تبحث عن مساحات سكنية تتراوح بين 200-350 متر مربع في المملكة العربية السعودية"
+                                                              },
+                                                              {
+                                                                "الأزواج الشباب": "أزواج على وشك الزواج أو متزوجون حديثا يبحثون عن شقق سكنية عصرية تتراوح مساحاتها بين 100-150 متر مربع في المملكة العربية السعودية"
+                                                              },
+                                                              {
+                                                                "رجال الأعمال والمديرين التنفيذيين": "أفراد يبحثون عن فيلات أو شقق سكنية فاخرة في منطقة راقية بالمملكة العربية السعودية"
+                                                              },
+                                                              {
+                                                                "المستثمرين العقاريين": "أفراد وشركات تبحث عن استثمارات عقارية عالية الجودة في المملكة العربية السعودية"
+                                                              },
+                                                              {
+                                                                "المغتربين والأجانب المقيمين": "أفراد يرغبون في العيش في أحياء راقية مع سهولة الوصول إلى المرافق والخدمات في المملكة العربية السعودية"
+                                                              }
+                                                            ],
+                                                            "الإعلانات": [
+                                                              {
+                                                                "المجموعة المستهدفة": "العائلات ذات الدخل المتوسط إلى العالي",
+                                                                "النص": "هل تبحث عن المنزل العائلي المثالي في الرياض؟ يوفر لك مجمع الياسمين أنت وعائلتك الراحة والرفاهية التي تستحقونها! بمساحات تصل إلى 350 متر مربع، اختر منزلك الجديد اليوم. #حلم_الياسمين",
+                                                                "الوسائط": "صورة أو فيديو يظهر عائلة سعيدة في منزل حديث وواسع مع حديقة خضراء ومرافق مجتمعية"
+                                                              },
+                                                              {
+                                                                "المجموعة المستهدفة": "الأزواج الشباب",
+                                                                "النص": "ابدأ حياتك الزوجية في منزل عصري ومعاصر. توفر لك شققنا في مجمع الياسمين بالرياض الراحة والفخامة بمساحات تبدأ من 100 متر مربع. احجز الآن وتمتع بحياة جديدة. #بداية_جديدة_الياسمين",
+                                                                "الوسائط": "فيديو قصير يعرض شقة حديثة التصميم مع أجواء رومانسية للأزواج"
+                                                              },
+                                                              {
+                                                                "المجموعة المستهدفة": "رجال الأعمال والمديرين التنفيذيين",
+                                                                "النص": "خصوصية، رفاهية، موقع مركزي. يقدم لك مجمع الياسمين بالرياض فيلات وشقق سكنية فاخرة بمساحات تصل إلى 350 متر مربع. احجز وحدتك الآن! #فخامة_الياسمين",
+                                                                "الوسائط": "صورة أو فيديو لفيلا فاخرة مع تفاصيل أنيقة وحديثة"
+                                                              },
+                                                              {
+                                                                "المجموعة المستهدفة": "المستثمرين العقاريين",
+                                                                "النص": "استثمارك العقاري القادم في موقع استراتيجي بحي الياسمين بالرياض. وحدات فاخرة بقيمة مستقبلية عالية. تواصل معنا لمزيد من التفاصيل. #استثمار_آمن_الياسمين",
+                                                                "الوسائط": "صورة أو فيديو يعرض المشروع بأكمله مع لقطات جوية للموقع والأبنية"
+                                                              },
+                                                              {
+                                                                "المجموعة المستهدفة": "المغتربين والأجانب المقيمين",
+                                                                "النص": "ابحث عن منزلك المثالي في الرياض! يوفر لك مجمع الياسمين شقق سكنية بمواصفات عالمية وموقع مثالي بالقرب من كل ما تحتاج. استمتع بالحياة التي تحبها. #الياسمين_للوافدين",
+                                                                "الوسائط": "فيديو يعرض حياة مريحة في شقة أنيقة بموقع مميز"
+                                                              }
+                                                            ],
+                                                            "القنوات الإعلانية": [
+                                                              "فيسبوك",
+                                                              "إنستغرام",
+                                                              "تويتر",
+                                                              "لينكد إن",
+                                                              "يوتيوب"
+                                                            ],
+                                                            "استراتيجية الإعلانات المدفوعة": {
+                                                              "ميزانية التسويق الكلية": "375,000 ريال سعودي",
+                                                              "توزيع الميزانية": {
+                                                                "فيسبوك وإنستغرام": "187,500 ريال سعودي",
+                                                                "لينكد إن": "75,000 ريال سعودي",
+                                                                "يوتيوب": "75,000 ريال سعودي",
+                                                                "تويتر": "37,500 ريال سعودي"
+                                                              },
+                                                              "الدفعة الأولية المقترحة": "75,000 ريال سعودي",
+                                                              "تأثير الدفعة الأولية": {
+                                                                "تعزيز التفاعل المبكر والوصول السريع لجمهور واسع عبر فيسبوك وإنستغرام",
+                                                                "استهداف فعال للشرائح المهنية والأعمال عبر لينكد إن"
+                                                              }
+                                                            },
+                                                            "الجدول الزمني للحملة": {
+                                                              "الأسبوع_الأول": "إطلاق الإعلانات الترويجية الرئيسية (فيسبوك، إنستغرام، تويتر)",
+                                                              "الأسبوع_الثاني": "إطلاق الفيديو الترويجي على يوتيوب ومشاركة المحتوى التفصيلي على لينكد إن",
+                                                              "الأسبوع_الثالث": "إعادة استهداف الجمهور الذي تفاعل مع الإعلانات الأولية بعروض خاصة وحصرية",
+                                                              "الأسبوع_الرابع": "تحليل الأداء وضبط الاستراتيجية بناءً على النتائج"
+                                                            },
+                                                            "مؤشرات الأداء": {
+                                                              "معدل التفاعل": "قياس عدد الإعجابات، التعليقات، والمشاركات",
+                                                              "زيارات الموقع": "عدد الزوار الذين تم توجيههم من الإعلانات",
+                                                              "معدل النقر إلى الظهور": "نسبة النقرات على الإعلانات مقارنة بعدد مرات الظهور",
+                                                              "الاستفسارات والمبيعات": "عدد الأشخاص الذين تواصلوا مع فريق المبيعات أو قاموا بحجز وحدة سكنية"
+                                                            },
+                                                            "تحليل الأداء وضبط الاستراتيجية": {
+                                                              "تحليل النتائج": "استخدام أدوات مثل Google Analytics وFacebook Insights لتحليل أداء الإعلانات",
+                                                              "ضبط الحملة": "بناءً على الأداء، قم بضبط النصوص الإعلانية، تحسين استهداف الجمهور، أو إعادة توزيع الميزانية على القنوات الأكثر فعالية"
+                                                            }
+                                                        },
                                     "Pros": {
                                         "1": "(ردك هنا)",
                                         "2": "(ردك هنا)",
