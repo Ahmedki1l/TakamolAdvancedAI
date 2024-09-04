@@ -11,6 +11,7 @@ import os
 from PIL import Image
 import io
 import base64
+import threading
 
 # Load environment variables from .env file
 load_dotenv()
@@ -111,25 +112,29 @@ def image_creator(prompt):
         print(f"An error occurred while creating an image: {str(e)}")
         return None
 
+# Semaphore to limit to 5 concurrent tasks
+semaphore = threading.Semaphore(5)
 
 def investment_image_creator(prompt):
-    try:
-        # Generate an image using the DALL-E model from OpenAI
-        response = client.images.generate(
-            model="dall-e-3",
-            prompt=prompt,
-            size="1024x1024",
-            quality="hd",
-            style="vivid",
-            n=1,
-        )
+    # Acquire a semaphore slot
+    with semaphore:
+        try:
+            # Generate an image using the DALL-E model from OpenAI
+            response = client.images.generate(
+                model="dall-e-3",
+                prompt=prompt,
+                size="1024x1024",
+                quality="hd",
+                style="vivid",
+                n=1,
+            )
 
-        image_url = response.data[0].url
-        print(image_url)
-        return image_url
-    except Exception as e:
-        print(f"An error occurred while creating an image: {str(e)}")
-        return None
+            image_url = response.data[0].url
+            print(image_url)
+            return image_url
+        except Exception as e:
+            print(f"An error occurred while creating an image: {str(e)}")
+            return None
 
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:

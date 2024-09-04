@@ -3,6 +3,8 @@ import hashlib
 from urllib.parse import urlencode, quote_plus
 import json
 import os
+import threading
+from queue import Queue
 
 import requests
 from flask import Flask, jsonify, request, redirect, render_template, session, url_for
@@ -20,6 +22,24 @@ app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 app.secret_key = os.urandom(24)
+
+task_queue = Queue()
+max_concurrent_tasks = 5  # Limit the number of concurrent tasks
+semaphore = threading.Semaphore(max_concurrent_tasks)  # Semaphore to control concurrency
+
+def worker():
+    while True:
+        semaphore.acquire()  # Acquire a semaphore slot
+        task = task_queue.get()
+        try:
+            investment_image_creator(task)
+        finally:
+            task_queue.task_done()
+            semaphore.release()  # Release the semaphore slot when done
+
+# Start worker threads
+for _ in range(max_concurrent_tasks):  # Create as many workers as the concurrency limit
+    threading.Thread(target=worker, daemon=True).start()
 
 # Initialize a Context to train GPT-4 on
 case_study_training_context_english = """
@@ -775,23 +795,22 @@ def image_generator():
 
 @app.route('/image2', methods=['POST'])
 def investment_image_generator():
-    # Check if the request contains JSON data
-    if not request.is_json:
-        return jsonify({"error": "Request must be JSON"}), 400
-
     data = request.get_json()
+    prompt = data.get('input')
+    if not prompt:
+        return jsonify({"error": "Prompt is required"}), 400
 
-    # Check if 'input' key exists in the JSON data
-    if 'input' not in data:
-        return jsonify({"error": "Missing 'input' field"}), 400
+    # Start the image generation in a new thread
+    result_holder = []
+    thread = threading.Thread(target=lambda: result_holder.append(investment_image_creator(prompt)))
+    thread.start()
+    thread.join()  # Wait for the thread to finish
 
-    user_input = data['input']
-    try:
-        image_url = investment_image_creator(user_input)
-        return jsonify({"url": image_url}), 200
-    except Exception as e:
-        print(e)
-        return jsonify({"error": str(e)}), 500
+    image_url = result_holder[0]
+    if image_url.startswith("Error"):
+        return jsonify({"error": image_url}), 500
+    else:
+        return jsonify({"image_url": image_url}), 200
 
 
 @app.route('/en/prompt-generator', methods=['POST'])
