@@ -763,6 +763,8 @@ def prompt_generator_en():
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
 
+    print(request)
+
     data = request.get_json()
 
     # Check if 'input' key exists in the JSON data
