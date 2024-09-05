@@ -594,6 +594,7 @@ investment_arabic_context = """
 
 context = []
 
+
 @app.before_request
 def log_request_info():
     app.logger.debug('Headers: %s', request.headers)
