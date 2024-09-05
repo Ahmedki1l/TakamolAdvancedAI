@@ -691,7 +691,7 @@ def social_media_chat_en():
         print(e)
         return jsonify({"error": str(e)}), 500
 
-@app.route('/ar/chat/socialmediaplan', methods=['POST'])
+@app.route('/ar/chat/socialmediaplan')
 def social_media_chat_ar():
     # Check if the request contains JSON data
     if not request.is_json:
