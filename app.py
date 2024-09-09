@@ -950,11 +950,13 @@ def ai_investment_ar():
 
 """ Publishing APIs """
 
+# Domain
+Domain_Origin = os.getenv('DOMAIN_ORIGIN')
 
 #Twitter
 CLIENT_ID = os.getenv('TWITTER_CLIENT_ID')
 CLIENT_SECRET = os.getenv('TWITTER_CLIENT_SECRET')
-REDIRECT_URI = 'https://urchin-app-6wl4t.ondigitalocean.app/twitter-callback'
+REDIRECT_URI = Domain_Origin + '/twitter-callback'
 
 def generate_code_verifier():
     return base64.urlsafe_b64encode(os.urandom(40)).decode('utf-8').replace('=', '')
@@ -1099,7 +1101,7 @@ def delete_tweet(tweet_id, access_token):
 # Constants
 linkedIn_CLIENT_ID = os.getenv('LINKEDIN_CLIENT_ID')
 linkedIn_CLIENT_SECRET = os.getenv('LINKEDIN_CLIENT_SECRET')
-linkedIn_REDIRECT_URI = 'https://urchin-app-6wl4t.ondigitalocean.app/linkedin-callback'
+linkedIn_REDIRECT_URI =  Domain_Origin + '/linkedin-callback'
 
 @app.route('/linkedin-login')
 def linkedin_login():
