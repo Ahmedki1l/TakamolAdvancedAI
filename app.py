@@ -956,7 +956,7 @@ Domain_Origin = os.getenv('DOMAIN_ORIGIN')
 #Twitter
 CLIENT_ID = os.getenv('TWITTER_CLIENT_ID')
 CLIENT_SECRET = os.getenv('TWITTER_CLIENT_SECRET')
-REDIRECT_URI = Domain_Origin + '/twitter-callback'
+REDIRECT_URI = 'https://coral-app-8z265.ondigitalocean.app' + '/twitter-callback'
 
 def generate_code_verifier():
     return base64.urlsafe_b64encode(os.urandom(40)).decode('utf-8').replace('=', '')
@@ -1020,7 +1020,7 @@ def twitter_callback():
     <script>
       window.opener.postMessage(
         {{ type: 'TWITTER_AUTH_SUCCESS', accessToken: '{access_token}' }},
-        '{os.getenv('DOMAIN_ORIGIN')}' // Ensure this matches your parent window origin
+        '{os.getenv('DOMAIN_ORIGIN')}'
       );
       window.close();
     </script>
@@ -1101,7 +1101,7 @@ def delete_tweet(tweet_id, access_token):
 # Constants
 linkedIn_CLIENT_ID = os.getenv('LINKEDIN_CLIENT_ID')
 linkedIn_CLIENT_SECRET = os.getenv('LINKEDIN_CLIENT_SECRET')
-linkedIn_REDIRECT_URI =  Domain_Origin + '/linkedin-callback'
+linkedIn_REDIRECT_URI =  'https://coral-app-8z265.ondigitalocean.app' + '/linkedin-callback'
 
 @app.route('/linkedin-login')
 def linkedin_login():
