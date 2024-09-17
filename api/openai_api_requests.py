@@ -47,9 +47,9 @@ def base_usage(user_input, context):
     # Call the API without streaming
     try:
         chat_completion = client.chat.completions.create(
-            model="gpt-4-vision-preview",
+            model="gpt-4o-mini",
             messages=context,
-            max_tokens=500,
+            max_tokens=16384,
             response_format={"type":"json_object"},
         )
 
