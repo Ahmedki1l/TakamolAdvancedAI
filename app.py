@@ -649,7 +649,12 @@ def chat():
     context.clear()
 
     # Add user message to context
-    context.append({"role": "system", "content": "you will be provided some images and you have to understand it and reply with the data you understood from these images."})
+    context.append({"role": "system", "content": """you will be provided some images and you have to understand it and reply with the data you understood from these images
+                                                    your response should look like this: 
+                                                    {
+                                                        "response":"your response here"
+                                                    }
+        """})
 
     # Call the chat_with_ai function from the imported module
     try:

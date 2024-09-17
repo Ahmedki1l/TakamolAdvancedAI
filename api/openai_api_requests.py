@@ -32,7 +32,7 @@ def base_usage(user_input, context):
     prompt = {
         "role": "user",
         "content": user_input,
-        "instruction": "Respond in JSON format with the following fields: Case Study, Target Audience, Pros, Cons, and relevant Hashtags."
+        "instruction": "Respond in JSON format only"
     }
     context.append(prompt)
     full_response = ''
