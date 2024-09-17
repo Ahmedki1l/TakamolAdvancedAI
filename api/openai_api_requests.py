@@ -31,8 +31,15 @@ def base_usage(user_input, context):
     # Append the user input to the context
     prompt = {
         "role": "user",
-        "content": user_input,
-        "instruction": "Respond in JSON format only"
+        "content": [
+            {
+                "type": "text", "text": "Return JSON Document with data. only return JSON not other text"
+            },
+            {
+                "type": "image_url",
+                "image_url": {"url": user_input}
+            }
+        ],
     }
     context.append(prompt)
     full_response = ''
@@ -40,11 +47,10 @@ def base_usage(user_input, context):
     # Call the API without streaming
     try:
         chat_completion = client.chat.completions.create(
+            model="gpt-4-vision-preview",
             messages=context,
-            model="gpt-4o-mini",
-            temperature=0.3,
+            max_tokens=500,
             response_format={"type":"json_object"},
-            max_tokens=16384
         )
 
         # Fetching the response assuming it is structured as instructed
