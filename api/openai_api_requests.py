@@ -35,13 +35,16 @@ def base_usage(user_input, context):
             {
                 "type": "text", "text": "Return JSON Document with data. only return JSON not other text"
             },
-            {
-                "type": "image_url",
-                "image_url": {"url": f"data:image/jpeg;base64,{user_input}"}
-            }
         ],
     }
+
+    for input in user_input:
+        prompt["content"].append({
+                "type": "image_url",
+                "image_url": {"url": f"data:image/jpeg;base64,{input}"}
+            })
     context.append(prompt)
+    print(context)
     full_response = ''
     parsed_ai_response = ''
     # Call the API without streaming

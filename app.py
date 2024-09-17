@@ -659,7 +659,7 @@ def chat():
     # Call the chat_with_ai function from the imported module
     try:
         response, parsed_ai_response, new_context = base_usage(user_input, context)
-        print("new context: ")
+        print("new context: ", new_context)
         return response, 200
     except Exception as e:
         print(e)
