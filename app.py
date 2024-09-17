@@ -16,7 +16,7 @@ import re
 from langdetect import detect
 
 from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
-    image_analyzer, investment_generator, investment_image_creator
+    image_analyzer, investment_generator, investment_image_creator, base_usage
 
 app = Flask(__name__)
 CORS(app)
@@ -631,6 +631,34 @@ def log_request_info():
     app.logger.debug('Headers: %s', request.headers)
     app.logger.debug('Body: %s', request.get_data())
 
+@app.route('/en/chat', methods=['POST'])
+def chat():
+    # Check if the request contains JSON data
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    # Check if 'input' key exists in the JSON data
+    if 'input' not in data:
+        return jsonify({"error": "Missing 'input' field"}), 400
+
+    user_input = data['input']
+
+    # clears the context for a new run
+    context.clear()
+
+    # Add user message to context
+    context.append({"role": "system", "content": "you will be provided some images and you have to understand it and reply with the data you understood from these images."})
+
+    # Call the chat_with_ai function from the imported module
+    try:
+        response, parsed_ai_response, new_context = base_usage(user_input, context)
+        print("new context: ")
+        return response, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/en/chat/casestudy', methods=['POST'])
 def case_study_chat_en():

@@ -27,6 +27,41 @@ first_headers = ['Case Study', 'Target Audience', 'Pros', 'Cons', 'Facebook Hash
 second_headers = ['Posts']
 
 
+def base_usage(user_input, context):
+    # Append the user input to the context
+    prompt = {
+        "role": "user",
+        "content": user_input,
+        "instruction": "Respond in JSON format with the following fields: Case Study, Target Audience, Pros, Cons, and relevant Hashtags."
+    }
+    context.append(prompt)
+    full_response = ''
+    parsed_ai_response = ''
+    # Call the API without streaming
+    try:
+        chat_completion = client.chat.completions.create(
+            messages=context,
+            model="gpt-4o-mini",
+            temperature=0.3,
+            response_format={"type":"json_object"},
+            max_tokens=16384
+        )
+
+        # Fetching the response assuming it is structured as instructed
+        full_response = chat_completion.choices[0].message.content
+        print("Raw AI response:", full_response)
+
+        # Attempt to parse the response to ensure it is valid JSON
+        parsed_ai_response = json.loads(full_response)
+        print("Parsed AI response:", parsed_ai_response)
+
+    except json.JSONDecodeError as e:
+        print(f"Failed to decode JSON: {str(e)}")
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+
+    return full_response, parsed_ai_response, context
+
 def case_study_ai(user_input, context):
     # Append the user input to the context
     prompt = {
