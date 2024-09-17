@@ -650,7 +650,7 @@ def chat():
 
     # Add user message to context
     context.append({"role": "system", "content": """you will be provided some images and you have to understand it and reply with the data you understood from these images
-                                                    your response should look like this: 
+                                                    your response should only be in json format and look like this: 
                                                     {
                                                         "response":"your response here"
                                                     }
