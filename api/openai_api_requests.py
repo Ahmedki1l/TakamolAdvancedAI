@@ -27,22 +27,24 @@ first_headers = ['Case Study', 'Target Audience', 'Pros', 'Cons', 'Facebook Hash
 second_headers = ['Posts']
 
 
-def base_usage(user_input, context):
+def base_usage(user_input, images, context):
     # Append the user input to the context
     prompt = {
         "role": "user",
         "content": [
             {
-                "type": "text", "text": "Return JSON Document with data. only return JSON not other text"
+                "type": "text", "text": user_input
             },
         ],
     }
+    if len(images) > 0:
+        if len(images[0]) > 0:
+            for image in images:
+                prompt["content"].append({
+                        "type": "image_url",
+                        "image_url": {"url": f"data:image/jpeg;base64,{image}"}
+                    })
 
-    for input in user_input:
-        prompt["content"].append({
-                "type": "image_url",
-                "image_url": {"url": f"data:image/jpeg;base64,{input}"}
-            })
     context.append(prompt)
     print(context)
     full_response = ''

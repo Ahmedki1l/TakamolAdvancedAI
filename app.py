@@ -644,6 +644,7 @@ def chat():
         return jsonify({"error": "Missing 'input' field"}), 400
 
     user_input = data['input']
+    images = data['images']
 
     # clears the context for a new run
     context.clear()
@@ -658,7 +659,7 @@ def chat():
 
     # Call the chat_with_ai function from the imported module
     try:
-        response, parsed_ai_response, new_context = base_usage(user_input, context)
+        response, parsed_ai_response, new_context = base_usage(user_input, images, context)
         print("new context: ", new_context)
         return response, 200
     except Exception as e:
