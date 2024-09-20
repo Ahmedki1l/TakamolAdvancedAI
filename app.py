@@ -16,7 +16,7 @@ import re
 from langdetect import detect
 
 from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
-    image_analyzer, investment_generator, investment_image_creator, base_usage
+    image_analyzer, investment_generator, investment_image_creator, base_usage, short_content_generator
 
 app = Flask(__name__)
 CORS(app)
@@ -292,6 +292,13 @@ case_study_training_context_arabic = """
                                         "تكلفة_التسويق_السنوية": "(ردك هنا بناءا على الدراسة الكمالة لتتناسب مع أسعار السوق الحالي)",
                                         "صافي_الربح": "(ردك هنا بناءا على الدراسة الكمالة لتتناسب مع أسعار السوق الحالي).",
                                         "نسبة_العائد_على_الاستثمار": "(ردك هنا بناءا على الدراسة الكمالة لتتناسب مع أسعار السوق الحالي)"
+                                    },
+                                    "Post_Frequency":{
+                                        "فيسبوك":"ردك هنا",
+                                        "انستجرام":"ردك هنا",
+                                        "لينكد إن":"ردك هنا",
+                                        "تويتر":"ردك هنا",
+                                        "تيكتوك":"ردك هنا",
                                     },
                                     "Strategic_Insights": "(ردك هنا بناءا على الدراسة الكمالة لتتناسب مع أسعار السوق الحالي)",
                                     "Recommendations": "(ردك هنا بناءا على الدراسة الكمالة لتتناسب مع أسعار السوق الحالي)"
@@ -623,6 +630,23 @@ investment_arabic_context = """
                             """
 
 
+short_content_context = """
+                        The client will give a post content and you have to generate short content to be put in an image frame, you have to provide short, medium, long contents for him. 
+                        Guidance: 
+                            short: must contain only 10 characters.
+                            Medium: must contain only 20 characters.
+                            Long: must contain only 30 characters.
+                            
+                        Your response must be in JSON format and look like this one: 
+                        {
+                            "short":"your response",
+                            "Medium:"your response",
+                            "Long":"your response"
+                        }
+                        
+                        """
+
+
 context = []
 
 
@@ -661,6 +685,35 @@ def chat():
     try:
         response, parsed_ai_response, new_context = base_usage(user_input, images, context)
         print("new context: ", new_context)
+        return response, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/shortcontent', methods=['POST'])
+def short_content():
+    # Check if the request contains JSON data
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    # Check if 'input' key exists in the JSON data
+    if 'input' not in data:
+        return jsonify({"error": "Missing 'input' field"}), 400
+
+    user_input = data['input']
+
+    # clears the context for a new run
+    context.clear()
+
+    # Add user message to context
+    context.append({"role": "system", "content": short_content_context})
+
+    # Call the chat_with_ai function from the imported module
+    try:
+        response, parsed_ai_response, new_context = short_content_generator(user_input, context)
+        print("new context: ")
         return response, 200
     except Exception as e:
         print(e)
