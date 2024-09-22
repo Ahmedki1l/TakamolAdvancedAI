@@ -20,7 +20,7 @@ from api.openai_api_requests import case_study_ai, social_media_ai, image_creato
 
 app = Flask(__name__)
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
+# socketio = SocketIO(app, cors_allowed_origins="*")
 app.secret_key = os.urandom(24)
 
 task_queue = Queue()
