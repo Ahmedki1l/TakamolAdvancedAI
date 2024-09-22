@@ -1083,7 +1083,7 @@ def twitter_login():
     code_verifier = generate_code_verifier()
     session['code_verifier'] = code_verifier
     code_challenge = generate_code_challenge(code_verifier)
-    state = base64.urlsafe_b64encode(os.urandom(32)).decode('utf-8')
+    state = base64.urlsafe_b64encode(os.urandom(32)).decode('utf-8').replace('=', '')
     session['state'] = state
     print('state: ', state)
     params = {
