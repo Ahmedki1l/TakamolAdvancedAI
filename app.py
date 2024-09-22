@@ -632,6 +632,7 @@ investment_arabic_context = """
 
 short_content_context = """
                         The client will give a post content and you have to generate short content to be put in an image frame, you have to provide short, medium, long contents for him. 
+                        Your response should only be in Arabic only ( except the keys of the json such as Short, Medium, and Long )
                         Guidance: 
                             short: must contain only 10 characters.
                             Medium: must contain only 20 characters.
@@ -639,9 +640,9 @@ short_content_context = """
                             
                         Your response must be in JSON format and look like this one: 
                         {
-                            "short":"your response",
-                            "Medium:"your response",
-                            "Long":"your response"
+                            "short":"ردك هنا",
+                            "Medium:"ردك هنا",
+                            "Long":"ردك هنا"
                         }
                         
                         """
