@@ -20,7 +20,7 @@ from api.openai_api_requests import case_study_ai, social_media_ai, image_creato
 
 app = Flask(__name__)
 CORS(app)
-# socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*")
 app.secret_key = os.urandom(24)
 
 task_queue = Queue()
@@ -1084,7 +1084,9 @@ def twitter_login():
     session['code_verifier'] = code_verifier
     code_challenge = generate_code_challenge(code_verifier)
     state = base64.urlsafe_b64encode(os.urandom(32)).decode('utf-8').replace('=', '')
+    print("Session before setting state:", session)
     session['state'] = state
+    print("Session after setting state:", session)
     print('state: ', state)
     params = {
         'response_type': 'code',
@@ -1330,4 +1332,4 @@ def post():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app, debug=True)
