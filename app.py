@@ -1085,15 +1085,16 @@ def twitter_login():
     code_challenge = generate_code_challenge(code_verifier)
     state = base64.urlsafe_b64encode(os.urandom(32)).decode('utf-8')
     session['state'] = state
+    print('state: ', state)
     params = {
-    'response_type': 'code',
-    'client_id': CLIENT_ID,
-    'redirect_uri': REDIRECT_URI,
-    'scope': 'tweet.read tweet.write users.read',
-    'state': state,
-    'code_challenge': code_challenge,
-    'code_challenge_method': 'S256'
-}
+        'response_type': 'code',
+        'client_id': CLIENT_ID,
+        'redirect_uri': REDIRECT_URI,
+        'scope': 'tweet.read tweet.write users.read',
+        'state': state,
+        'code_challenge': code_challenge,
+        'code_challenge_method': 'S256'
+    }
     url = f"https://twitter.com/i/oauth2/authorize?{urlencode(params)}"
     return redirect(url)
 
@@ -1102,6 +1103,8 @@ def twitter_login():
 def twitter_callback():
     code = request.args.get('code')
     returned_state = request.args.get('state')
+
+    print('returned state: ', returned_state)
 
     # Check state
     if returned_state != session.pop('state', None):
