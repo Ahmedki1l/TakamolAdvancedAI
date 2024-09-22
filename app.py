@@ -1224,7 +1224,7 @@ linkedIn_REDIRECT_URI =  'https://coral-app-8z265.ondigitalocean.app' + '/linked
 
 @app.route('/linkedin-login')
 def linkedin_login():
-    state = base64.urlsafe_b64encode(os.urandom(32)).decode('utf-8')
+    state = base64.urlsafe_b64encode(os.urandom(32)).decode('utf-8').replace('=', '')
     session['linkedin-state'] = state
     linkedin_auth_url = (
         "https://www.linkedin.com/oauth/v2/authorization?response_type=code"
