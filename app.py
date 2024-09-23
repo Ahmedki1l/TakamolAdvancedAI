@@ -1156,6 +1156,8 @@ def twitter_callback():
 
     print(f"access token: {access_token}")
 
+    print(f"Domain Origin: {os.getenv('DOMAIN_ORIGIN')}")
+
     # Ensure the correct origin is used in the postMessage
     return f"""
     <script>
