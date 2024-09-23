@@ -1154,7 +1154,7 @@ def twitter_callback():
 
     access_token = response.json().get('access_token')
 
-    print(access_token)
+    print(f"access token: {access_token}")
 
     # Ensure the correct origin is used in the postMessage
     return f"""
