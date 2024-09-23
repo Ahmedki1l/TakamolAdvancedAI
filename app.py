@@ -22,16 +22,17 @@ from api.openai_api_requests import case_study_ai, social_media_ai, image_creato
 
 app = Flask(__name__)
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
-app.secret_key = os.urandom(24)
-app.config['SESSION_TYPE'] = 'redis'
-app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_USE_SIGNER'] = True
-app.config['SESSION_KEY_PREFIX'] = 'session:'
-app.config['SESSION_REDIS'] = Redis(host='localhost', port=6379)
+# app.config['SESSION_TYPE'] = 'redis'
+# app.config['SESSION_PERMANENT'] = False
+# app.config['SESSION_USE_SIGNER'] = True
+# app.config['SESSION_KEY_PREFIX'] = 'session:'
+# app.config['SESSION_REDIS'] = Redis(host='localhost', port=6379)
 
 # Initialize the session
 Session(app)
+
+socketio = SocketIO(app, cors_allowed_origins="*")
+app.secret_key = os.urandom(24)
 
 task_queue = Queue()
 max_concurrent_tasks = 5  # Limit the number of concurrent tasks
@@ -1344,4 +1345,4 @@ def post():
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app)
