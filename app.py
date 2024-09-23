@@ -1106,12 +1106,12 @@ def twitter_login():
 def twitter_callback():
     code = request.args.get('code')
     returned_state = request.args.get('state')
-
+    current_state = session.pop('state', None)
     print('returned state: ', returned_state)
-    print('current state: ', session['state'])
+    print('current state: ', current_state)
 
     # Check state
-    if returned_state != session.pop('state', None):
+    if returned_state != current_state:
         return jsonify(error="State mismatch"), 400
 
     headers = {
