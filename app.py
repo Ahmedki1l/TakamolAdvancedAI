@@ -1092,7 +1092,8 @@ CLIENT_SECRET = os.getenv('TWITTER_CLIENT_SECRET')
 REDIRECT_URI = 'https://coral-app-8z265.ondigitalocean.app' + '/twitter-callback'
 
 def generate_code_verifier():
-    return base64.urlsafe_b64encode(os.urandom(40)).decode('utf-8').replace('=', '')
+    # Generate a code verifier with a length between 43 and 128
+    return base64.urlsafe_b64encode(os.urandom(64)).decode('utf-8').replace('=', '')
 
 def generate_code_challenge(verifier):
     return base64.urlsafe_b64encode(hashlib.sha256(verifier.encode('utf-8')).digest()).decode('utf-8').replace('=', '')
