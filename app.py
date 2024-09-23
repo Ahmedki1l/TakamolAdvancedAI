@@ -1129,8 +1129,8 @@ def twitter_callback():
     print('current state: ', current_state)
 
     # Check state
-    # if returned_state != current_state:
-    #     return jsonify(error="State mismatch"), 400
+    if returned_state != current_state:
+        return jsonify(error="State mismatch"), 400
 
     headers = {
         'Authorization': f'Basic {base64.urlsafe_b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()}',
