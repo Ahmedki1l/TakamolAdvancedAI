@@ -35,7 +35,13 @@ CORS(app)
 # Session(app)
 
 socketio = SocketIO(app, cors_allowed_origins="*")
-app.secret_key = os.urandom(24)
+app.secret_key = 'sadsakdjaslkdjwkqjeqe02=wd22@'
+
+app.config.update(
+    SESSION_COOKIE_SECURE=True,  # Set to True if you're using HTTPS
+    SESSION_COOKIE_HTTPONLY=True,  # Prevents JavaScript access to cookies
+    SESSION_COOKIE_SAMESITE='None'  # Adjust depending on your use case (could be 'None' if cross-origin)
+)
 
 task_queue = Queue()
 max_concurrent_tasks = 5  # Limit the number of concurrent tasks
