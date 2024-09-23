@@ -28,7 +28,7 @@ app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_KEY_PREFIX'] = 'session:'
-app.config['SESSION_REDIS'] = Redis(host='localhost', port=8080)
+app.config['SESSION_REDIS'] = Redis(host='localhost', port=6379)
 
 # Initialize the session
 Session(app)
