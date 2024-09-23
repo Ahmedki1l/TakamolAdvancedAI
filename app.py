@@ -1159,10 +1159,9 @@ def twitter_callback():
     # Ensure the correct origin is used in the postMessage
     return f"""
     <script>
-      window.opener.postMessage({
-        type: 'TWITTER_AUTH_SUCCESS',
-         accessToken: '{access_token}' 
-        },'https://urchin-app-6wl4t.ondigitalocean.app'
+      window.opener.postMessage(
+        {{ type: 'TWITTER_AUTH_SUCCESS', accessToken: '{access_token}' }},
+        '{os.getenv('DOMAIN_ORIGIN')}'
       );
       window.close();
     </script>
