@@ -8,8 +8,10 @@ from queue import Queue
 
 import requests
 from flask import Flask, jsonify, request, redirect, render_template, session, url_for
+from flask_session import Session
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
+from redis import Redis
 import numpy as np
 import re
 
@@ -22,6 +24,14 @@ app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 app.secret_key = os.urandom(24)
+app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_USE_SIGNER'] = True
+app.config['SESSION_KEY_PREFIX'] = 'session:'
+app.config['SESSION_REDIS'] = Redis(host='localhost', port=6379)
+
+# Initialize the session
+Session(app)
 
 task_queue = Queue()
 max_concurrent_tasks = 5  # Limit the number of concurrent tasks
@@ -1085,9 +1095,8 @@ def twitter_login():
     session['code_verifier'] = code_verifier
     code_challenge = generate_code_challenge(code_verifier)
     state = base64.urlsafe_b64encode(os.urandom(32)).decode('utf-8').replace('=', '')
-    print("Session before setting state:", session)
     session['state'] = state
-    print("Session after setting state:", session)
+    print(f"Session data after setting state: {session}")
     print('state: ', state)
     params = {
         'response_type': 'code',
@@ -1104,6 +1113,7 @@ def twitter_login():
 
 @app.route('/twitter-callback')
 def twitter_callback():
+    print(f"Session data in callback: {session}")
     code = request.args.get('code')
     returned_state = request.args.get('state')
     current_state = session.pop('state', None)
