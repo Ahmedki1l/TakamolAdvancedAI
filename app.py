@@ -1108,6 +1108,7 @@ def twitter_callback():
     returned_state = request.args.get('state')
 
     print('returned state: ', returned_state)
+    print('current state: ', session['state'])
 
     # Check state
     if returned_state != session.pop('state', None):
