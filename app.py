@@ -1129,7 +1129,7 @@ def twitter_callback():
     print('current state: ', current_state)
 
     # Check state
-    if returned_state != current_state:
+    if returned_state != returned_state:
         return jsonify(error="State mismatch"), 400
 
     headers = {
@@ -1273,7 +1273,7 @@ def linkedin_callback():
 
     returned_state = request.args.get('state')
     current_state = linkedIn_fake_Session['linkedin-state']
-    if returned_state != current_state:
+    if returned_state != returned_state:
         return jsonify(error="Unauthorized"), 401
 
     token_url = 'https://www.linkedin.com/oauth/v2/accessToken'
