@@ -22,6 +22,9 @@ from api.openai_api_requests import case_study_ai, social_media_ai, image_creato
 
 app = Flask(__name__)
 CORS(app)
+
+
+
 # app.config['SESSION_TYPE'] = 'redis'
 # app.config['SESSION_PERMANENT'] = False
 # app.config['SESSION_USE_SIGNER'] = True
@@ -29,7 +32,7 @@ CORS(app)
 # app.config['SESSION_REDIS'] = Redis(host='localhost', port=6379)
 
 # Initialize the session
-Session(app)
+# Session(app)
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 app.secret_key = os.urandom(24)
@@ -1076,6 +1079,10 @@ def ai_investment_ar():
 
 """ Publishing APIs """
 
+twitter_fake_Session = {}
+twitter_fake_Session['state'] = ''
+twitter_fake_Session['code_verifier'] = ''
+
 # Domain
 Domain_Origin = os.getenv('DOMAIN_ORIGIN')
 
@@ -1093,11 +1100,11 @@ def generate_code_challenge(verifier):
 @app.route('/twitter-login')
 def twitter_login():
     code_verifier = generate_code_verifier()
-    session['code_verifier'] = code_verifier
+    twitter_fake_Session['code_verifier'] = code_verifier
     code_challenge = generate_code_challenge(code_verifier)
     state = base64.urlsafe_b64encode(os.urandom(32)).decode('utf-8').replace('=', '')
-    session['state'] = state
-    print(f"Session data after setting state: {session}")
+    twitter_fake_Session['state'] = state
+    print(f"Session data after setting state: {twitter_fake_Session}")
     print('state: ', state)
     params = {
         'response_type': 'code',
@@ -1114,10 +1121,10 @@ def twitter_login():
 
 @app.route('/twitter-callback')
 def twitter_callback():
-    print(f"Session data in callback: {session}")
+    print(f"Session data in callback: {twitter_fake_Session}")
     code = request.args.get('code')
     returned_state = request.args.get('state')
-    current_state = session.pop('state', None)
+    current_state = twitter_fake_Session['state']
     print('returned state: ', returned_state)
     print('current state: ', current_state)
 
@@ -1230,6 +1237,11 @@ def delete_tweet(tweet_id, access_token):
 
 #linked in
 
+linkedIn_fake_Session = {}
+linkedIn_fake_Session['linkedin-state'] = ''
+linkedIn_fake_Session['linkedin_access_token'] = ''
+linkedIn_fake_Session['linkedin_urn'] = ''
+
 # Constants
 linkedIn_CLIENT_ID = os.getenv('LINKEDIN_CLIENT_ID')
 linkedIn_CLIENT_SECRET = os.getenv('LINKEDIN_CLIENT_SECRET')
@@ -1238,7 +1250,7 @@ linkedIn_REDIRECT_URI =  'https://coral-app-8z265.ondigitalocean.app' + '/linked
 @app.route('/linkedin-login')
 def linkedin_login():
     state = base64.urlsafe_b64encode(os.urandom(32)).decode('utf-8').replace('=', '')
-    session['linkedin-state'] = state
+    linkedIn_fake_Session['linkedin-state'] = state
     linkedin_auth_url = (
         "https://www.linkedin.com/oauth/v2/authorization?response_type=code"
         f"&client_id={linkedIn_CLIENT_ID}"
@@ -1260,7 +1272,8 @@ def linkedin_callback():
         return jsonify({'error': 'Authorization code not found'}), 400
 
     returned_state = request.args.get('state')
-    if returned_state != session.pop('linkedin-state', None):
+    current_state = linkedIn_fake_Session['linkedin-state']
+    if returned_state != current_state:
         return jsonify(error="Unauthorized"), 401
 
     token_url = 'https://www.linkedin.com/oauth/v2/accessToken'
@@ -1277,7 +1290,7 @@ def linkedin_callback():
         token_response = requests.post(token_url, data=token_data, headers=token_headers)
         token_response.raise_for_status()
         access_token = token_response.json().get('access_token')
-        session['linkedin_access_token'] = access_token
+        linkedIn_fake_Session['linkedin_access_token'] = access_token
 
         # Optionally, fetch user's URN or profile data
         try:
@@ -1286,8 +1299,8 @@ def linkedin_callback():
             profile_headers = {'Authorization': f'Bearer {access_token}'}
             profile_response = requests.get(profile_url, headers=profile_headers)
             profile_response.raise_for_status()
-            session['linkedin_urn'] = profile_response.json().get('sub')
-            linkedin_urn = session['linkedin_urn']
+            linkedIn_fake_Session['linkedin_urn'] = profile_response.json().get('sub')
+            linkedin_urn = linkedIn_fake_Session['linkedin_urn']
 
             # JavaScript snippet to send the token back to the parent window
             return f"""
