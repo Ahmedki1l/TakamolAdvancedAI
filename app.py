@@ -709,7 +709,7 @@ def chat():
                                                                                 "Asset_Type":"Write the type of the asset here please",
                                                                                 "Title":"Write the title of the asset here like the class of the asset",
                                                                                 "No_Of_Units":"if the number of units was provided then write it, if not then write 0",
-                                                                                "Space":"asset Area",
+                                                                                "Space":"asset Area ( only a number without a unit )",
                                                                                 "Finishing":"the finishing of the asset if provided, if not then type 0",
                                                                                 "Floors":"number of floors of the assets if it is a duplex or has many floors, if not then type 1",
                                                                                 "Rooms": "total number of rooms",
