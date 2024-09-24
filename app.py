@@ -696,9 +696,14 @@ def chat():
     # Add user message to context
     context.append({"role": "system", "content": """you will be provided some images and you have to understand it and reply with the data you understood from these images.
                                                     Your response must be in Arabic.
-                                                    If there are some floor plans then read it and get the number of rooms, bathrooms, and living rooms from them better.
-                                                    Asset_Type Must be in English only and select it from one of these:
-                                                    [ Apartment, Villa ]
+                                                    Guidance:
+                                                        1-If there are some floor plans then read it and get the number of rooms, bathrooms, and living rooms from them better.
+                                                        2-If there are some floor plans then each one is a separate Asset.
+                                                        3-You have to focus on the number of rooms, number of bathrooms, number of living rooms, you have to get them as they are the heighest periority.
+                                                        4-Asset_Type Must be in English only and select it from one of these:
+                                                                [ Apartment, Villa ]
+                                                                
+                                                                
                                                     your response should only be in json format and look like this: 
                                                     {
                                                         "Title":"Project title here",
