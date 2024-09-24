@@ -686,7 +686,7 @@ def chat():
 
     # Check if 'input' key exists in the JSON data
     if 'images' not in data:
-        return jsonify({"error": "Missing 'input' field"}), 400
+        return jsonify({"error": "Missing 'images' field"}), 400
 
     images = data['images']
 
