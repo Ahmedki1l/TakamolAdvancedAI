@@ -18,7 +18,7 @@ import re
 from langdetect import detect
 
 from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
-    image_analyzer, investment_generator, investment_image_creator, base_usage, short_content_generator
+    image_analyzer, investment_generator, investment_image_creator, pdf_extractor, short_content_generator
 
 app = Flask(__name__)
 CORS(app)
@@ -688,23 +688,42 @@ def chat():
     if 'input' not in data:
         return jsonify({"error": "Missing 'input' field"}), 400
 
-    user_input = data['input']
     images = data['images']
 
     # clears the context for a new run
     context.clear()
 
     # Add user message to context
-    context.append({"role": "system", "content": """you will be provided some images and you have to understand it and reply with the data you understood from these images
+    context.append({"role": "system", "content": """you will be provided some images and you have to understand it and reply with the data you understood from these images.
+                                                    Your response must be in Arabic.
                                                     your response should only be in json format and look like this: 
                                                     {
-                                                        "response":"your response here"
+                                                        "Title":"Project title here",
+                                                        "Description":"make a Description here to provide all the details about the location",
+                                                        "District":"the district of the project if provided, if not then type 0",
+                                                        "City":"the city of the project if provided, if not then type 0",
+                                                        "Country":"the country of the project if provided, if not then type 0",
+                                                        "Land_Area":"Land Area here if provided, if not then type 0",
+                                                        "Project_Assets":[
+                                                                            {
+                                                                                "Asset_Type":"Write the type of the asset here please",
+                                                                                "Title":"Write the title of the asset here like the class of the asset",
+                                                                                "No_Of_Units":"if the number of units was provided then write it, if not then write 0",
+                                                                                "Space":"asset Area",
+                                                                                "Finishing":"the finishing of the asset if provided, if not then type 0",
+                                                                                "Floors":"number of floors of the assets if it is a duplex or has many floors, if not then type 1",
+                                                                                "Rooms": "total number of rooms",
+                                                                                "Bathrooms" : "total number of bathrooms",
+                                                                                "Livingrooms":"total number of living rooms"
+                                                                            },
+                                                                            ...
+                                                                        ],
                                                     }
         """})
 
     # Call the chat_with_ai function from the imported module
     try:
-        response, parsed_ai_response, new_context = base_usage(user_input, images, context)
+        response, parsed_ai_response, new_context = pdf_extractor(images, context)
         print("new context: ", new_context)
         return response, 200
     except Exception as e:

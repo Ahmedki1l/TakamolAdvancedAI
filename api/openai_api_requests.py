@@ -27,16 +27,17 @@ first_headers = ['Case Study', 'Target Audience', 'Pros', 'Cons', 'Facebook Hash
 second_headers = ['Posts']
 
 
-def base_usage(user_input, images, context):
+def pdf_extractor(images, context):
     # Append the user input to the context
     prompt = {
         "role": "user",
         "content": [
             {
-                "type": "text", "text": user_input
+                "type": "text", "text": "Understand these images and provide me with the details from it."
             },
         ],
     }
+
     if len(images) > 0:
         if len(images[0]) > 0:
             for image in images:
