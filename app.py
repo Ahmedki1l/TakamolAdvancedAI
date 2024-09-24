@@ -676,7 +676,7 @@ def log_request_info():
     app.logger.debug('Headers: %s', request.headers)
     app.logger.debug('Body: %s', request.get_data())
 
-@app.route('/en/chat', methods=['POST'])
+@app.route('/pdf-data-extractor', methods=['POST'])
 def chat():
     # Check if the request contains JSON data
     if not request.is_json:
