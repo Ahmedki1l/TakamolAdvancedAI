@@ -1138,7 +1138,7 @@ def twitter_login():
         'response_type': 'code',
         'client_id': CLIENT_ID,
         'redirect_uri': REDIRECT_URI,
-        'scope': 'tweet.read tweet.write users.read',
+        'scope': 'tweet.read tweet.write users.read offline.access',
         'state': state,
         'code_challenge': code_challenge,
         'code_challenge_method': 'S256'
