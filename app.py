@@ -1219,7 +1219,7 @@ def post_tweet():
         'Content-Type': 'application/json'
     }
     payload = {'text': tweet_text}  # Use the text from the request
-    response = requests.post("https://api.twitter.com/2/tweets", headers=headers, json=payload)
+    response = requests.post("https://api.x.com/2/tweets", headers=headers, json=payload)
 
     if response.status_code != 201:
         return jsonify({"error": "Failed to post tweet", "details": response.json()}), response.status_code
