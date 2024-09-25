@@ -1191,7 +1191,7 @@ def twitter_callback():
     return f"""
     <script>
       window.opener.postMessage(
-        {{ type: 'TWITTER_AUTH_SUCCESS', accessToken: '{access_token}'}},
+        {{ type: 'TWITTER_AUTH_SUCCESS', accessToken: '{access_token}', refreshToken: '{refresh_token}'}},
         '{os.getenv('DOMAIN_ORIGIN')}'
       );
       window.close();
