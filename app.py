@@ -715,13 +715,13 @@ def chat():
                                                                             {
                                                                                 "Asset_Type":"Write the type of the asset here please",
                                                                                 "Title":"Write the title of the asset here like the class of the asset",
-                                                                                "No_Of_Units":"if the number of units was provided then write it, if not then write 0",
-                                                                                "Space":"asset Area ( only a number without a unit )",
-                                                                                "Finishing":"the finishing of the asset if provided, if not then type 0",
-                                                                                "Floors":"number of floors of the assets if it is a duplex or has many floors, if not then type 1",
-                                                                                "Rooms": "total number of rooms",
-                                                                                "Bathrooms" : "total number of bathrooms",
-                                                                                "Livingrooms":"total number of living rooms"
+                                                                                "No_Of_Units":"search the images for the number of units if it was provided, if not then write 0",
+                                                                                "Space":"search the images for the asset Area ( only a number without a unit )",
+                                                                                "Finishing":"search the images for the finishing of the asset if provided, if not then type 0",
+                                                                                "Floors":"search the images for the number of floors of the assets if it is a duplex or has many floors, if not then type 1",
+                                                                                "Rooms": "search the images for the total number of rooms",
+                                                                                "Bathrooms" : "search the images for the total number of bathrooms",
+                                                                                "Livingrooms":"search the images for the total number of living rooms"
                                                                             },
                                                                             ...
                                                                         ],
