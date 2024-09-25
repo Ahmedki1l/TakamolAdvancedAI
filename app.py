@@ -697,17 +697,16 @@ def chat():
     context.append({"role": "system", "content": """you will be provided some images and you have to understand it and reply with the data you understood from these images.
                                                     Your response must be in Arabic.
                                                     Guidance:
-                                                        1-If there are some floor plans then read it and get the number of rooms, bathrooms, and living rooms from them better.
-                                                        2-If there are some floor plans then each one is a separate Asset.
-                                                        3-You have to focus on the number of rooms, number of bathrooms, number of living rooms, you have to get them as they are the heighest periority.
-                                                        4-Asset_Type Must be in English only and select it from one of these:
+                                                        -If there are some floor plans then each one is a separate Asset.
+                                                        -You have to focus on the number of rooms, number of bathrooms, number of living rooms, you have to get them as they are the heighest periority.
+                                                        -Asset_Type Must be in English only and select it from one of these:
                                                                 [ Apartment, Villa ]
                                                                 
                                                                 
                                                     your response should only be in json format and look like this: 
                                                     {
                                                         "Title":"Project title here",
-                                                        "Description":"make a Description here to provide all the details about the location",
+                                                        "Description":"make a full Description here to provide all the details about the location",
                                                         "District":"the district of the project if provided, if not then type 0",
                                                         "City":"the city of the project if provided, if not then type 0",
                                                         "Country":"the country of the project if provided, if not then type 0",
