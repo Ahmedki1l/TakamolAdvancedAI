@@ -1178,7 +1178,10 @@ def twitter_callback():
     if response.status_code != 200:
         return jsonify(error="Failed to retrieve access token", details=response.json()), 400
 
+    print(response.json())
+
     access_token = response.json().get('access_token')
+    refresh_token = response.json().get('refresh_token')
 
     print(f"access token: {access_token}")
 
@@ -1188,7 +1191,7 @@ def twitter_callback():
     return f"""
     <script>
       window.opener.postMessage(
-        {{ type: 'TWITTER_AUTH_SUCCESS', accessToken: '{access_token}' }},
+        {{ type: 'TWITTER_AUTH_SUCCESS', accessToken: '{access_token}'}},
         '{os.getenv('DOMAIN_ORIGIN')}'
       );
       window.close();
