@@ -1341,7 +1341,7 @@ def linkedin_callback():
     except requests.exceptions.RequestException as e:
         return jsonify({'error': str(e), 'details': 'Failed to get access token'}), 400
 
-@app.route('/linkedin-post')
+@app.route('/linkedin-post', methods=['POST'])
 def post():
 
     data = request.get_json()  # Get the JSON data
