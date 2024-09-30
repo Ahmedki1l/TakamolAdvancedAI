@@ -23,7 +23,7 @@ client = OpenAI(api_key=api_key)
 
 # Function to add a new message and get response from the model
 first_headers = ['Case Study', 'Target Audience', 'Pros', 'Cons', 'Facebook Hashtags', 'Instagram Hashtags',
-                'Twitter Hashtags', 'LinkedIn Hashtags']
+                 'Twitter Hashtags', 'LinkedIn Hashtags']
 second_headers = ['Posts']
 
 
@@ -42,9 +42,9 @@ def pdf_extractor(images, context):
         if len(images[0]) > 0:
             for image in images:
                 prompt["content"].append({
-                        "type": "image_url",
-                        "image_url": {"url": f"data:image/jpeg;base64,{image}"}
-                    })
+                    "type": "image_url",
+                    "image_url": {"url": f"data:image/jpeg;base64,{image}"}
+                })
 
     context.append(prompt)
     print(context)
@@ -56,7 +56,7 @@ def pdf_extractor(images, context):
             model="gpt-4o-mini",
             messages=context,
             max_tokens=16384,
-            response_format={"type":"json_object"},
+            response_format={"type": "json_object"},
         )
 
         # Fetching the response assuming it is structured as instructed
@@ -74,6 +74,7 @@ def pdf_extractor(images, context):
 
     return full_response, parsed_ai_response, context
 
+
 def short_content_generator(user_input, context):
     # Append the user input to the context
     prompt = {
@@ -90,7 +91,7 @@ def short_content_generator(user_input, context):
             messages=context,
             model="gpt-4o-mini",
             temperature=0.3,
-            response_format={"type":"json_object"},
+            response_format={"type": "json_object"},
             max_tokens=16384
         )
 
@@ -109,6 +110,43 @@ def short_content_generator(user_input, context):
 
     return full_response, parsed_ai_response, context
 
+
+def investment_editor(user_input, context):
+    # Append the user input to the context
+    prompt = {
+        "role": "user",
+        "content": user_input,
+    }
+
+    context.append(prompt)
+    full_response = ''
+    parsed_ai_response = ''
+    # Call the API without streaming
+    try:
+        chat_completion = client.chat.completions.create(
+            messages=context,
+            model="gpt-4o-mini",
+            temperature=0.1,
+            response_format={"type": "json_object"},
+            max_tokens=16384
+        )
+
+        # Fetching the response assuming it is structured as instructed
+        full_response = chat_completion.choices[0].message.content
+        print("Raw AI response:", full_response)
+
+        # Attempt to parse the response to ensure it is valid JSON
+        parsed_ai_response = json.loads(full_response)
+        print("Parsed AI response:", parsed_ai_response)
+
+    except json.JSONDecodeError as e:
+        print(f"Failed to decode JSON: {str(e)}")
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+
+    return full_response, parsed_ai_response, context
+
+
 def case_study_ai(user_input, context):
     # Append the user input to the context
     prompt = {
@@ -125,7 +163,7 @@ def case_study_ai(user_input, context):
             messages=context,
             model="gpt-4o-mini",
             temperature=0.3,
-            response_format={"type":"json_object"},
+            response_format={"type": "json_object"},
             max_tokens=16384
         )
 
@@ -156,7 +194,7 @@ def social_media_ai(user_input, context):
             messages=context,
             model="gpt-4o-mini",
             temperature=0.3,
-            response_format={"type":"json_object"},
+            response_format={"type": "json_object"},
             max_tokens=16384
         )
         # Fetching the response assuming it is structured as instructed
@@ -194,8 +232,10 @@ def image_creator(prompt):
         print(f"An error occurred while creating an image: {str(e)}")
         return None
 
+
 # Semaphore to limit to 5 concurrent tasks
 semaphore = threading.Semaphore(5)
+
 
 def investment_image_creator(prompt):
     # Acquire a semaphore slot
@@ -218,13 +258,16 @@ def investment_image_creator(prompt):
             print(f"An error occurred while creating an image: {str(e)}")
             return None
 
-def encode_image(image_path):
-    with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode('utf-8')
 
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')
+
+
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
+
 
 image_location = "C:/Users/LapTop/Desktop/Residential-building.webp"
 
@@ -233,11 +276,11 @@ def image_analyzer(image_path, sent_context):
     try:
         # base64_image = encode_image(image_path)
         context = [{"role": "system", "content": sent_context},
-                   {"role": "user", "content":[
+                   {"role": "user", "content": [
                        {
                            'type': 'image_url',
-                           'image_url':{
-                               'url':image_path
+                           'image_url': {
+                               'url': image_path
                            }
                        }
                    ]
@@ -256,6 +299,7 @@ def image_analyzer(image_path, sent_context):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return jsonify({"error": str(e)})
+
 
 # image_analyzer(base64_image)
 
@@ -288,7 +332,7 @@ def prompt_creator(text, sent_context):
             messages=context,
             model="gpt-4o-mini",
             temperature=0.3,
-            response_format={"type":"json_object"},
+            response_format={"type": "json_object"},
             max_tokens=16384
         )
         response = chat_completion.choices[0].message.content
@@ -299,6 +343,7 @@ def prompt_creator(text, sent_context):
         print(f"An error occurred: {str(e)}")
         return jsonify({"error": str(e)})
 
+
 def prompt_enhancer(text, sent_context):
     try:
         context = [{"role": "system", "content": sent_context},
@@ -308,7 +353,7 @@ def prompt_enhancer(text, sent_context):
             messages=context,
             model="gpt-4o-mini",
             temperature=0.3,
-            response_format={"type":"json_object"},
+            response_format={"type": "json_object"},
             max_tokens=16384
         )
         response = chat_completion.choices[0].message.content
@@ -325,12 +370,12 @@ def investment_generator(user_input, sent_context):
     try:
         context = [
             {
-                "role":"system",
+                "role": "system",
                 "content": sent_context
             },
             {
-                "role":"user",
-                "content":user_input
+                "role": "user",
+                "content": user_input
             }
         ]
 
