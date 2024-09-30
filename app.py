@@ -1206,7 +1206,7 @@ def ai_investment_ar():
         return jsonify({"error": str(e)}), 500
 
 @app.route('/ar/investment-editor', methods=['POST'])
-def social_media_chat_en():
+def investment_editor_ar():
     # Check if the request contains JSON data
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
