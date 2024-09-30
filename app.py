@@ -1220,10 +1220,8 @@ def investment_editor_ar():
     user_input = data['input']
     history = data['history']
 
-    input = history + """
-    
-    
-                    """ + user_input
+    # Add history and user_input with a blank line between them
+    input = history + "\n\n" + user_input
 
 
 
