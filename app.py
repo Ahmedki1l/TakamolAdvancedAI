@@ -755,11 +755,11 @@ investment_editor_context_ar = """
                                 "ملخص_تنفيذي":"ضع ملخص تفنيذي مناسب هنا ويجب أن يكون مفيدا ومهما للمشروع"
                             }
                             
-                            و سيرسل لك العميل تغييرا قام به في أحد الخانات مثل: 
+                            #إرشادات
+                            و سيرسل لك العميل تعديلا قام به في أحد الخانات مثل: 
                             "تكلفة_البناء_لكل_متر_مربع": "1200 ريال سعودي"
                             
-                            ف عليك أن تقوم بهذا التعديل وتقوم بحساب باقي الأرقام وترسل له الدراسة الجديدة على نفس الشكل الذي ارسله لك
-                            لو كان شكل صيغة json مختلف عن هذا ف عليك أن تحافظ على الشكل العميل.
+                            -يجب عليك تطبيق هذا التعديل على الدراسة التي أرسلها لك
                             
 
 
@@ -1225,19 +1225,18 @@ def investment_editor_ar():
     user_input_str = json.dumps(history, ensure_ascii=False, indent=4)  # Convert to a formatted string
 
     # Add history_str and user_input with a blank line between them
-    input = history_str + "\n\n" + user_input_str
+    input = "الدراسة السابقة: " + history_str + "\n\n" + "لقد قمت بهذا التعديل: " + user_input_str
 
 
 
     # clears the context for a new run
     context.clear()
     context.append({"role": "system", "content": investment_editor_context_ar})
-    context.append({"role": "user", "content": input})
 
 
     # Call the chat_with_ai function from the imported module
     try:
-        response, parsed_ai_response, new_context = investment_editor(user_input, context)
+        response, parsed_ai_response, new_context = investment_editor(input, context)
         print("new context: ")
         return response, 200
     except Exception as e:
@@ -1521,4 +1520,4 @@ def post():
 
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app, debug=True, allow_unsafe_werkzeug=True)

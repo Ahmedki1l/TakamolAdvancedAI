@@ -133,6 +133,7 @@ def investment_editor(user_input, context):
         )
 
         # Fetching the response assuming it is structured as instructed
+        print("chat_completion: ", chat_completion)
         full_response = chat_completion.choices[0].message.content
         print("Raw AI response:", full_response)
 
