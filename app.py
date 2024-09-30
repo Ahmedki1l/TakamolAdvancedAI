@@ -1225,7 +1225,7 @@ def investment_editor_ar():
     user_input_str = json.dumps(history, ensure_ascii=False, indent=4)  # Convert to a formatted string
 
     # Add history_str and user_input with a blank line between them
-    input = "الدراسة السابقة: " + history_str + "\n\n" + "لقد قمت بهذا التعديل: " + user_input_str
+    input = "الدراسة السابقة: " + history_str + "\n\n" + "لقد قمت بهذا التعديل: " + user_input_str + "أريدك أن تقوم بتطبيق هذا التعديل في الدراسة التي ارفقتها في الأعلى"
 
 
 
