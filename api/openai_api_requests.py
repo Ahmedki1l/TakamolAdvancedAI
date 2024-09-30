@@ -116,6 +116,7 @@ def investment_editor(user_input, context):
     prompt = {
         "role": "user",
         "content": user_input,
+        "instruction": "Respond in JSON format only"
     }
 
     context.append(prompt)
