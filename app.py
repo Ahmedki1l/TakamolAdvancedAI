@@ -1222,9 +1222,10 @@ def investment_editor_ar():
 
     # Convert the 'history' dictionary to a string
     history_str = json.dumps(history, ensure_ascii=False, indent=4)  # Convert to a formatted string
+    user_input_str = json.dumps(history, ensure_ascii=False, indent=4)  # Convert to a formatted string
 
     # Add history_str and user_input with a blank line between them
-    input = history_str + "\n\n" + user_input
+    input = history_str + "\n\n" + user_input_str
 
 
 
