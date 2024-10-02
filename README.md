@@ -44,3 +44,4 @@ Generates a social media content plan for the targeted platforms for a period of
 - [/ar/investment-villa](#ar/investment-villa): Create an investment consultation for a villa
 - [/ar/investment-residential-compound](#ar/investment-residential-compound): Create an investment consultation for a residential compound
 - [/ar/investment-administrative-building](#ar/investment-administrative-building): Create an investment consultation for an administrative building
+- [/ar/investment-hotel](#/ar/investment-hotel): Create an investment consultation for a hotel
