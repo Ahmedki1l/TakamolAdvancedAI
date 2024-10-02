@@ -126,7 +126,6 @@ def investment_editor(user_input, context):
         chat_completion = client.chat.completions.create(
             messages=context,
             model="gpt-4o-mini",
-            temperature=0.1,
             response_format={"type": "json_object"},
             max_tokens=16384
         )

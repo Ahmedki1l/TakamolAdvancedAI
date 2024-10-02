@@ -30,4 +30,11 @@ Inputs:
 - /image: Create image
 
 # AI Investment:
-- /investment: create an investment consultation
+- /ar/investment-residential-building: create an investment consultation for a residential building
+- /ar/investment-residential-commercial-building: create an investment consultation for a residential commercial building
+- /ar/investment-commercial-building: create an investment consultation for a commercial building
+- /ar/investment-shopping-mall: create an investment consultation for a shopping mall
+- /ar/investment-villas: create an investment consultation for villas
+- /ar/investment-villa: create an investment consultation for villa
+- /ar/investment-residential-compound: create an investment consultation for a residential compound
+- /ar/investment-administrative-building: create an investment consultation for an administrative building
