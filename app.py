@@ -2053,6 +2053,28 @@ def ai_investment_en():
         print(e)
         return jsonify({"error": str(e)}), 500
 
+@app.route('/ar/investment', methods=['POST'])
+def ai_investment_ar():
+    # Check if the request contains JSON data
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    # Check if 'input' key exists in the JSON data
+    if 'input' not in data:
+        return jsonify({"error": "Missing 'input' field"}), 400
+
+    user_input = data['input']
+    print(user_input)
+
+    try:
+        image_prompt = investment_generator(user_input, investment_arabic_context_residential_building)
+        return image_prompt, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/ar/investment-residential-building', methods=['POST'])
 def ai_investment_ar_residential_building():
     # Check if the request contains JSON data
