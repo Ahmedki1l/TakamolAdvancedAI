@@ -383,7 +383,7 @@ def investment_generator(user_input, sent_context):
         chat_completion = client.chat.completions.create(
             messages=context,
             model="gpt-4o-mini",
-            temperature=0.7,
+            temperature=0.3,
             response_format={"type": "json_object"},
             max_tokens=16384
         )
