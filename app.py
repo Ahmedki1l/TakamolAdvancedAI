@@ -18,7 +18,8 @@ import re
 from langdetect import detect
 
 from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
-    image_analyzer, investment_generator, investment_image_creator, pdf_extractor, short_content_generator, investment_editor
+    image_analyzer, investment_generator, investment_image_creator, pdf_extractor, short_content_generator, investment_editor, \
+    investment_selector
 
 app = Flask(__name__)
 CORS(app)
@@ -1080,7 +1081,7 @@ investment_arabic_context_villas = """
                                         },
                                         "تكاليف_البناء": {
                                             "تكلفة_البناء_لكل_متر_مربع": "1400 ريال سعودي",
-                                            "مجموع_تكاليف_البناء": "مجموع_مساحة_البناء * تكلفة_البناء_لكل_متر_مربع = 3600 * 1400",
+                                            "مجموع_تكاليف_البناء": "مساحة_الأرض_الفعالة_للبناء * تكلفة_البناء_لكل_متر_مربع = 3600 * 1400",
                                             "نتيجة_مجموع_تكاليف_البناء": "5040000 ريال سعودي",
                                             "التكاليف_الإضافية": {
                                                 "تصميم_معماري": "200000 ريال سعودي",
@@ -1094,7 +1095,7 @@ investment_arabic_context_villas = """
                                         "نتيجة_الاستثمار_الكلي": "16890000 ريال سعودي",
                                         "توقعات_الإيرادات_من_البيع": {
                                             "سعر_البيع_لكل_متر_مربع": "(اقترح سعر البيع للمتر المربع)",
-                                            "إيرادات_محتملة_من_البيع": "مجموع_مساحة_البناء * سعر_البيع_لكل_متر_مربع = 3600 * سعر_البيع_لكل_متر_مربع",
+                                            "إيرادات_محتملة_من_البيع": "مساحة_الأرض_الفعالة_للبناء * سعر_البيع_لكل_متر_مربع = 3600 * سعر_البيع_لكل_متر_مربع",
                                             "نتيجة_الإيرادات_المحتملة_من_البيع": "18000000 ريال سعودي",
                                             "هامش_الربح_الإجمالي": "إيرادات_محتملة_من_البيع - الاستثمار_الكلي = 18000000 - 16890000",
                                             "نتيجة_هامش_الربح_الإجمالي": "1110000 ريال سعودي",
@@ -1103,7 +1104,7 @@ investment_arabic_context_villas = """
                                         },
                                         "توقعات_الإيرادات_من_الإيجار": {
                                             "الإيجار_السنوي_المتوقع_لكل_متر_مربع": "(9% من تكلفة_لكل_متر_مربع) ريال سعودي",
-                                            "الإيجار_السنوي_الكلي": "مجموع_مساحة_البناء * الإيجار_السنوي_المتوقع_لكل_متر_مربع = ( قم بحساب العملية )",
+                                            "الإيجار_السنوي_الكلي": "مساحة_الأرض_الفعالة_للبناء * الإيجار_السنوي_المتوقع_لكل_متر_مربع = ( قم بحساب العملية )",
                                             "نتيجة_الإيجار_السنوي_الكلي": "2160000 ريال سعودي",
                                             "النفقات_التشغيلية": "20% من الإيجار_السنوي_الكلي = 0.20 * 2160000",
                                             "نتيجة_النفقات_التشغيلية": "432000 ريال سعودي",
@@ -2192,8 +2193,8 @@ def ai_investment_en():
     print(user_input)
 
     try:
-        image_prompt = investment_generator(user_input, investment_arabic_context_residential_building)
-        return image_prompt, 200
+        response = investment_generator(user_input, investment_arabic_context_residential_building)
+        return response, 200
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)}), 500
@@ -2214,8 +2215,8 @@ def ai_investment_ar():
     print(user_input)
 
     try:
-        image_prompt = investment_generator(user_input, investment_arabic_context_residential_building)
-        return image_prompt, 200
+        response = investment_generator(user_input, investment_arabic_context_residential_building)
+        return response, 200
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)}), 500
@@ -2236,8 +2237,8 @@ def ai_investment_ar_residential_building():
     print(user_input)
 
     try:
-        image_prompt = investment_generator(user_input, investment_arabic_context_residential_building)
-        return image_prompt, 200
+        response = investment_generator(user_input, investment_arabic_context_residential_building)
+        return response, 200
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)}), 500
@@ -2258,8 +2259,8 @@ def ai_investment_ar_residential_commercial_building():
     print(user_input)
 
     try:
-        image_prompt = investment_generator(user_input, investment_arabic_context_residential_commercial_building)
-        return image_prompt, 200
+        response = investment_generator(user_input, investment_arabic_context_residential_commercial_building)
+        return response, 200
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)}), 500
@@ -2280,8 +2281,8 @@ def ai_investment_ar_commercial_building():
     print(user_input)
 
     try:
-        image_prompt = investment_generator(user_input, investment_arabic_context_commercial_building)
-        return image_prompt, 200
+        response = investment_generator(user_input, investment_arabic_context_commercial_building)
+        return response, 200
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)}), 500
@@ -2302,8 +2303,8 @@ def ai_investment_ar_shopping_mall():
     print(user_input)
 
     try:
-        image_prompt = investment_generator(user_input, investment_arabic_context_shopping_mall)
-        return image_prompt, 200
+        response = investment_generator(user_input, investment_arabic_context_shopping_mall)
+        return response, 200
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)}), 500
@@ -2324,8 +2325,8 @@ def ai_investment_ar_villas():
     print(user_input)
 
     try:
-        image_prompt = investment_generator(user_input, investment_arabic_context_villas)
-        return image_prompt, 200
+        response = investment_generator(user_input, investment_arabic_context_villas)
+        return response, 200
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)}), 500
@@ -2346,8 +2347,8 @@ def ai_investment_ar_villa():
     print(user_input)
 
     try:
-        image_prompt = investment_generator(user_input, investment_arabic_context_villa)
-        return image_prompt, 200
+        response = investment_generator(user_input, investment_arabic_context_villa)
+        return response, 200
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)}), 500
@@ -2368,8 +2369,8 @@ def ai_investment_ar_residential_compound():
     print(user_input)
 
     try:
-        image_prompt = investment_generator(user_input, investment_arabic_context_residential_compound)
-        return image_prompt, 200
+        response = investment_generator(user_input, investment_arabic_context_residential_compound)
+        return response, 200
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)}), 500
@@ -2390,8 +2391,8 @@ def ai_investment_ar_administrative_building():
     print(user_input)
 
     try:
-        image_prompt = investment_generator(user_input, investment_arabic_context_administrative_building)
-        return image_prompt, 200
+        response = investment_generator(user_input, investment_arabic_context_administrative_building)
+        return response, 200
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)}), 500
@@ -2412,8 +2413,30 @@ def ai_investment_ar_hotel():
     print(user_input)
 
     try:
-        image_prompt = investment_generator(user_input, investment_arabic_context_hotel)
-        return image_prompt, 200
+        response = investment_generator(user_input, investment_arabic_context_hotel)
+        return response, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/ar/investment-selector', methods=['POST'])
+def ai_investment_ar_selector():
+    # Check if the request contains JSON data
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    # Check if 'input' key exists in the JSON data
+    if 'input' not in data:
+        return jsonify({"error": "Missing 'input' field"}), 400
+
+    user_input = data['input']
+    print(user_input)
+
+    try:
+        response = investment_selector(user_input)
+        return response, 200
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)}), 500

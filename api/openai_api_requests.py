@@ -146,6 +146,68 @@ def investment_editor(user_input, context):
 
     return full_response, parsed_ai_response, context
 
+def investment_selector(user_input):
+    context = []
+    context.clear()
+
+    system = {
+        "role":"system",
+        "content":"""
+                    أنت أداة استكشاف نوع العقار الذي يريده العميل.
+                    العميل سوف يرسل لك برومبت مثل هذه:
+                    كومباوند عمارات سكنية في حي الياسمين في الرياض.
+                    عليك أن تفهم نوع العقار الذي يريده العميل و ردك يجب أن يكون بصيغة JSON كالتالي:
+                    {
+                        "مبنى_سكني":"False",
+                        "مبنى_تجاري":"False",
+                        "مبنى_تجاري_سكني":"False",
+                        "مول_تجاري":"False",
+                        "كومباوند_فلل":"False",
+                        "فيلا":"False",
+                        "كومباوند_سكني":"True",
+                        "مبنى_إداري":"False",
+                        "فندق":"False"
+                    }
+                    
+                    النوع الصحيح للعقار يجب أن يحمل قيمة True و الباقي يجب أن يحمل قيمة False
+                    
+                  """
+    }
+    context.append(system)
+
+    # Append the user input to the context
+    prompt = {
+        "role": "user",
+        "content": user_input,
+        "instruction": "Respond in JSON format with the following fields: Short, Medium, Long."
+    }
+    context.append(prompt)
+    full_response = ''
+    parsed_ai_response = ''
+    # Call the API without streaming
+    try:
+        chat_completion = client.chat.completions.create(
+            messages=context,
+            model="gpt-4o-mini",
+            temperature=0.3,
+            response_format={"type": "json_object"},
+            max_tokens=16384
+        )
+
+        # Fetching the response assuming it is structured as instructed
+        full_response = chat_completion.choices[0].message.content
+        print("Raw AI response:", full_response)
+
+        # Attempt to parse the response to ensure it is valid JSON
+        parsed_ai_response = json.loads(full_response)
+        print("Parsed AI response:", parsed_ai_response)
+
+    except json.JSONDecodeError as e:
+        print(f"Failed to decode JSON: {str(e)}")
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+
+    return full_response
 
 def case_study_ai(user_input, context):
     # Append the user input to the context
