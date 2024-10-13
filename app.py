@@ -17,6 +17,7 @@ import re
 
 from langdetect import detect
 
+from api.ideogram_api_requests import generate_image_from_ideogram
 from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
     image_analyzer, investment_generator, investment_image_creator, pdf_extractor, short_content_generator, investment_editor, \
     investment_selector
@@ -2043,6 +2044,19 @@ def investment_image_generator():
         return jsonify({"error": image_url}), 500
     else:
         return jsonify({"image_url": image_url}), 200
+
+@app.route('/image-model-2', methods=['POST'])
+def generate_image():
+    data = request.get_json()
+    prompt = data.get('prompt')
+
+    # Call the separate function
+    result = generate_image_from_ideogram(prompt)
+
+    if result:
+        return jsonify({"data": result}), 200
+    else:
+        return jsonify({"error": "Error generating image"}), 500
 
 
 @app.route('/en/prompt-generator', methods=['POST'])
