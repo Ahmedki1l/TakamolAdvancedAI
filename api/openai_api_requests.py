@@ -329,11 +329,6 @@ def encode_image(image_path):
         return base64.b64encode(image_file.read()).decode('utf-8')
 
 
-def encode_image(image_path):
-    with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode('utf-8')
-
-
 image_location = "C:/Users/LapTop/Desktop/Residential-building.webp"
 
 
@@ -460,3 +455,43 @@ def investment_generator(user_input, sent_context):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return jsonify({"error": str(e)})
+
+
+
+
+# Unreal Engine APIs
+
+def Unreal_Engine_Chat(user_input, context):
+    # Append the user input to the context
+    prompt = {
+        "role": "user",
+        "content": user_input,
+        "instruction": "Respond in JSON format with the following field: Text"
+    }
+    context.append(prompt)
+    full_response = ''
+    parsed_ai_response = ''
+    # Call the API without streaming
+    try:
+        chat_completion = client.chat.completions.create(
+            messages=context,
+            model="gpt-4o-mini",
+            temperature=0.3,
+            response_format={"type": "json_object"},
+            max_tokens=16384
+        )
+
+        # Fetching the response assuming it is structured as instructed
+        full_response = chat_completion.choices[0].message.content
+        print("Raw AI response:", full_response)
+
+        # Attempt to parse the response to ensure it is valid JSON
+        parsed_ai_response = json.loads(full_response)
+        print("Parsed AI response:", parsed_ai_response)
+
+    except json.JSONDecodeError as e:
+        print(f"Failed to decode JSON: {str(e)}")
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+
+    return full_response, parsed_ai_response, context
