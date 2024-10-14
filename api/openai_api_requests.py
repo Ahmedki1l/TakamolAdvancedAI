@@ -332,19 +332,26 @@ def encode_image(image_path):
 image_location = "C:/Users/LapTop/Desktop/Residential-building.webp"
 
 
-def image_analyzer(image_path, sent_context):
+def image_analyzer(images, sent_context):
     try:
-        # base64_image = encode_image(image_path)
         context = [{"role": "system", "content": sent_context},
-                   {"role": "user", "content": [
-                       {
-                           'type': 'image_url',
-                           'image_url': {
-                               'url': image_path
-                           }
-                       }
-                   ]
-                    }]
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "What are in these images? Is there any difference between them?",
+                    },
+                    *[
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": image_url}
+                        } for image_url in images
+                    ]
+                ]
+            }
+        ]
+
         chat_completion = client.chat.completions.create(
             messages=context,
             model="gpt-4o-mini",

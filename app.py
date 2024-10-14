@@ -2181,8 +2181,8 @@ def image_analysis_ar():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/en/investment', methods=['POST'])
-def ai_investment_en():
+@app.route('/investment/image-analyzer', methods=['POST'])
+def investment_image_analysis():
     # Check if the request contains JSON data
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
@@ -2195,6 +2195,57 @@ def ai_investment_en():
 
     user_input = data['input']
     print(user_input)
+
+    try:
+        image_prompt = image_analyzer(user_input, image_analyzer_arabic_context)
+        return image_prompt, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/en/investment', methods=['POST'])
+def ai_investment_en():
+    # Check if the request contains JSON data
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    # Check if 'input' key exists in the JSON data
+    if 'input' not in data or 'price' not in data or 'images' not in data:
+        return jsonify({"error": "Missing 'input' or 'price' or 'images' field"}), 400
+
+    user_input = data['input']
+    price = data['price']
+    images = data['images']
+
+    image_analyzer_context = """
+                            you are a image analyzer, your job is to analyze the image and let us know whether it is on a main street or not.
+                            your response should be in JSON format and look like this: 
+                            {
+                                "flag": "True (if it is for a main street) or False (otherwise)
+                            }
+                            
+                            your response should be True or False only. 
+                            You should analyze all the images carefully and understand them correctly and then respond.
+    
+                            """
+
+    analyzer_response = image_analyzer(images, image_analyzer_context)
+
+    # Parse analyzer_response as JSON (if it is not already a dictionary)
+    try:
+        analyzer_response = json.loads(analyzer_response)  # Convert string response to JSON if necessary
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Failed to parse analyzer response: {str(e)}"}), 500
+
+    # Check if 'flag' is present and True
+    if analyzer_response['flag'] == 'True':
+        # Convert price to float, multiply by 1.5, and convert back to string
+        price = str(float(price) * 1.5)
+
+    user_input += f", and the land price for sqm is {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_residential_building)
@@ -2212,11 +2263,39 @@ def ai_investment_ar():
     data = request.get_json()
 
     # Check if 'input' key exists in the JSON data
-    if 'input' not in data:
-        return jsonify({"error": "Missing 'input' field"}), 400
+    if 'input' not in data or 'price' not in data or 'images' not in data:
+        return jsonify({"error": "Missing 'input' or 'price' or 'images' field"}), 400
 
     user_input = data['input']
-    print(user_input)
+    price = data['price']
+    images = data['images']
+
+    image_analyzer_context = """
+                                you are a image analyzer, your job is to analyze the image and let us know whether it is on a main street or not.
+                                your response should be in JSON format and look like this: 
+                                {
+                                    "flag": "True (if it is for a main street) or False (otherwise)
+                                }
+
+                                your response should be True or False only. 
+                                You should analyze all the images carefully and understand them correctly and then respond.
+
+                                """
+
+    analyzer_response = image_analyzer(images, image_analyzer_context)
+
+    # Parse analyzer_response as JSON (if it is not already a dictionary)
+    try:
+        analyzer_response = json.loads(analyzer_response)  # Convert string response to JSON if necessary
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Failed to parse analyzer response: {str(e)}"}), 500
+
+    # Check if 'flag' is present and True
+    if analyzer_response['flag'] == 'True':
+        # Convert price to float, multiply by 1.5, and convert back to string
+        price = str(float(price) * 1.5)
+
+    user_input += f", وسعر متر الأرض يساوي: {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_residential_building)
@@ -2234,11 +2313,39 @@ def ai_investment_ar_residential_building():
     data = request.get_json()
 
     # Check if 'input' key exists in the JSON data
-    if 'input' not in data:
-        return jsonify({"error": "Missing 'input' field"}), 400
+    if 'input' not in data or 'price' not in data or 'images' not in data:
+        return jsonify({"error": "Missing 'input' or 'price' or 'images' field"}), 400
 
     user_input = data['input']
-    print(user_input)
+    price = data['price']
+    images = data['images']
+
+    image_analyzer_context = """
+                                    you are a image analyzer, your job is to analyze the image and let us know whether it is on a main street or not.
+                                    your response should be in JSON format and look like this: 
+                                    {
+                                        "flag": "True (if it is for a main street) or False (otherwise)
+                                    }
+
+                                    your response should be True or False only. 
+                                    You should analyze all the images carefully and understand them correctly and then respond.
+
+                                    """
+
+    analyzer_response = image_analyzer(images, image_analyzer_context)
+
+    # Parse analyzer_response as JSON (if it is not already a dictionary)
+    try:
+        analyzer_response = json.loads(analyzer_response)  # Convert string response to JSON if necessary
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Failed to parse analyzer response: {str(e)}"}), 500
+
+    # Check if 'flag' is present and True
+    if analyzer_response['flag'] == 'True':
+        # Convert price to float, multiply by 1.5, and convert back to string
+        price = str(float(price) * 1.5)
+
+    user_input += f", وسعر متر الأرض يساوي: {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_residential_building)
@@ -2256,11 +2363,39 @@ def ai_investment_ar_residential_commercial_building():
     data = request.get_json()
 
     # Check if 'input' key exists in the JSON data
-    if 'input' not in data:
-        return jsonify({"error": "Missing 'input' field"}), 400
+    if 'input' not in data or 'price' not in data or 'images' not in data:
+        return jsonify({"error": "Missing 'input' or 'price' or 'images' field"}), 400
 
     user_input = data['input']
-    print(user_input)
+    price = data['price']
+    images = data['images']
+
+    image_analyzer_context = """
+                                    you are a image analyzer, your job is to analyze the image and let us know whether it is on a main street or not.
+                                    your response should be in JSON format and look like this: 
+                                    {
+                                        "flag": "True (if it is for a main street) or False (otherwise)
+                                    }
+
+                                    your response should be True or False only. 
+                                    You should analyze all the images carefully and understand them correctly and then respond.
+
+                                    """
+
+    analyzer_response = image_analyzer(images, image_analyzer_context)
+
+    # Parse analyzer_response as JSON (if it is not already a dictionary)
+    try:
+        analyzer_response = json.loads(analyzer_response)  # Convert string response to JSON if necessary
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Failed to parse analyzer response: {str(e)}"}), 500
+
+    # Check if 'flag' is present and True
+    if analyzer_response['flag'] == 'True':
+        # Convert price to float, multiply by 1.5, and convert back to string
+        price = str(float(price) * 1.5)
+
+    user_input += f", وسعر متر الأرض يساوي: {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_residential_commercial_building)
@@ -2278,11 +2413,39 @@ def ai_investment_ar_commercial_building():
     data = request.get_json()
 
     # Check if 'input' key exists in the JSON data
-    if 'input' not in data:
-        return jsonify({"error": "Missing 'input' field"}), 400
+    if 'input' not in data or 'price' not in data or 'images' not in data:
+        return jsonify({"error": "Missing 'input' or 'price' or 'images' field"}), 400
 
     user_input = data['input']
-    print(user_input)
+    price = data['price']
+    images = data['images']
+
+    image_analyzer_context = """
+                                    you are a image analyzer, your job is to analyze the image and let us know whether it is on a main street or not.
+                                    your response should be in JSON format and look like this: 
+                                    {
+                                        "flag": "True (if it is for a main street) or False (otherwise)
+                                    }
+
+                                    your response should be True or False only. 
+                                    You should analyze all the images carefully and understand them correctly and then respond.
+
+                                    """
+
+    analyzer_response = image_analyzer(images, image_analyzer_context)
+
+    # Parse analyzer_response as JSON (if it is not already a dictionary)
+    try:
+        analyzer_response = json.loads(analyzer_response)  # Convert string response to JSON if necessary
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Failed to parse analyzer response: {str(e)}"}), 500
+
+    # Check if 'flag' is present and True
+    if analyzer_response['flag'] == 'True':
+        # Convert price to float, multiply by 1.5, and convert back to string
+        price = str(float(price) * 1.5)
+
+    user_input += f", وسعر متر الأرض يساوي: {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_commercial_building)
@@ -2300,11 +2463,39 @@ def ai_investment_ar_shopping_mall():
     data = request.get_json()
 
     # Check if 'input' key exists in the JSON data
-    if 'input' not in data:
-        return jsonify({"error": "Missing 'input' field"}), 400
+    if 'input' not in data or 'price' not in data or 'images' not in data:
+        return jsonify({"error": "Missing 'input' or 'price' or 'images' field"}), 400
 
     user_input = data['input']
-    print(user_input)
+    price = data['price']
+    images = data['images']
+
+    image_analyzer_context = """
+                                    you are a image analyzer, your job is to analyze the image and let us know whether it is on a main street or not.
+                                    your response should be in JSON format and look like this: 
+                                    {
+                                        "flag": "True (if it is for a main street) or False (otherwise)
+                                    }
+
+                                    your response should be True or False only. 
+                                    You should analyze all the images carefully and understand them correctly and then respond.
+
+                                    """
+
+    analyzer_response = image_analyzer(images, image_analyzer_context)
+
+    # Parse analyzer_response as JSON (if it is not already a dictionary)
+    try:
+        analyzer_response = json.loads(analyzer_response)  # Convert string response to JSON if necessary
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Failed to parse analyzer response: {str(e)}"}), 500
+
+    # Check if 'flag' is present and True
+    if analyzer_response['flag'] == 'True':
+        # Convert price to float, multiply by 1.5, and convert back to string
+        price = str(float(price) * 1.5)
+
+    user_input += f", وسعر متر الأرض يساوي: {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_shopping_mall)
@@ -2322,11 +2513,39 @@ def ai_investment_ar_villas():
     data = request.get_json()
 
     # Check if 'input' key exists in the JSON data
-    if 'input' not in data:
-        return jsonify({"error": "Missing 'input' field"}), 400
+    if 'input' not in data or 'price' not in data or 'images' not in data:
+        return jsonify({"error": "Missing 'input' or 'price' or 'images' field"}), 400
 
     user_input = data['input']
-    print(user_input)
+    price = data['price']
+    images = data['images']
+
+    image_analyzer_context = """
+                                    you are a image analyzer, your job is to analyze the image and let us know whether it is on a main street or not.
+                                    your response should be in JSON format and look like this: 
+                                    {
+                                        "flag": "True (if it is for a main street) or False (otherwise)
+                                    }
+
+                                    your response should be True or False only. 
+                                    You should analyze all the images carefully and understand them correctly and then respond.
+
+                                    """
+
+    analyzer_response = image_analyzer(images, image_analyzer_context)
+
+    # Parse analyzer_response as JSON (if it is not already a dictionary)
+    try:
+        analyzer_response = json.loads(analyzer_response)  # Convert string response to JSON if necessary
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Failed to parse analyzer response: {str(e)}"}), 500
+
+    # Check if 'flag' is present and True
+    if analyzer_response['flag'] == 'True':
+        # Convert price to float, multiply by 1.5, and convert back to string
+        price = str(float(price) * 1.5)
+
+    user_input += f", وسعر متر الأرض يساوي: {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_villas)
@@ -2344,11 +2563,39 @@ def ai_investment_ar_villa():
     data = request.get_json()
 
     # Check if 'input' key exists in the JSON data
-    if 'input' not in data:
-        return jsonify({"error": "Missing 'input' field"}), 400
+    if 'input' not in data or 'price' not in data or 'images' not in data:
+        return jsonify({"error": "Missing 'input' or 'price' or 'images' field"}), 400
 
     user_input = data['input']
-    print(user_input)
+    price = data['price']
+    images = data['images']
+
+    image_analyzer_context = """
+                                    you are a image analyzer, your job is to analyze the image and let us know whether it is on a main street or not.
+                                    your response should be in JSON format and look like this: 
+                                    {
+                                        "flag": "True (if it is for a main street) or False (otherwise)
+                                    }
+
+                                    your response should be True or False only. 
+                                    You should analyze all the images carefully and understand them correctly and then respond.
+
+                                    """
+
+    analyzer_response = image_analyzer(images, image_analyzer_context)
+
+    # Parse analyzer_response as JSON (if it is not already a dictionary)
+    try:
+        analyzer_response = json.loads(analyzer_response)  # Convert string response to JSON if necessary
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Failed to parse analyzer response: {str(e)}"}), 500
+
+    # Check if 'flag' is present and True
+    if analyzer_response['flag'] == 'True':
+        # Convert price to float, multiply by 1.5, and convert back to string
+        price = str(float(price) * 1.5)
+
+    user_input += f", وسعر متر الأرض يساوي: {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_villa)
@@ -2366,11 +2613,39 @@ def ai_investment_ar_residential_compound():
     data = request.get_json()
 
     # Check if 'input' key exists in the JSON data
-    if 'input' not in data:
-        return jsonify({"error": "Missing 'input' field"}), 400
+    if 'input' not in data or 'price' not in data or 'images' not in data:
+        return jsonify({"error": "Missing 'input' or 'price' or 'images' field"}), 400
 
     user_input = data['input']
-    print(user_input)
+    price = data['price']
+    images = data['images']
+
+    image_analyzer_context = """
+                                    you are a image analyzer, your job is to analyze the image and let us know whether it is on a main street or not.
+                                    your response should be in JSON format and look like this: 
+                                    {
+                                        "flag": "True (if it is for a main street) or False (otherwise)
+                                    }
+
+                                    your response should be True or False only. 
+                                    You should analyze all the images carefully and understand them correctly and then respond.
+
+                                    """
+
+    analyzer_response = image_analyzer(images, image_analyzer_context)
+
+    # Parse analyzer_response as JSON (if it is not already a dictionary)
+    try:
+        analyzer_response = json.loads(analyzer_response)  # Convert string response to JSON if necessary
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Failed to parse analyzer response: {str(e)}"}), 500
+
+    # Check if 'flag' is present and True
+    if analyzer_response['flag'] == 'True':
+        # Convert price to float, multiply by 1.5, and convert back to string
+        price = str(float(price) * 1.5)
+
+    user_input += f", وسعر متر الأرض يساوي: {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_residential_compound)
@@ -2388,11 +2663,39 @@ def ai_investment_ar_administrative_building():
     data = request.get_json()
 
     # Check if 'input' key exists in the JSON data
-    if 'input' not in data:
-        return jsonify({"error": "Missing 'input' field"}), 400
+    if 'input' not in data or 'price' not in data or 'images' not in data:
+        return jsonify({"error": "Missing 'input' or 'price' or 'images' field"}), 400
 
     user_input = data['input']
-    print(user_input)
+    price = data['price']
+    images = data['images']
+
+    image_analyzer_context = """
+                                    you are a image analyzer, your job is to analyze the image and let us know whether it is on a main street or not.
+                                    your response should be in JSON format and look like this: 
+                                    {
+                                        "flag": "True (if it is for a main street) or False (otherwise)
+                                    }
+
+                                    your response should be True or False only. 
+                                    You should analyze all the images carefully and understand them correctly and then respond.
+
+                                    """
+
+    analyzer_response = image_analyzer(images, image_analyzer_context)
+
+    # Parse analyzer_response as JSON (if it is not already a dictionary)
+    try:
+        analyzer_response = json.loads(analyzer_response)  # Convert string response to JSON if necessary
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Failed to parse analyzer response: {str(e)}"}), 500
+
+    # Check if 'flag' is present and True
+    if analyzer_response['flag'] == 'True':
+        # Convert price to float, multiply by 1.5, and convert back to string
+        price = str(float(price) * 1.5)
+
+    user_input += f", وسعر متر الأرض يساوي: {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_administrative_building)
@@ -2410,11 +2713,39 @@ def ai_investment_ar_hotel():
     data = request.get_json()
 
     # Check if 'input' key exists in the JSON data
-    if 'input' not in data:
-        return jsonify({"error": "Missing 'input' field"}), 400
+    if 'input' not in data or 'price' not in data or 'images' not in data:
+        return jsonify({"error": "Missing 'input' or 'price' or 'images' field"}), 400
 
     user_input = data['input']
-    print(user_input)
+    price = data['price']
+    images = data['images']
+
+    image_analyzer_context = """
+                                    you are a image analyzer, your job is to analyze the image and let us know whether it is on a main street or not.
+                                    your response should be in JSON format and look like this: 
+                                    {
+                                        "flag": "True (if it is for a main street) or False (otherwise)
+                                    }
+
+                                    your response should be True or False only. 
+                                    You should analyze all the images carefully and understand them correctly and then respond.
+
+                                    """
+
+    analyzer_response = image_analyzer(images, image_analyzer_context)
+
+    # Parse analyzer_response as JSON (if it is not already a dictionary)
+    try:
+        analyzer_response = json.loads(analyzer_response)  # Convert string response to JSON if necessary
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Failed to parse analyzer response: {str(e)}"}), 500
+
+    # Check if 'flag' is present and True
+    if analyzer_response['flag'] == 'True':
+        # Convert price to float, multiply by 1.5, and convert back to string
+        price = str(float(price) * 1.5)
+
+    user_input += f", وسعر متر الأرض يساوي: {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_hotel)
