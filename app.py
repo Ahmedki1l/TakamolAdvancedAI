@@ -2245,7 +2245,8 @@ def ai_investment_en():
         # Convert price to float, multiply by 1.5, and convert back to string
         price = str(float(price) * 1.5)
 
-    user_input += f", and the land price for sqm is {price}."
+    if float(price) > 0:
+        user_input += f", and the land price for sqm is {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_residential_building)
@@ -2295,7 +2296,8 @@ def ai_investment_ar():
         # Convert price to float, multiply by 1.5, and convert back to string
         price = str(float(price) * 1.5)
 
-    user_input += f", وسعر متر الأرض يساوي: {price}."
+    if float(price) > 0:
+        user_input += f", and the land price for sqm is {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_residential_building)
@@ -2345,7 +2347,8 @@ def ai_investment_ar_residential_building():
         # Convert price to float, multiply by 1.5, and convert back to string
         price = str(float(price) * 1.5)
 
-    user_input += f", وسعر متر الأرض يساوي: {price}."
+    if float(price) > 0:
+        user_input += f", and the land price for sqm is {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_residential_building)
@@ -2395,7 +2398,8 @@ def ai_investment_ar_residential_commercial_building():
         # Convert price to float, multiply by 1.5, and convert back to string
         price = str(float(price) * 1.5)
 
-    user_input += f", وسعر متر الأرض يساوي: {price}."
+    if float(price) > 0:
+        user_input += f", and the land price for sqm is {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_residential_commercial_building)
@@ -2445,7 +2449,8 @@ def ai_investment_ar_commercial_building():
         # Convert price to float, multiply by 1.5, and convert back to string
         price = str(float(price) * 1.5)
 
-    user_input += f", وسعر متر الأرض يساوي: {price}."
+    if float(price) > 0:
+        user_input += f", and the land price for sqm is {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_commercial_building)
@@ -2495,7 +2500,8 @@ def ai_investment_ar_shopping_mall():
         # Convert price to float, multiply by 1.5, and convert back to string
         price = str(float(price) * 1.5)
 
-    user_input += f", وسعر متر الأرض يساوي: {price}."
+    if float(price) > 0:
+        user_input += f", and the land price for sqm is {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_shopping_mall)
@@ -2545,7 +2551,8 @@ def ai_investment_ar_villas():
         # Convert price to float, multiply by 1.5, and convert back to string
         price = str(float(price) * 1.5)
 
-    user_input += f", وسعر متر الأرض يساوي: {price}."
+    if float(price) > 0:
+        user_input += f", and the land price for sqm is {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_villas)
@@ -2595,7 +2602,8 @@ def ai_investment_ar_villa():
         # Convert price to float, multiply by 1.5, and convert back to string
         price = str(float(price) * 1.5)
 
-    user_input += f", وسعر متر الأرض يساوي: {price}."
+    if float(price) > 0:
+        user_input += f", and the land price for sqm is {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_villa)
@@ -2645,7 +2653,8 @@ def ai_investment_ar_residential_compound():
         # Convert price to float, multiply by 1.5, and convert back to string
         price = str(float(price) * 1.5)
 
-    user_input += f", وسعر متر الأرض يساوي: {price}."
+    if float(price) > 0:
+        user_input += f", and the land price for sqm is {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_residential_compound)
@@ -2695,7 +2704,8 @@ def ai_investment_ar_administrative_building():
         # Convert price to float, multiply by 1.5, and convert back to string
         price = str(float(price) * 1.5)
 
-    user_input += f", وسعر متر الأرض يساوي: {price}."
+    if float(price) > 0:
+        user_input += f", and the land price for sqm is {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_administrative_building)
@@ -2745,7 +2755,8 @@ def ai_investment_ar_hotel():
         # Convert price to float, multiply by 1.5, and convert back to string
         price = str(float(price) * 1.5)
 
-    user_input += f", وسعر متر الأرض يساوي: {price}."
+    if float(price) > 0:
+        user_input += f", and the land price for sqm is {price}."
 
     try:
         response = investment_generator(user_input, investment_arabic_context_hotel)
