@@ -6,7 +6,7 @@ def generate_image_from_ideogram(prompt):
     url = "https://api.ideogram.ai/generate"
 
     headers = {
-        "Authorization": f"Bearer {os.environ.get('API_KEY')}",
+        "Api-Key": os.getenv('IDEOGRAM_API_KEY'),
         "Content-Type": "application/json"
     }
 
