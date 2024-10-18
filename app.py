@@ -17,6 +17,7 @@ import re
 
 from langdetect import detect
 
+from api.Automation_Assistant import generate_real_estate_campaign
 from api.ideogram_api_requests import generate_image_from_ideogram
 from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
     image_analyzer, investment_generator, investment_image_creator, pdf_extractor, short_content_generator, \
@@ -1923,6 +1924,15 @@ def case_study_chat_ar():
     # Call the chat_with_ai function from the imported module
     try:
         response, parsed_ai_response, new_context = case_study_ai(user_input, context)
+
+        try:
+            target_audience_response = generate_real_estate_campaign(user_input)
+
+            response['Target_Audience'] = target_audience_response
+        except Exception as e:
+            print(e)
+            return jsonify({"error": str(e)}), 500
+        
         print("new context: ")
         return response, 200
     except Exception as e:
