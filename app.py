@@ -1928,11 +1928,22 @@ def case_study_chat_ar():
         try:
             target_audience_response = generate_real_estate_campaign(user_input)
 
-            response['Target_Audience'] = target_audience_response
+            # Check if response['Target_Audience'] exists and is a string
+            if isinstance(response.get('Target_Audience'), str):
+                # Parse the string into a dictionary
+                response['Target_Audience'] = json.loads(response['Target_Audience'])
+
+            # Now, response['Target_Audience'] is a dictionary, so we can update it
+            if isinstance(response['Target_Audience'], dict):
+                response['Target_Audience'].update(target_audience_response)
+            else:
+                # If it wasn't a dictionary, initialize it as one and add target audience data
+                response['Target_Audience'] = target_audience_response
+                
         except Exception as e:
             print(e)
             return jsonify({"error": str(e)}), 500
-        
+
         print("new context: ")
         return response, 200
     except Exception as e:
