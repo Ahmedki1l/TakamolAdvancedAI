@@ -232,14 +232,14 @@ case_study_training_context_arabic = """
                                 يجب أن تكون إجابتك بصيغة json ويجب أن تبدو هكذا: 
                                 {
                                     "Case_Study": "(أعطني دراسة مشروع كاملة)",
-                                    "Target_Audience": {
+                                    "Target_Audience": [{
                                                             "العائلات ذات الدخل المتوسط إلى العالي": "عائلات تبحث عن مساحات سكنية تتراوح بين 200-350 متر مربع في المملكة العربية السعودية",
                                                             "الأزواج الشباب": "أزواج على وشك الزواج أو متزوجون حديثا يبحثون عن شقق سكنية عصرية تتراوح مساحاتها بين 100-150 متر مربع في المملكة العربية السعودية",
                                                             "رجال الأعمال والمديرين التنفيذيين": "أفراد يبحثون عن فيلات أو شقق سكنية فاخرة في منطقة راقية بالمملكة العربية السعودية",
                                                             "المستثمرين العقاريين": "أفراد وشركات تبحث عن استثمارات عقارية عالية الجودة في المملكة العربية السعودية",
                                                             "المغتربين والأجانب المقيمين": "أفراد يرغبون في العيش في أحياء راقية مع سهولة الوصول إلى المرافق والخدمات في المملكة العربية السعودية",
                                                             ...
-                                                        },
+                                                        },],
                                     "Pros": {
                                         "1": "(ردك هنا)",
                                         "2": "(ردك هنا)",
@@ -1928,17 +1928,11 @@ def case_study_chat_ar():
         try:
             target_audience_response = generate_real_estate_campaign(user_input)
 
-            # Check if response['Target_Audience'] exists and is a string
-            if isinstance(response['Target_Audience'], str):
-                # Parse the string into a dictionary
-                response['Target_Audience'] = json.loads(response['Target_Audience'])
+            parsed_ai_response["Target_Audience"] = json.loads(target_audience_response)
 
-            # Now, response['Target_Audience'] is a dictionary, so we can update it
-            if isinstance(response['Target_Audience'], dict):
-                response['Target_Audience'].update(target_audience_response)
-            else:
-                # If it wasn't a dictionary, initialize it as one and add target audience data
-                response['Target_Audience'] = target_audience_response
+            response = json.dumps(parsed_ai_response)
+
+            print(response)
 
         except Exception as e:
             print(e)
