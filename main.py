@@ -1,32 +1,93 @@
-import json
+import requests
 
-# JSON string, note the double quotes
-json_string = """
-{ 
-    "Case Study": "The property in question is a medium-sized 150m real estate located in the upscale 5th Settlement district of New Cairo, Egypt. It has been recently renovated and sits in proximity to several commercial and leisure establishments in the region. There's also easy access to public transportation. The recent promotional campaign saw the utilization of both traditional and digital marketing strategies, including the use of social media platforms like Facebook and Twitter to increase the property's visibility to potential buyers or tenants. High-quality images and concise but compelling listing descriptions proved effective in generating inquiries and property viewings.", 
-    "Target Audience": "The target audience includes affluent professionals and families within the ages of 30-55 who value convenience and upscale living. Also, real estate investors looking for properties with good ROI potential in high-end markets are also targeted.", 
-    "Pros": "The property's location in a high-end neighborhood adds to its appeal and value. Its proximity to commercial and leisure establishments also makes it an attractive choice for potential homeowners or renters who value convenience. The promotional campaign's success in generating interest and inquiries demonstrates the effectiveness of the marketing tactics employed.", 
-    "Cons": "A potential downside would be the property's price, which may be on the higher end, given its location and size. This may discourage price-sensitive buyers or renters. The reliance on digital marketing might also overlook potential buyers not active on social media or those who prefer traditional methods of property search.", 
-    "Facebook Hashtags": "#5thSettlementProperty #LuxuryLiving #RealEstateEgypt #PropertyInvestmentEgypt", 
-    "Twitter Hashtags": "#5thSettlementHomes #EgyptRealEstate #PropertyFindEgypt"
-}
-"""
+# Example usage
+access_token = "AAAAAAAAAAAAAAAAAAAAAL8avAEAAAAAX30xVdTIF5EpsAJsjhEtDOlpfQc%3D6zWGZZTise4yihLkVPK5lgsXnWssQJLREAJjb7Q6zl80K4n0Be"
 
-# Parse the JSON string into a Python dictionary
-data = json.loads(json_string)
+def get_user_id(access_token, username):
+    url = f"https://api.twitter.com/2/users/by/username/{username}"
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        user_data = response.json()
+        return user_data['data']['id']  # The 'id' field contains the user_id
+    else:
+        print("Failed to fetch user ID:", response.text)
+        return None
 
-# Accessing individual items
-case_study = data['Case Study']
-target_audience = data['Target Audience']
-pros = data['Pros']
-cons = data['Cons']
-facebook_hashtags = data['Facebook Hashtags']
-twitter_hashtags = data['Twitter Hashtags']
+# Example usage
+username = "KeepGoing743679"
+user_id = get_user_id(access_token, username)
 
-# Print some data
-print("Case Study:", case_study)
-print("Target Audience:", target_audience)
-print("Pros:", pros)
-print("Cons:", cons)
-print("Facebook Hashtags:", facebook_hashtags)
-print("Twitter Hashtags:", twitter_hashtags)
+
+def fetch_tweets(access_token, user_id, max_results=5):
+    url = f"https://api.twitter.com/2/users/{user_id}/tweets"  # Correct endpoint to fetch user's tweets
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+    }
+    params = {
+        'max_results': max_results,
+    }
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code == 200:
+        print(response.json().get('data', []))
+        return response.json().get('data', [])
+    else:
+        print("Failed to fetch tweets:", response.text)  # Logging the error for debugging
+        return None
+
+# Fetch replies (comments) for a specific tweet
+def fetch_replies(access_token, tweet_id):
+    url = "https://api.twitter.com/2/tweets/search/recent"
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+    }
+    params = {
+        'query': f'conversation_id:{tweet_id}',  # Find tweets in the same conversation
+        'tweet.fields': 'author_id,conversation_id',
+    }
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code == 200:
+        return response.json().get('data', [])
+    else:
+        print(f"Failed to fetch replies for tweet {tweet_id}:", response.text)
+        return None
+
+# Reply to a specific tweet
+def reply_to_comment(access_token, comment_id, reply_text):
+    url = "https://api.twitter.com/2/tweets"
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Content-Type': 'application/json',
+    }
+    data = {
+        'in_reply_to_tweet_id': comment_id,
+        'text': reply_text
+    }
+    response = requests.post(url, headers=headers, json=data)
+    if response.status_code == 201:
+        print(f"Replied to comment {comment_id}")
+    else:
+        print(f"Failed to reply to comment {comment_id}:", response.text)
+
+# Main function to fetch tweets and reply to comments
+def fetch_tweets_and_reply(access_token, user_id):
+    tweets = fetch_tweets(access_token, user_id)
+    if tweets:
+        for tweet in tweets:
+            tweet_id = tweet['id']
+            print(f"Fetching replies for tweet {tweet_id}...")
+            replies = fetch_replies(access_token, tweet_id)
+            if replies:
+                for reply in replies:
+                    comment_id = reply['id']
+                    print(f"Replying to comment {comment_id}")
+                    reply_text = "Thanks for your comment!"
+                    reply_to_comment(access_token, comment_id, reply_text)
+
+
+
+fetch_tweets_and_reply(access_token, user_id)
+
+

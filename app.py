@@ -8,7 +8,6 @@ from queue import Queue
 
 import requests
 from flask import Flask, jsonify, request, redirect, render_template, session, url_for
-from flask_session import Session
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 from redis import Redis
@@ -2980,6 +2979,56 @@ def fetch_tweets(access_token, user_id, max_results=5):
     else:
         print("Failed to fetch tweets:", response.text)  # Logging the error for debugging
         return None
+
+# Fetch replies (comments) for a specific tweet
+def fetch_replies(access_token, tweet_id):
+    url = "https://api.twitter.com/2/tweets/search/recent"
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+    }
+    params = {
+        'query': f'conversation_id:{tweet_id}',  # Find tweets in the same conversation
+        'tweet.fields': 'author_id,conversation_id',
+    }
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code == 200:
+        return response.json().get('data', [])
+    else:
+        print(f"Failed to fetch replies for tweet {tweet_id}:", response.text)
+        return None
+
+# Reply to a specific tweet
+def reply_to_comment(access_token, comment_id, reply_text):
+    url = "https://api.twitter.com/2/tweets"
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Content-Type': 'application/json',
+    }
+    data = {
+        'in_reply_to_tweet_id': comment_id,
+        'text': reply_text
+    }
+    response = requests.post(url, headers=headers, json=data)
+    if response.status_code == 201:
+        print(f"Replied to comment {comment_id}")
+    else:
+        print(f"Failed to reply to comment {comment_id}:", response.text)
+
+# Main function to fetch tweets and reply to comments
+def fetch_tweets_and_reply(access_token, user_id):
+    tweets = fetch_tweets(access_token, user_id)
+    if tweets:
+        for tweet in tweets:
+            tweet_id = tweet['id']
+            print(f"Fetching replies for tweet {tweet_id}...")
+            replies = fetch_replies(access_token, tweet_id)
+            if replies:
+                for reply in replies:
+                    comment_id = reply['id']
+                    print(f"Replying to comment {comment_id}")
+                    reply_text = "Thanks for your comment!"
+                    reply_to_comment(access_token, comment_id, reply_text)
+
 
 def delete_tweet(tweet_id, access_token):
     url = f"https://api.twitter.com/2/tweets/{tweet_id}"
