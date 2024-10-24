@@ -729,8 +729,8 @@ def ai_investment_ar_residential_commercial_building():
 
     # Check if 'flag' is present and True
     if analyzer_response['flag'] == 'True':
-        # Convert price to float, multiply by 1.5, and convert back to string
-        price = str(float(price) * 1.5)
+        # Convert price to float, multiply by 2, and convert back to string
+        price = str(float(price) * 2)
 
     if float(price) > 0:
         user_input += f", and the land price for sqm is {price}."
