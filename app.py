@@ -24,7 +24,7 @@ from api.Investment_Contexts import investment_arabic_context_residential_buildi
     investment_arabic_context_residential_commercial_building, investment_arabic_context_commercial_building, \
     investment_arabic_context_shopping_mall, investment_arabic_context_villas, investment_arabic_context_villa, \
     investment_arabic_context_residential_compound, investment_arabic_context_administrative_building, \
-    investment_arabic_context_hotel, investment_editor_context_ar
+    investment_arabic_context_hotel, investment_editor_context_ar, investment_arabic_Commercial_residential_tower, investment_arabic_Commercial_and_administrative_tower, investment_arabic_administrative_tower
 from api.ideogram_api_requests import generate_image_from_ideogram
 from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
     image_analyzer, investment_generator, investment_image_creator, pdf_extractor, short_content_generator, \
@@ -1124,7 +1124,10 @@ def ai_investment_ar_selector():
         "فيلا": investment_arabic_context_villa,
         "كومباوند_سكني": investment_arabic_context_residential_compound,
         "مبنى_إداري": investment_arabic_context_administrative_building,
-        "فندق": investment_arabic_context_hotel
+        "فندق": investment_arabic_context_hotel,
+        "برج_تجاري_سكني" : investment_arabic_Commercial_residential_tower,
+        "برج_تجاري_إداري" : investment_arabic_Commercial_and_administrative_tower,
+        "برج_إداري" : investment_arabic_administrative_tower
     }
 
     try:
@@ -1179,6 +1182,158 @@ def investment_editor_ar():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/ar/investment_Commercial_residential_tower', methods=['POST'])
+def ai_investment_Commercial_residential_tower():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    # Check if 'input' key exists in the JSON data
+    if 'input' not in data or 'price' not in data or 'images' not in data:
+        return jsonify({"error": "Missing 'input' or 'price' or 'images' field"}), 400
+
+    user_input = data['input']
+    price = data['price']
+    images = data['images']
+
+    image_analyzer_context = """
+                                    you are a image analyzer, your job is to analyze the image and let us know whether it is on a main street or not.
+                                    your response should be in JSON format and look like this: 
+                                    {
+                                        "flag": "True (if it is for a main street) or False (otherwise)
+                                    }
+
+                                    your response should be True or False only. 
+                                    You should analyze all the images carefully and understand them correctly and then respond.
+
+                                    """
+
+    analyzer_response = image_analyzer(images, image_analyzer_context)
+
+    # Parse analyzer_response as JSON (if it is not already a dictionary)
+    try:
+        analyzer_response = json.loads(analyzer_response)  # Convert string response to JSON if necessary
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Failed to parse analyzer response: {str(e)}"}), 500
+
+    # Check if 'flag' is present and True
+    if analyzer_response['flag'] == 'True':
+        # Convert price to float, multiply by 1.5, and convert back to string
+        price = str(float(price) * 1.5)
+
+    if float(price) > 0:
+        user_input += f", and the land price for sqm is {price}."
+
+    try:
+        response = investment_generator(user_input, investment_arabic_Commercial_residential_tower)
+        return response, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    
+
+
+@app.route('/ar/investment_Commercial_and_administrative_tower', methods=['POST'])
+def ai_investment_Commercial_administrative_tower():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    # Check if 'input' key exists in the JSON data
+    if 'input' not in data or 'price' not in data or 'images' not in data:
+        return jsonify({"error": "Missing 'input' or 'price' or 'images' field"}), 400
+
+    user_input = data['input']
+    price = data['price']
+    images = data['images']
+
+    image_analyzer_context = """
+                                    you are a image analyzer, your job is to analyze the image and let us know whether it is on a main street or not.
+                                    your response should be in JSON format and look like this: 
+                                    {
+                                        "flag": "True (if it is for a main street) or False (otherwise)
+                                    }
+
+                                    your response should be True or False only. 
+                                    You should analyze all the images carefully and understand them correctly and then respond.
+
+                                    """
+
+    analyzer_response = image_analyzer(images, image_analyzer_context)
+
+    # Parse analyzer_response as JSON (if it is not already a dictionary)
+    try:
+        analyzer_response = json.loads(analyzer_response)  # Convert string response to JSON if necessary
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Failed to parse analyzer response: {str(e)}"}), 500
+
+    # Check if 'flag' is present and True
+    if analyzer_response['flag'] == 'True':
+        # Convert price to float, multiply by 1.5, and convert back to string
+        price = str(float(price) * 1.5)
+
+    if float(price) > 0:
+        user_input += f", and the land price for sqm is {price}."
+
+    try:
+        response = investment_generator(user_input, investment_arabic_Commercial_and_administrative_tower)
+        return response, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    
+
+@app.route('/ar/investment_administrative_tower', methods=['POST'])
+def ai_investment_administrative_tower():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    # Check if 'input' key exists in the JSON data
+    if 'input' not in data or 'price' not in data or 'images' not in data:
+        return jsonify({"error": "Missing 'input' or 'price' or 'images' field"}), 400
+
+    user_input = data['input']
+    price = data['price']
+    images = data['images']
+
+    image_analyzer_context = """
+                                    you are a image analyzer, your job is to analyze the image and let us know whether it is on a main street or not.
+                                    your response should be in JSON format and look like this: 
+                                    {
+                                        "flag": "True (if it is for a main street) or False (otherwise)
+                                    }
+
+                                    your response should be True or False only. 
+                                    You should analyze all the images carefully and understand them correctly and then respond.
+
+                                    """
+
+    analyzer_response = image_analyzer(images, image_analyzer_context)
+
+    # Parse analyzer_response as JSON (if it is not already a dictionary)
+    try:
+        analyzer_response = json.loads(analyzer_response)  # Convert string response to JSON if necessary
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Failed to parse analyzer response: {str(e)}"}), 500
+
+    # Check if 'flag' is present and True
+    if analyzer_response['flag'] == 'True':
+        # Convert price to float, multiply by 1.5, and convert back to string
+        price = str(float(price) * 1.5)
+
+    if float(price) > 0:
+        user_input += f", and the land price for sqm is {price}."
+
+    try:
+        response = investment_generator(user_input, investment_arabic_administrative_tower)
+        return response, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
 
 """  Unreal Engine Endpoints  """
 @app.route('/unreal-engine-chat-v1', methods=['POST'])
