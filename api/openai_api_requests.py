@@ -43,7 +43,7 @@ def pdf_extractor(images, context):
             for image in images:
                 prompt["content"].append({
                     "type": "image_url",
-                    "image_url": {"url": f"data:image/jpeg;base64,{image}"}
+                    "image_url": {"url": image}
                 })
 
     context.append(prompt)
