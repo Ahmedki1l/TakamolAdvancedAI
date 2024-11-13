@@ -118,32 +118,88 @@ case_study_training_context_english = """
 
                                 {
                                     "Facebook": [
-                                        {"Post1": "Content of post 1"},
-                                        {"Post2": "Content of post 2"},
-                                        {"Post3": "Content of post 3"},
-                                        ...
-                                        and so on
+                                        {
+                                            "Post1": {
+                                                "title": "(Suggest a title for the post content)",
+                                                "content": "Content of post 1"
+                                            }
+                                        },
+                                        {
+                                            "Post2": {
+                                                "title": "(Suggest a title for the post content)",
+                                                "content": "Content of post 2"
+                                            }
+                                        },
+                                        {
+                                            "Post3": {
+                                                "title": "(Suggest a title for the post content)",
+                                                "content": "Content of post 3"
+                                            }
+                                        }
+                                        // ... and so on
                                     ],
                                     "Instagram": [
-                                        {"Post1": "Content of post 1"},
-                                        {"Post2": "Content of post 2"},
-                                        {"Post3": "Content of post 3"},
-                                        ...
-                                        and so on
+                                        {
+                                            "Post1": {
+                                                "title": "(Suggest a title for the post content)",
+                                                "content": "Content of post 1"
+                                            }
+                                        },
+                                        {
+                                            "Post2": {
+                                                "title": "(Suggest a title for the post content)",
+                                                "content": "Content of post 2"
+                                            }
+                                        },
+                                        {
+                                            "Post3": {
+                                                "title": "(Suggest a title for the post content)",
+                                                "content": "Content of post 3"
+                                            }
+                                        }
+                                        // ... and so on
                                     ],
                                     "Twitter": [
-                                        {"Post1": "Content of post 1"},
-                                        {"Post2": "Content of post 2"},
-                                        {"Post3": "Content of post 3"},
-                                        ...
-                                        and so on
+                                        {
+                                            "Post1": {
+                                                "title": "(Suggest a title for the post content)",
+                                                "content": "Content of post 1"
+                                            }
+                                        },
+                                        {
+                                            "Post2": {
+                                                "title": "(Suggest a title for the post content)",
+                                                "content": "Content of post 2"
+                                            }
+                                        },
+                                        {
+                                            "Post3": {
+                                                "title": "(Suggest a title for the post content)",
+                                                "content": "Content of post 3"
+                                            }
+                                        }
+                                        // ... and so on
                                     ],
                                     "LinkedIn": [
-                                        {"Post1": "Content of post 1"},
-                                        {"Post2": "Content of post 2"},
-                                        {"Post3": "Content of post 3"},
-                                        ...
-                                        and so on
+                                        {
+                                            "Post1": {
+                                                "title": "(Suggest a title for the post content)",
+                                                "content": "Content of post 1"
+                                            }
+                                        },
+                                        {
+                                            "Post2": {
+                                                "title": "(Suggest a title for the post content)",
+                                                "content": "Content of post 2"
+                                            }
+                                        },
+                                        {
+                                            "Post3": {
+                                                "title": "(Suggest a title for the post content)",
+                                                "content": "Content of post 3"
+                                            }
+                                        }
+                                        // ... and so on
                                     ]
                                 }
                                 Do not provide empty posts, you must create all the desired number of posts per each platform.
@@ -201,32 +257,64 @@ case_study_training_context_arabic = """
 
                                 {
                                     "Facebook": [
-                                        {"Post1": "محتوى post 1"},
-                                        {"Post2": "محتوى post 2"},
-                                        {"Post3": "محتوى post 3"},
-                                        ...
-                                        and so on
+                                        {
+                                            "title": "اقترح عنوان بناءا على المحتوى",
+                                            "content": "محتوى post 1"
+                                        },
+                                        {
+                                            "title": "اقترح عنوان بناءا على المحتوى",
+                                            "content": "محتوى post 2"
+                                        },
+                                        {
+                                            "title": "اقترح عنوان بناءا على المحتوى",
+                                            "content": "محتوى post 3"
+                                        }
+                                        // ... and so on
                                     ],
                                     "Instagram": [
-                                        {"Post1": "محتوى post 1"},
-                                        {"Post2": "محتوى post 2"},
-                                        {"Post3": "محتوى post 3"},
-                                        ...
-                                        and so on
+                                        {
+                                            "title": "اقترح عنوان بناءا على المحتوى",
+                                            "content": "محتوى post 1"
+                                        },
+                                        {
+                                            "title": "اقترح عنوان بناءا على المحتوى",
+                                            "content": "محتوى post 2"
+                                        },
+                                        {
+                                            "title": "اقترح عنوان بناءا على المحتوى",
+                                            "content": "محتوى post 3"
+                                        }
+                                        // ... and so on
                                     ],
                                     "Twitter": [
-                                        {"Post1": "محتوى post 1"},
-                                        {"Post2": "محتوى post 2"},
-                                        {"Post3": "محتوى post 3"},
-                                        ...
-                                        and so on
+                                        {
+                                            "title": "اقترح عنوان بناءا على المحتوى",
+                                            "content": "محتوى post 1"
+                                        },
+                                        {
+                                            "title": "اقترح عنوان بناءا على المحتوى",
+                                            "content": "محتوى post 2"
+                                        },
+                                        {
+                                            "title": "اقترح عنوان بناءا على المحتوى",
+                                            "content": "محتوى post 3"
+                                        }
+                                        // ... and so on
                                     ],
                                     "LinkedIn": [
-                                        {"Post1": "محتوى post 1"},
-                                        {"Post2": "محتوى post 2"},
-                                        {"Post3": "محتوى post 3"},
-                                        ...
-                                        and so on
+                                        {
+                                            "title": "اقترح عنوان بناءا على المحتوى",
+                                            "content": "محتوى post 1"
+                                        },
+                                        {
+                                            "title": "اقترح عنوان بناءا على المحتوى",
+                                            "content": "محتوى post 2"
+                                        },
+                                        {
+                                            "title": "اقترح عنوان بناءا على المحتوى",
+                                            "content": "محتوى post 3"
+                                        }
+                                        // ... and so on
                                     ]
                                 }
 
