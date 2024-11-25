@@ -1,253 +1,708 @@
 import json
+import os
 from openai import OpenAI
 from dotenv import load_dotenv
-import os
+import time
+import concurrent.futures
+from collections import OrderedDict
 
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
 
-# Access the API key
-api_key = os.getenv('OPENAI_API_KEY')
+# Initialize OpenAI client
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
-client = OpenAI(api_key=api_key)
+# Define prompt templates at the top of the file, after the imports
+your_detailed_prompt = """
+قم بتحديد:
+- الفئات المستهدفة لكل منصة
+- الاهتمامات والسلوكيات
+- الخصائص الديموغرافية
+- أوقات النشاط المثالية
+- الكلمات المفتاحية المقترحة
+"""
 
-# وظيفة لتحليل المشروع العقاري وتوليد الاستراتيجيات الإعلانية
-def generate_real_estate_campaign(user_input):
-    user_prompt = f"""
-    {user_input}
+market_strategy_prompt = """
+قم بتحديد:
+- الرسائل الإعلانية الرئيسية
+- نوع المحتوى المناسب
+- الميزانية المقترحة
+- الجدول الزمني للحملة
+"""
 
-    قم بتحليل هذا المشروع وتحديد الجمهور المستهدف لجميع المنصات. يجب أن تشمل المخرجات تقسيم الجمهور حسب الفئة العمرية، الدخل، الموقع الجغرافي، والاهتمامات. أيضًا، يجب أن تشمل الاستراتيجيات الإعلانية الموصى بها لكل منصة مع نوع الإعلانات الأنسب.
-    
-    استناداً إلى البيانات الحالية للسوق لكل منصة إعلانية (فيسبوك، إنستغرام، لينكد إن، جوجل، تويتر)، قم بإعداد دراسة كاملة تشمل ما يلي:
-    1. استراتيجية السوق لكل منصة بناءً على البيانات الحالية(Market_Strategy):
-        - فيسبوك: استراتيجية السوق، مؤشرات الأداء، التكلفة السنوية، الرؤى، التوصيات، التكرار الأسبوعي، النقرات اليومية (daily_clicks)، نسبة النقر (CTR)، نسبة التحويل (conversion_rate)، تكلفة التسويق (marketing_cost).
-        - إنستغرام: استراتيجية السوق، مؤشرات الأداء، التكلفة السنوية، الرؤى، التوصيات، التكرار الأسبوعي، النقرات اليومية (daily_clicks)، نسبة النقر (CTR)، نسبة التحويل (conversion_rate)، تكلفة التسويق (marketing_cost).
-        - لينكد إن: استراتيجية السوق، مؤشرات الأداء، التكلفة السنوية، الرؤى، التوصيات، التكرار الأسبوعي، النقرات اليومية (daily_clicks)، نسبة النقر (CTR)، نسبة التحويل (conversion_rate)، تكلفة التسويق (marketing_cost).
-        - جوجل: استراتيجية السوق، مؤشرات الأداء، التكلفة السنوية، الرؤى، التوصيات، التكرار الأسبوعي، النقرات اليومية (daily_clicks)، نسبة النقر (CTR)، نسبة التحويل (conversion_rate)، تكلفة التسويق (marketing_cost).
-        - تويتر: استراتيجية السوق، مؤشرات الأداء، التكلفة السنوية، الرؤى، التوصيات، التكرار الأسبوعي، النقرات اليومية (daily_clicks)، نسبة النقر (CTR)، نسبة التحويل (conversion_rate)، تكلفة التسويق (marketing_cost).
-        
-    2. مؤشرات الأداء الرئيسية (KPIs) المتوقعة بناءً على الاتجاهات الحالية لكل منصة(Performance_Metrics).
-    3. التكلفة التسويقية السنوية المتوقعة بناءً على بيانات السوق الحالية(ROI_Calculation).
-         - قانون حساب نسبة العائد على الاستثمار (ROI): 
-        \[
-        \text{{ROI}} = \left( \frac{{\text{{صافي الربح}}}}{{\text{{تكلفة التسويق}}}} \right) \times 100
-        \]
-        - تأكد من حساب ROI وفقًا لهذا القانون مع إضافة علامة "%" في النهاية.
-    4. رؤى استراتيجية بناءً على السوق الحالي، تشمل الفرص والمخاطر(Strategic_Insights).
-    5. التوصيات لتحسين الأداء الإعلاني بناءً على ظروف السوق الحالية(Recommendations).
-    6. التكرار الأسبوعي الموصى به للمنشورات على كل منصة بناءً على الاتجاهات الحالية(Post_Frequency).
+roi_calculation_prompt = """
+قم بتحليل:
+- التكلفة المتوقعة لكل منصة
+- العائد المتوقع
+- معدل التحويل المتوقع
+- فترة استرداد رأس المال
+"""
 
-    تأكد من تقديم النتائج في صيغة JSON مع الحفاظ على هذا الترتيب:
-    1. فيسبوك: الفئة_العمرية، الدخل، الموقع_الجغرافي، الاهتمامات، السلوك، نوع_الإعلانات، الأهداف.
-    2. إنستغرام: الفئة_العمرية، الدخل، الاهتمامات، السلوك، نوع_الإعلانات، الأهداف.
-    3. لينكد_إن: الفئة_المستهدفة، الدخل، الاهتمامات، نوع_الإعلانات، الأهداف.
-    4. تويتر: الفئة العمرية، الدخل، الاهتمامات، السلوك، نوع الإعلانات، الأهداف.
-    5. جوجل: الكلمات_المفتاحية، نوع_الإعلانات، الأهداف.
-    6.Market_Strategy.
-    7.Performance_Metrics.
-    8.ROI_Calculations.
-    9.Strategic_Insights.
-    10.Recommendations.
-    11.Post_Frequency.
-    
-    json format:
-    {"""
-        {
-           "Target_Audience": {
-              "فيسبوك": {
-                 "الفئة_العمرية": "",
-                 "الدخل": "",
-                 "الموقع_الجغرافي": "",
-                 "الاهتمامات": [],
-                 "السلوك": [],
-                 "نوع_الإعلانات": [],
-                 "الأهداف": []
-              },
-              "إنستغرام": {
-                 "الفئة_العمرية": "",
-                 "الدخل": "",
-                 "الاهتمامات": [],
-                 "السلوك": [],
-                 "نوع_الإعلانات": [],
-                 "الأهداف": []
-              },
-              "لينكد_إن": {
-                 "الفئة_المستهدفة": "",
-                 "الدخل": "",
-                 "الاهتمامات": [],
-                 "نوع_الإعلانات": [],
-                 "الأهداف": []
-              },
-              "تويتر": {
-                 "الفئة العمرية": "",
-                 "الدخل": "",
-                 "الاهتمامات": [],
-                 "السلوك": [],
-                 "نوع الإعلانات": [],
-                 "الأهداف": []
-              },
-              "جوجل": {
-                 "الكلمات_المفتاحية": [],
-                 "نوع_الإعلانات": [],
-                 "الأهداف": []
-              }
-           },
-           "Market_Strategy": {
-                "فيسبوك": {
-                    "استراتيجية السوق": "",
-                    "التوصيات": "",
-                    "النقرات اليومية": "100",
-                    "نسبة النقر (CTR)": "0.02",
-                    "نسبة التحويل (conversion_rate)": "0.01",
-                    "تكلفة التسويق الشهرية": "(يجب عليك دراسة المنصة وكتابة التكلفة هنا مع مراعاة عملة البلد)",
-                    "التكلفة السنوية": ""
-                },
-                "إنستغرام": {
-                    "استراتيجية السوق": "",
-                    "التوصيات": "",
-                    "النقرات اليومية": "80",
-                    "نسبة النقر (CTR)": "0.03",
-                    "نسبة التحويل (conversion_rate)": "0.015",
-                    "تكلفة التسويق الشهرية": "(يجب عليك دراسة المنصة وكتابة التكلفة هنا مع مراعاة عملة البلد)",
-                    "التكلفة السنوية": "",
-                },
-                "لينكد_إن": {
-                    "استراتيجية السوق": "",
-                    "التوصيات": "",
-                    "النقرات اليومية": "50",
-                    "نسبة النقر (CTR)": "0.015",
-                    "نسبة التحويل (conversion_rate)": "0.02",
-                    "تكلفة التسويق الشهرية": "(يجب عليك دراسة المنصة وكتابة التكلفة هنا مع مراعاة عملة البلد)",
-                    "التكلفة السنوية": "",
-                },
-                "تويتر": {
-                    "استراتيجية السوق": "",
-                    "التوصيات": "",
-                    "النقرات اليومية": "70",
-                    "نسبة النقر (CTR)": "0.025",
-                    "نسبة التحويل (conversion_rate)": "0.01",
-                    "تكلفة التسويق الشهرية": "(يجب عليك دراسة المنصة وكتابة التكلفة هنا مع مراعاة عملة البلد)",
-                    "التكلفة السنوية": "",
-                },
-                "جوجل": {
-                    "استراتيجية السوق": "",
-                    "التوصيات": "",
-                    "النقرات اليومية": "90",
-                    "نسبة النقر (CTR)": "0.04",
-                    "نسبة التحويل (conversion_rate)": "0.02",
-                    "تكلفة التسويق الشهرية": "(يجب عليك دراسة المنصة وكتابة التكلفة هنا مع مراعاة عملة البلد)",
-                    "التكلفة السنوية": "",
-              }
-           },
-           "Performance_Metrics": {
-              "فيسبوك": ["نسبة التفاعل", "نسبة النقر"],
-              "إنستغرام": ["عدد المتابعين", "نسبة التفاعل"],
-              "لينكد_إن": ["عدد المشاهدات", "عدد المحادثات"],
-              "تويتر": ["عدد الإشارات", "نسبة التفاعل"],
-              "جوجل": ["عدد الزيارات", "عدد التفاعل"]
-           },
-           "ROI_Calculation": {
-                "فيسبوك": {
-                    "إسقاط_عدد_الزوار_السنوي": "",
-                    "إسقاط_عدد_المبيعات_السنوي": "",
-                    "إسقاط_الإيرادات_السنوية": "",
-                    "تكلفة_التسويق_السنوية": "",
-                    "صافي_الربح": "",
-                    "نسبة_العائد_على_الاستثمار": ""
-                },
-                "إنستغرام": {
-                    "إسقاط_عدد_الزوار_السنوي": "",
-                    "إسقاط_عدد_المبيعات_السنوي": "",
-                    "إسقاط_الإيرادات_السنوية": "",
-                    "تكلفة_التسويق_السنوية": "",
-                    "صافي_الربح": "",
-                    "نسبة_العائد_على_الاستثمار": ""
-                },
-                "لينكد_إن": {
-                    "إسقاط_عدد_الزوار_السنوي": "",
-                    "إسقاط_عدد_المبيعات_السنوي": "",
-                    "إسقاط_الإيرادات_السنوية": "",
-                    "تكلفة_التسويق_السنوية": "",
-                    "صافي_الربح": "",
-                    "نسبة_العائد_على_الاستثمار": ""
-                },
-                "تويتر": {
-                    "إسقاط_عدد_الزوار_السنوي": "",
-                    "إسقاط_عدد_المبيعات_السنوي": "",
-                    "إسقاط_الإيرادات_السنوية": "",
-                    "تكلفة_التسويق_السنوية": "",
-                    "صافي_الربح": "",
-                    "نسبة_العائد_على_الاستثمار": ""
-                },
-                "جوجل": {
-                    "إسقاط_عدد_الزوار_السنوي": "",
-                    "إسقاط_عدد_المبيعات_السنوي": "",
-                    "إسقاط_الإيرادات_السنوية": "",
-                    "تكلفة_التسويق_السنوية": "",
-                    "صافي_الربح": "",
-                    "نسبة_العائد_على_الاستثمار": ""
-                }
-            },
-           "Strategic_Insights": {
-              "الفرص": "",
-              "المخاطر": ""
-           },
-           "Recommendations": {
-              "تحسين الإعلانات": "",
-              "زيادة التفاعل": "",
-              "استهداف دقيق": ""
-           },
-           "Post_Frequency": {
-              "فيسبوك": "",
-              "إنستغرام": "",
-              "لينكد_إن": "",
-              "تويتر": "",
-              "جوجل": ""
-           }
-        }
-
-    """}
-    إرشادات: 
-    أعطني فقط البيانات بدون اسم المشروع او أي شئ آخر .. فقط اتبع الترتيب بالأعلى و اعجلها لجميع المنصات 
-    
-    """
-
-    system_prompt = f""" أنت أفضل media buyer متخصص. يجب عليك أن تلبي إحتياجات العميل على أكمل وجه ممكن."""
-
-    context = [{"role": "system", "content": system_prompt},{"role": "user", "content": user_prompt}]
-    parsed_ai_response = ''
+def clean_and_parse_json(response_text):
+    """Clean the response and ensure it's valid JSON"""
     try:
-        chat_completion = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=context,
-            max_tokens=16384,
-            response_format={"type": "json_object"},
+        # Remove any potential prefixes or suffixes
+        text = response_text.strip()
+        # Find the first '{' and last '}'
+        start = text.find('{')
+        end = text.rfind('}') + 1
+        if start != -1 and end != 0:
+            text = text[start:end]
+        return json.loads(text)
+    except json.JSONDecodeError as e:
+        print(f"Original response: {response_text}")
+        print(f"JSON Error: {str(e)}")
+        raise
+
+def create_platform_targeting(project_details):
+    """Generate platform-specific targeting strategy"""
+    user_prompt = f"""Based on these project details:
+    {json.dumps(project_details, ensure_ascii=False)}
+    
+    Generate a detailed targeting strategy. Return ONLY valid JSON with this structure:
+    {{
+        "Target_Audience": {{
+            "فيسبوك": {{
+                "الفئة_العمرية": "25-40",
+                "الدخل": "5000-15000 ريال سعودي شهرياً",
+                "الموقع_الجغرافي": "",
+                "الاهتمامات": [],
+                "السلوك": [],
+                "نوع_الإعلانات": [],
+                "الأهداف": []
+            }},
+            "إنستغرام": {{ ... }},
+            "لينكد_إن": {{ ... }},
+            "تويتر": {{ ... }},
+            "جوجل": {{ ... }}
+        }}
+    }}"""
+    
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini-2024-07-18",
+            messages=[
+                {"role": "system", "content": "You are a digital marketing expert. Respond only with valid JSON."},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=0.7
+        )
+        return clean_and_parse_json(response.choices[0].message.content)
+    except Exception as e:
+        print(f"Error in create_platform_targeting: {str(e)}")
+        raise
+
+def generate_market_strategy(project_details):
+    """Generate detailed market strategy with realistic metrics using ordered dictionaries"""
+    user_prompt = f"""Based on these project details:
+    {json.dumps(project_details, ensure_ascii=False)}
+
+    Generate a comprehensive marketing strategy with realistic metrics. Return ONLY valid JSON with this structure:
+    {{
+        "Market_Strategy": {{
+            "فيسبوك": {{
+                "استراتيجية السوق": "",
+                "التوصيات": "",
+                "النقرات اليومية": "",
+                "نسبة النقر (CTR)": "",
+                "نسبة التح��يل (conversion_rate)": "",
+                "تكلفة التسويق الشهرية": "",
+                "التكلفة السنوية": ""
+            }},
+            "إنستغرام": {{ ... }},
+            "لينكد_إن": {{ ... }},
+            "تويتر": {{ ... }},
+            "جوجل": {{ ... }}
+        }},
+        "Performance_Metrics": {{
+            "فيسبوك": [
+                "معدل النقر (1-3%)",
+                "معدل التحويل (0.5-2%)",
+                "متوسط تكلفة النقرة (2-5 ريال)",
+                "معدل التفاعل (2-5%)",
+                "عدد المشاهدات الشهرية"
+            ],
+            "إنستغرام": [
+                "معدل المشاركة (2-4%)",
+                "معدل الوصول (20-30%)",
+                "معدل حفظ المنشورات (1-3%)",
+                "معدل زيارة الملف الشخصي (5-10%)",
+                "معدل التحويل (0.5-2%)"
+            ],
+            "لينكد_إن": [
+                "معدل النقر (1-2%)",
+                "معدل التفاعل المهني (2-4%)",
+                "معدل الاستفسارات (3-5%)",
+                "جودة العملاء المحتملين",
+                "معدل التحويل للمستثمرين (1-3%)"
+            ],
+            "تويتر": [
+                "معدل إعادة التغريد (1-3%)",
+                "معدل التفاعل (2-4%)",
+                "معدل النقر (1-2%)",
+                "معدل الوصول",
+                "معدل التحويل (0.3-1%)"
+            ],
+            "جوجل": [
+                "معدل النقر (2-5%)",
+                "تكلفة النقرة",
+                "معدل التحويل (1-3%)",
+                "جودة الزيارات",
+                "مدة مشاهدة الصفحة"
+            ]
+        }},
+        "Post_Frequency": {{
+            "فيسبوك": "",
+            "إنستغرام": "",
+            "لينكد_إن": "",
+            "تويتر": "",
+            "جوجل": ""
+        }}
+    }}"""
+    
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini-2024-07-18",
+            messages=[
+                {"role": "system", "content": "You are a marketing strategist. Provide realistic marketing metrics based on real estate industry standards."},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=0.7
+        )
+        return clean_and_parse_json(response.choices[0].message.content)
+    except Exception as e:
+        print(f"Error in generate_market_strategy: {str(e)}")
+        raise
+
+def calculate_roi_projections(project_details):
+    """Calculate realistic ROI projections"""
+    # Get property price for calculations
+    property_price = float(project_details.get('assets', {}).get('price', 500000))
+    
+    # Calculate maximum marketing budget (10% of property value)
+    max_marketing_budget = property_price * 0.1
+    
+    # Define platforms with their English keys to avoid encoding issues
+    platforms = {
+        "facebook": "فيسبوك",
+        "instagram": "انستغرام",
+        "twitter": "تويتر",
+        "linkedin": "لينكد_إن",
+        "google": "جوجل"
+    }
+    
+    # Calculate platform budgets
+    platform_budgets = {
+        platforms["facebook"]: max_marketing_budget * 0.25,  # 25% of budget
+        platforms["instagram"]: max_marketing_budget * 0.20,  # 20% of budget
+        platforms["google"]: max_marketing_budget * 0.25,  # 25% of budget
+        platforms["twitter"]: max_marketing_budget * 0.15,  # 15% of budget
+        platforms["linkedin"]: max_marketing_budget * 0.15   # 15% of budget
+    }
+
+    user_prompt = f'''Based on these project details:
+    Property Price: {property_price} SAR
+    Maximum Marketing Budget: {max_marketing_budget} SAR
+    
+    Generate realistic ROI projections for a real estate marketing campaign with these specific platform budgets:
+    {platforms["facebook"]}: {platform_budgets[platforms["facebook"]]} SAR
+    {platforms["instagram"]}: {platform_budgets[platforms["instagram"]]} SAR
+    {platforms["google"]}: {platform_budgets[platforms["google"]]} SAR
+    {platforms["twitter"]}: {platform_budgets[platforms["twitter"]]} SAR
+    {platforms["linkedin"]}: {platform_budgets[platforms["linkedin"]]} SAR
+    
+    Consider:
+    1. Average real estate conversion rates (0.5-2%)
+    2. Marketing costs MUST match the specified budgets
+    3. Realistic visitor-to-lead ratios
+    4. Standard real estate sales cycles
+    
+    Return ONLY valid JSON with this structure and use SPECIFIC NUMBERS (not ranges):
+    {{
+        "ROI_Calculation": {{
+            "{platforms["facebook"]}": {{
+                "إسقاط_عدد_الزوار_السنوي": "3000",
+                "إسقاط_عدد_المبيعات_السنوي": "2",
+                "إسقاط_الإيرادات_السنوية": "{property_price * 2}",
+                "تكلفة_التسويق_السنوية": "{platform_budgets[platforms["facebook"]]}",
+                "صافي_الربح": "{(property_price * 2) - platform_budgets[platforms["facebook"]]}",
+                "نسبة_العائد_على_الاستثمار": "150"
+            }},
+            // Similar structure for other platforms
+        }}
+    }} 
+    '''
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini-2024-07-18",
+            messages=[
+                {"role": "system", "content": f"""You are a real estate financial analyst. 
+                Provide realistic ROI calculations based on:
+                - Total marketing budget is {max_marketing_budget} SAR
+                - Use the exact marketing costs provided for each platform
+                - Conversion rates should be 0.5-2%
+                - Use specific numbers, not ranges
+                - ROI calculations should reflect realistic market conditions
+                - Property price is {property_price} SAR"""},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=0.7
         )
 
-        # Fetching the response assuming it is structured as instructed
-        response = chat_completion.choices[0].message.content
-        print("Raw AI response:", response)
+        result = clean_and_parse_json(response.choices[0].message.content)
+        
+        # Validate and fix ROI calculations
+        total_marketing_cost = 0
+        for platform_en, platform_ar in platforms.items():
+            if platform_ar not in result["ROI_Calculation"]:
+                result["ROI_Calculation"][platform_ar] = {
+                    "إسقاط_عدد_الزوار_السنوي": "2000",
+                    "إسقاط_عدد_المبيعات_السنوي": "1",
+                    "إسقاط_الإيرادات_السنوية": str(int(property_price)),
+                    "تكلفة_التسويق_السنوية": str(int(platform_budgets[platform_ar])),
+                    "صافي_الربح": str(int(property_price - platform_budgets[platform_ar])),
+                    "نسبة_العائد_على_الاستثمار": str(int((property_price - platform_budgets[platform_ar]) / platform_budgets[platform_ar] * 100))
+                }
+            
+            platform_cost = float(''.join(filter(str.isdigit, result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"])))
+            if abs(platform_cost - platform_budgets[platform_ar]) > 1:  # Allow for minor rounding differences
+                result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"] = str(int(platform_budgets[platform_ar]))
+                
+            total_marketing_cost += platform_budgets[platform_ar]
 
-        # Attempt to parse the response to ensure it is valid JSON
-        parsed_ai_response = json.loads(response)
-        print("Parsed AI response:", parsed_ai_response)
-    except json.JSONDecodeError as e:
-        print(f"Failed to decode JSON: {str(e)}")
+        return result
+
     except Exception as e:
-        print(f"An error occurred: {str(e)}")
+        print(f"Error in calculate_roi_projections: {str(e)}")
+        raise
 
-    return parsed_ai_response
+        
+# def calculate_project_summary(project_details):
+#     """Generate project summary with strictly ordered pros and cons"""
+#     user_prompt = f"""Based on these project details:
+#     {json.dumps(project_details, ensure_ascii=False)}
 
-# وظيفة لتنظيم المخرجات في صيغة JSON
-def organize_campaign_output(project_name, location, platforms, assets, insights):
-    output = {
-        "project_name": project_name,
-        "location": location,
-        "platforms": platforms,
-        "assets": assets,
-        "insights": json.loads(insights)
+#     Generate a project summary. Return ONLY valid JSON with this structure:
+#     {{
+#         "Case_Study": "وصف تفصيلي للمشروع والموقع",
+#             "Pros": {{
+#             "1": "ميزة رئيسية أولى",
+#             "2": "ميزة رئيسية ثانية",
+#             "3": "ميزة رئيسية ثالثة",
+#             "4": "ميزة رئيسية رابعة",
+#             "5": "ميزة رئيسية خامسة"
+#         }},
+#             "Cons": {{
+#             "1": "تحدي رئيسي أول",
+#             "2": "تحدي رئيسي ثاني",
+#             "3": "تحدي رئيسي ثالث",
+#             "4": "تحدي رئيسي رابع"
+#         }},
+#         "Strategic_Insights": {{
+#             "الفرص": "",
+#             "المخاطر": ""
+#         }},
+#         "Recommendations": {{
+#             "تحسين الإعلانات": "",
+#             "زيادة التفاعل": "",
+#             "استهداف دقيق": ""
+#         }}
+#     }}"""
+    
+#     try:
+#         response = client.chat.completions.create(
+#             model="gpt-4o-mini-2024-07-18",
+#             messages=[
+#                 {"role": "system", "content": "You are a real estate analyst. Provide detailed project analysis."},
+#                 {"role": "user", "content": user_prompt}
+#             ],
+#             temperature=0.7
+#         )
+#         return clean_and_parse_json(response.choices[0].message.content)
+#     except Exception as e:
+#         print(f"Error in calculate_project_summary: {str(e)}")
+#         raise
+
+def calculate_project_summary(project_details):
+    """Generate project summary with strictly ordered pros and cons"""
+    user_prompt = f"""Based on these project details:
+    {json.dumps(project_details, ensure_ascii=False)}
+
+    Generate a project summary. Return ONLY valid JSON with this structure:
+    {{
+        "Case_Study": "وصف تفصيلي للمشروع والموقع",
+        "Pros": {{
+            "1": "ميزة رئيسية أولى",
+            "2": "ميزة رئيسية ثانية",
+            "3": "ميزة رئيسية ثالثة",
+            "4": "ميزة رئيسية رابعة",
+            "5": "ميزة رئيسية خامسة"
+        }},
+        "Cons": {{
+            "1": "تحدي رئيسي أول",
+            "2": "تحدي رئيسي ثاني",
+            "3": "تحدي رئيسي ثالث",
+            "4": "تحدي رئيسي رابع"
+        }},
+        "Strategic_Insights": {{
+            "الفرص": "",
+            "المخاطر": ""
+        }},
+        "Recommendations": {{
+            "تحسين الإعلانات": "",
+            "زيادة التفاعل": "",
+            "استهداف دقيق": ""
+        }}
+    }}"""
+    
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini-2024-07-18",
+            messages=[
+                {"role": "system", "content": "You are a real estate analyst. Provide detailed project analysis."},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=0.7
+        )
+        
+        # Parse the response and enforce ordering
+        content = response.choices[0].message.content
+        parsed_content = json.loads(content)
+        
+        # Create ordered dictionary with desired key order
+        ordered_result = OrderedDict([
+            ("Case_Study", parsed_content["Case_Study"]),
+            ("Pros", parsed_content["Pros"]),
+            ("Cons", parsed_content["Cons"]),
+            ("Strategic_Insights", parsed_content["Strategic_Insights"]),
+            ("Recommendations", parsed_content["Recommendations"])
+        ])
+        
+        return ordered_result
+    except Exception as e:
+        print(f"Error in calculate_project_summary: {str(e)}")
+        raise
+
+
+def social_media_content_ai(project_details_json):
+    """Generate social media content plan"""
+    try:
+        project_details = json.loads(project_details_json) if isinstance(project_details_json, str) else project_details_json
+        
+        user_prompt = f"""Based on this property description:
+        {project_details.get('property_description', '')}
+        
+        Generate a social media content plan. Return ONLY valid JSON with this structure:
+        {{
+            "facebook_posts": [],
+            "facebook_timing": [],
+            "facebook_hashtags": [],
+            "instagram_posts": [],
+            "instagram_timing": [],
+            "instagram_hashtags": [],
+            "twitter_posts": [],
+            "twitter_timing": [],
+            "twitter_hashtags": [],
+            "general_tips": [],
+            "weekly_schedule": {{
+                "الأحد": [],
+                "الإثنين": [],
+                "الثلاثاء": [],
+                "الأربعاء": [],
+                "الخميس": [],
+                "الجمعة": [],
+                "السبت": []
+            }}
+        }}"""
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini-2024-07-18",
+            messages=[
+                {"role": "system", "content": "You are a social media expert specializing in real estate marketing."},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=0.7
+        )
+        
+        return clean_and_parse_json(response.choices[0].message.content)
+    except Exception as e:
+        print(f"Error in social_media_content_ai: {str(e)}")
+        raise
+
+# Example usage
+if __name__ == "__main__":
+    test_data = {
+        "project_name": "شقق النخبة الفاخرة",
+        "location": "الرياض",
+        "platforms": ["فيسبوك", "إنستغرام", "تويتر", "لينكد_إن", "جوجل"],
+        "assets": {
+            "price": "500000",
+            "features": [
+                "مسبح خاص",
+                "نادي رياضي مجهز",
+                "أمن وحراسة 24/7",
+                "قريبة من المدارس الدولية"
+            ]
+        }
     }
-    return json.dumps(output, ensure_ascii=False, indent=4)
+    
+    debug_full_analysis(test_data) # type: ignore
+
+
+
+
+##===================================================================
+# import json
+# from openai import OpenAI
+# from dotenv import load_dotenv
+# import os
+
+# # Load environment variables from .env file
+# load_dotenv()
+
+# # Access the API key
+# api_key = os.getenv('OPENAI_API_KEY')
+
+# client = OpenAI(api_key=api_key)
+
+# # وظيفة لتحليل المشروع العقاري وتوليد الاستراتيجيات الإعلانية
+# def generate_real_estate_campaign(user_input):
+#     user_prompt = f"""
+#     {user_input}
+
+#     قم بتحليل هذا المشروع وتحديد الجمهور المستهدف لجميع المنصات. يجب أن تشمل المخرجات تقسيم الجمهور حسب الفئة العمرية، الدخل، الموقع الجغرافي، والاهتمامات. أيضًا، يجب أن تشمل الاستراتيجيات الإعلانية الموصى بها لكل منصة مع نوع الإعلانات الأنسب.
+    
+#     استناداً إلى البيانات الحالية للسوق لكل منصة إعلانية (فيسبوك، إنستغرام، لينكد إن، جوجل، تويتر)، قم بإعداد دراسة كاملة تشمل ما يلي:
+#     1. استراتيجية السوق لكل منصة بناءً على البيانات الحالية(Market_Strategy):
+#         - فيسبوك: استراتيجية السوق، مؤشرات الأداء، التكلفة السنوية، الرؤى، التوصيات، التكرار الأسبوعي، النقرات اليومية (daily_clicks)، نسبة النقر (CTR)، نسبة التحويل (conversion_rate)، تكلفة التسويق (marketing_cost).
+#         - إنستغرام: استراتيجية السوق، مؤشرات الأداء، التكلفة السنوية، الرؤى، التوصيات، التكرار الأسبوعي، النقرات اليومية (daily_clicks)، نسبة النقر (CTR)، نسبة التحويل (conversion_rate)، تكلفة التسويق (marketing_cost).
+#         - لينكد إن: استراتيجية السوق، مؤشرات الأداء، التكلفة السنوية، الرؤى، التوصيات، التكرار الأسبوعي، النقرات اليومية (daily_clicks)، نسبة النقر (CTR)، نسبة التحويل (conversion_rate)، تكلفة التسويق (marketing_cost).
+#         - جوجل: استراتيجية السوق، مؤشرات الأداء، التكلفة السنوية، الرؤى، التوصيات، التكرار الأسبوعي، النقرات اليومية (daily_clicks)، نسبة النقر (CTR)، نسبة التحويل (conversion_rate)، تكلفة التسويق (marketing_cost).
+#         - تويتر: استراتيجية السوق، مؤشرات الأداء، التكلفة السنوية، الرؤى، التوصيات، التكرار الأسبوعي، النقرات اليومية (daily_clicks)، نسبة النقر (CTR)، نسبة التحويل (conversion_rate)، تكلفة التسويق (marketing_cost).
+        
+#     2. مؤشرات الأداء الرئيسية (KPIs) المتوقعة بناءً على الاتجاهات الحالية لكل منصة(Performance_Metrics).
+#     3. التكلفة التسويقية السنوية المتوقعة بناءً على بيانات السوق الحالية(ROI_Calculation).
+#          - قانون حساب نسبة العائد على الاستثمار (ROI): 
+#         \[
+#         \text{{ROI}} = \left( \frac{{\text{{صافي الربح}}}}{{\text{{تكلفة التسويق}}}} \right) \times 100
+#         \]
+#         - تأكد من حساب ROI وفقًا لهذا القانون مع إضافة علامة "%" في النهاية.
+#     4. رؤى استراتيجية بناءً على السوق الحالي، تشمل الفرص والمخاطر(Strategic_Insights).
+#     5. التوصيات لتحسين الأداء الإعلاني بناءً على ظروف السوق الحالية(Recommendations).
+#     6. التكرار الأسبوعي الموصى به للمنشورات على كل منصة بناءً على الاتجاهات الحالية(Post_Frequency).
+
+#     تأكد من تقديم النتائج في صيغة JSON مع الحفاظ على هذا الترتيب:
+#     1. فيسبوك: الفئة_العمرية، الدخل، الموقع_الجغرافي، الاهتمامات، السلوك، نوع_الإعلانات، الأهداف.
+#     2. إنستغرام: الفئة_العمرية، الدخل، الاهتمامات، السلوك، نوع_الإعلانات، الأهداف.
+#     3. لينكد_إن: الفئة_المستهدفة، الدخل، الاهتمامات، نوع_الإعلانات، الأهداف.
+#     4. تويتر: الفئة العمرية، الدخل، الاهتمامات، السلوك، نوع الإعلانات، الأهداف.
+#     5. جوجل: الكلمات_المفتاحية، نوع_الإعلانات، الأهداف.
+#     6.Market_Strategy.
+#     7.Performance_Metrics.
+#     8.ROI_Calculations.
+#     9.Strategic_Insights.
+#     10.Recommendations.
+#     11.Post_Frequency.
+    
+#     json format:
+#     {"""
+#         {
+#            "Target_Audience": {
+#               "فيسبوك": {
+#                  "الفئة_العمرية": "",
+#                  "الدخل": "",
+#                  "الموقع_الجغرافي": "",
+#                  "الاهتمامات": [],
+#                  "السلوك": [],
+#                  "نوع_الإعلانات": [],
+#                  "الأهداف": []
+#               },
+#               "إنستغرام": {
+#                  "الفئة_العمرية": "",
+#                  "الدخل": "",
+#                  "الاهتمامات": [],
+#                  "السلوك": [],
+#                  "نوع_الإعلانات": [],
+#                  "الأهداف": []
+#               },
+#               "لينكد_إن": {
+#                  "الفئة_المستهدفة": "",
+#                  "الدخل": "",
+#                  "الاهتمامات": [],
+#                  "نوع_الإعلانات": [],
+#                  "الأهداف": []
+#               },
+#               "تويتر": {
+#                  "الفئة العمرية": "",
+#                  "الدخل": "",
+#                  "الاهتمامات": [],
+#                  "السلوك": [],
+#                  "نوع الإعلانات": [],
+#                  "الأهداف": []
+#               },
+#               "جوجل": {
+#                  "الكلمات_المفتاحية": [],
+#                  "نوع_الإعلانات": [],
+#                  "الأهداف": []
+#               }
+#            },
+#            "Market_Strategy": {
+#                 "فيسبوك": {
+#                     "استراتيجية السوق": "",
+#                     "التوصيات": "",
+#                     "النقرات اليومية": "100",
+#                     "نسبة النقر (CTR)": "0.02",
+#                     "نسبة التحويل (conversion_rate)": "0.01",
+#                     "تكلفة التسويق الشهرية": "(يجب عليك دراسة المنصة وكتابة التكلفة هنا مع مراعاة عملة البلد)",
+#                     "التكلفة السنوية": ""
+#                 },
+#                 "إنستغرام": {
+#                     "استراتيجية السوق": "",
+#                     "التوصيات": "",
+#                     "النقرات اليومية": "80",
+#                     "نسبة النقر (CTR)": "0.03",
+#                     "نسبة التحويل (conversion_rate)": "0.015",
+#                     "تكلفة التسويق الشهرية": "(يجب عليك دراسة المنصة وكتابة التكلفة هنا مع مراعاة عملة البلد)",
+#                     "التكلفة السنوية": "",
+#                 },
+#                 "لينكد_إن": {
+#                     "استراتيجية السوق": "",
+#                     "التوصيات": "",
+#                     "النقرات اليومية": "50",
+#                     "نسبة النقر (CTR)": "0.015",
+#                     "نسبة التحويل (conversion_rate)": "0.02",
+#                     "تكلفة التسويق الشهرية": "(يجب عليك دراسة المنصة وكتابة التكلفة هنا مع مراعاة عملة البلد)",
+#                     "التكلفة السنوية": "",
+#                 },
+#                 "تويتر": {
+#                     "استراتيجية السوق": "",
+#                     "التوصيات": "",
+#                     "النقرات اليومية": "70",
+#                     "نسبة النقر (CTR)": "0.025",
+#                     "نسبة التحويل (conversion_rate)": "0.01",
+#                     "تكلفة التسويق الشهرية": "(يجب عليك دراسة المنصة وكتابة التكلفة هنا مع مراعاة عملة البلد)",
+#                     "التكلفة السنوية": "",
+#                 },
+#                 "جوجل": {
+#                     "استراتيجية السوق": "",
+#                     "التوصيات": "",
+#                     "النقرات اليومية": "90",
+#                     "نسبة النقر (CTR)": "0.04",
+#                     "نسبة التحويل (conversion_rate)": "0.02",
+#                     "تكلفة التسويق الشهرية": "(يجب عليك دراسة المنصة وكتابة التكلفة هنا مع مراعاة عملة البلد)",
+#                     "التكلفة السنوية": "",
+#               }
+#            },
+#            "Performance_Metrics": {
+#               "فيسبوك": ["نسبة التفاعل", "نسبة النقر"],
+#               "إنستغرام": ["عدد المتابعين", "نسبة التفاعل"],
+#               "لينكد_إن": ["عدد المشاهدات", "عدد المحادثات"],
+#               "تويتر": ["عدد الإشارات", "نسبة التفاعل"],
+#               "جوجل": ["عدد الزيارات", "عدد التفاعل"]
+#            },
+#            "ROI_Calculation": {
+#                 "فيسبوك": {
+#                     "إسقاط_عدد_الزوار_السنوي": "",
+#                     "إسقاط_عدد_المبيعات_السنوي": "",
+#                     "إسقاط_الإيرادات_السنوية": "",
+#                     "تكلفة_التسويق_السنوية": "",
+#                     "صافي_الربح": "",
+#                     "نسبة_العائد_على_الاستثمار": ""
+#                 },
+#                 "إنستغرام": {
+#                     "إسقاط_عدد_الزوار_السنوي": "",
+#                     "إسقاط_عدد_المبيعات_السنوي": "",
+#                     "إسقاط_الإيرادات_السنوية": "",
+#                     "تكلفة_التسويق_السنوية": "",
+#                     "صافي_الربح": "",
+#                     "نسبة_العائد_على_الاستثمار": ""
+#                 },
+#                 "لينكد_إن": {
+#                     "إسقاط_عدد_الزوار_السنوي": "",
+#                     "إسقاط_عدد_المبيعات_السنوي": "",
+#                     "إسقاط_الإيرادات_السنوية": "",
+#                     "تكلفة_التسويق_السنوية": "",
+#                     "صافي_الربح": "",
+#                     "نسبة_العائد_على_الاستثمار": ""
+#                 },
+#                 "تويتر": {
+#                     "إسقاط_عدد_الزوار_السنوي": "",
+#                     "إسقاط_عدد_المبيعات_السنوي": "",
+#                     "إسقاط_الإيرادات_السنوية": "",
+#                     "تكلفة_التسويق_السنوية": "",
+#                     "صافي_الربح": "",
+#                     "نسبة_العائد_على_الاستثمار": ""
+#                 },
+#                 "جوجل": {
+#                     "إسقاط_عدد_الزوار_السنوي": "",
+#                     "إسقاط_عدد_المبيعات_السنوي": "",
+#                     "إسقاط_الإيرادات_السنوية": "",
+#                     "تكلفة_التسويق_السنوية": "",
+#                     "صافي_الربح": "",
+#                     "نسبة_العائد_على_الاستثمار": ""
+#                 }
+#             },
+#            "Strategic_Insights": {
+#               "الفرص": "",
+#               "المخاطر": ""
+#            },
+#            "Recommendations": {
+#               "تحسين الإعلانات": "",
+#               "زيادة التفاعل": "",
+#               "استهداف دقيق": ""
+#            },
+#            "Post_Frequency": {
+#               "فيسبوك": "",
+#               "إنستغرام": "",
+#               "لينكد_إن": "",
+#               "تويتر": "",
+#               "جوجل": ""
+#            }
+#         }
+
+#     """}
+#     إرشادات: 
+#     أعطني فقط البيانات بدون اسم المشروع او أي شئ آخر .. فقط اتبع الترتيب بالأعلى و اعجلها لجميع المنصات 
+    
+#     """
+
+#     system_prompt = f""" أنت أفضل media buyer متخصص. يجب عليك أن تلبي إحتياجات العميل على أكمل وجه ممكن."""
+
+#     context = [{"role": "system", "content": system_prompt},{"role": "user", "content": user_prompt}]
+#     parsed_ai_response = ''
+#     try:
+#         chat_completion = client.chat.completions.create(
+#             model="gpt-4o-mini",
+#             messages=context,
+#             max_tokens=16384,
+#             response_format={"type": "json_object"},
+#         )
+
+#         # Fetching the response assuming it is structured as instructed
+#         response = chat_completion.choices[0].message.content
+#         print("Raw AI response:", response)
+
+#         # Attempt to parse the response to ensure it is valid JSON
+#         parsed_ai_response = json.loads(response)
+#         print("Parsed AI response:", parsed_ai_response)
+#     except json.JSONDecodeError as e:
+#         print(f"Failed to decode JSON: {str(e)}")
+#     except Exception as e:
+#         print(f"An error occurred: {str(e)}")
+
+#     return parsed_ai_response
+
+# # وظيفة لتنظيم المخرجات في صيغة JSON
+# def organize_campaign_output(project_name, location, platforms, assets, insights):
+#     output = {
+#         "project_name": project_name,
+#         "location": location,
+#         "platforms": platforms,
+#         "assets": assets,
+#         "insights": json.loads(insights)
+#     }
+#     return json.dumps(output, ensure_ascii=False, indent=4)
 
 # البيانات الخاصة بالمشروع
 # project_name = "شقق النخبة الفاخرة"
