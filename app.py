@@ -1,4 +1,5 @@
 import base64
+from dataclasses import asdict
 import hashlib
 from urllib.parse import urlencode, quote_plus
 import json
@@ -7,6 +8,7 @@ import threading
 from queue import Queue
 import time
 import concurrent.futures
+from venv import logger
 
 import requests
 from flask import Flask, jsonify, request, redirect, render_template, session, url_for
@@ -18,12 +20,16 @@ import re
 
 from langdetect import detect
 
+from api import Automation_Assistant
 from api.Automation_Assistant import (
     calculate_roi_projections,
     create_platform_targeting,
     generate_market_strategy,
     social_media_content_ai,
-    calculate_project_summary
+    calculate_project_summary,
+    ContentGenerator,
+    ContentGenerationError,
+    ContentIdea
 )
 from api.Automation_Contexts import case_study_training_context_arabic, short_content_context, \
     prompt_generator_english_context, prompt_generator_arabic_context, prompt_enhancer_english_context, \
@@ -41,7 +47,6 @@ from api.openai_api_requests import case_study_ai, social_media_ai, image_creato
 
 app = Flask(__name__)
 CORS(app)
-
 
 
 # app.config['SESSION_TYPE'] = 'redis'
@@ -1877,6 +1882,167 @@ def project_summary_endpoint():
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)}), 500
+
+# Initialize ContentGenerator
+content_generator = ContentGenerator()
+
+@app.route('/ar/content/generate', methods=['POST'])
+def generate_content():
+    """Generate content ideas and posts for multiple platforms"""
+    logger.debug(f"Received request body: {request.data}")
+    
+    if not request.is_json:
+        logger.error("Request is not JSON")
+        return jsonify({"error": "Request must be JSON"}), 400
+    
+    try:
+        data = request.get_json()
+        logger.debug(f"Parsed JSON data: {data}")
+    except Exception as e:
+        logger.error(f"JSON parsing error: {e}")
+        return jsonify({"error": "Invalid JSON"}), 400
+
+    required_fields = ['platforms', 'case_study']
+    missing_fields = [field for field in required_fields if field not in data]
+    
+    if missing_fields:
+        logger.error(f"Missing fields: {missing_fields}")
+        return jsonify({
+            "error": f"Missing required fields: {', '.join(missing_fields)}"
+        }), 400
+
+    try:
+        results = {}
+        
+        for platform in data['platforms']:
+            # Generate ideas
+            ideas = content_generator.generate_content_ideas(
+                platform=platform,
+                case_study=data['case_study'],
+                num_ideas=data.get('num_ideas', 3)
+            )
+            
+            # Generate posts from those ideas
+            posts = content_generator.generate_posts_for_ideas(
+                platform=platform,
+                ideas=ideas,
+                case_study=data['case_study'],
+                post_length=data.get('post_length', 'medium')
+            )
+            
+            results[platform] = {
+                'ideas': [idea.__dict__ for idea in ideas],
+                'posts': [post.__dict__ for post in posts]
+            }
+
+        return jsonify({
+            "success": True,
+            "data": results
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Content generation error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/ar/content/ideas', methods=['POST'])
+def generate_ideas():
+    """Generate content ideas for a specific platform, the content generated need to be with the exact number of ideas required and without emojis"""
+    logger.debug(f"Received request body: {request.data}")
+    
+    if not request.is_json:
+        logger.error("Request is not JSON")
+        return jsonify({"error": "Request must be JSON"}), 400
+    
+    try:
+        data = request.get_json()
+        logger.debug(f"Parsed JSON data: {data}")
+    except Exception as e:
+        logger.error(f"JSON parsing error: {e}")
+        return jsonify({"error": "Invalid JSON"}), 400
+
+    required_fields = ['platform', 'case_study']
+    missing_fields = [field for field in required_fields if field not in data]
+    
+    if missing_fields:
+        logger.error(f"Missing fields: {missing_fields}")
+        return jsonify({
+            "error": f"Missing required fields: {', '.join(missing_fields)}"
+        }), 400
+    
+    try:
+        ideas = content_generator.generate_content_ideas(
+            platform=data['platform'],
+            case_study=data['case_study'],
+            num_ideas=data.get('num_ideas', 3)
+        )
+        
+        ideas_dict = [idea.__dict__ for idea in ideas]
+        
+        return jsonify({
+            "success": True,
+            "data": ideas_dict
+        }), 200
+    
+    except Exception as e:
+        logger.error(f"Content generation error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/ar/content/posts', methods=['POST'])
+def generate_posts():
+    """Generate posts from provided ideas"""
+    logger.debug(f"Received request body: {request.data}")
+    
+    if not request.is_json:
+        logger.error("Request is not JSON")
+        return jsonify({"error": "Request must be JSON"}), 400
+    
+    try:
+        data = request.get_json()
+        logger.debug(f"Parsed JSON data: {data}")
+    except Exception as e:
+        logger.error(f"JSON parsing error: {e}")
+        return jsonify({"error": "Invalid JSON"}), 400
+
+    required_fields = ['platform', 'ideas', 'case_study']
+    missing_fields = [field for field in required_fields if field not in data]
+    
+    if missing_fields:
+        logger.error(f"Missing fields: {missing_fields}")
+        return jsonify({
+            "error": f"Missing required fields: {', '.join(missing_fields)}"
+        }), 400
+
+    try:
+        # Convert JSON ideas back to ContentIdea objects
+        ideas = []
+        for idea_data in data['ideas']:
+            idea = ContentIdea(
+                id=idea_data.get('id', ''),
+                platform=data['platform'],
+                content=idea_data.get('content', ''),
+                progression_hint=idea_data.get('progression_hint', ''),
+                metadata=idea_data.get('metadata', {})
+            )
+            ideas.append(idea)
+        
+        posts = content_generator.generate_posts_for_ideas(
+            platform=data['platform'],
+            ideas=ideas,
+            case_study=data['case_study'],
+            post_length=data.get('post_length', 'medium')
+        )
+        
+        posts_data = [post.__dict__ for post in posts]
+
+        return jsonify({
+            "success": True,
+            "data": posts_data
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Content generation error: {e}")
+        return jsonify({"error": str(e)}), 500
+
 
 # Change port to 5000
 if __name__ == '__main__':
