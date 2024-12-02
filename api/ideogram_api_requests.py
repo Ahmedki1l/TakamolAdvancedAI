@@ -14,9 +14,9 @@ def generate_image_from_ideogram(prompt):
         "image_request": {
             "prompt": prompt,
             "aspect_ratio": "ASPECT_16_9",
-            "model": "V_2_TURBO",
+            "model": "V_2",
             "style_type": "RENDER_3D",
-            "magic_prompt_option": "ON"
+            "magic_prompt_option": "OFF"
         }
     }
 
