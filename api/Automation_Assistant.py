@@ -505,8 +505,7 @@ def calculate_roi_projections(project_details):
         platforms["linkedin"]: max_marketing_budget * 0.15   # 15% of budget
     }
 
-    user_prompt = 
-    f"""Based on these project details:
+    user_prompt = f"""Based on these project details:
     Property Price: {property_price} SAR
     Maximum Marketing Budget: {max_marketing_budget} SAR
     
