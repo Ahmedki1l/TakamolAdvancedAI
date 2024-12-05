@@ -721,124 +721,23 @@ def generate_market_strategy(project_details):
         print(f"Error in generate_market_strategy: {str(e)}")
         raise
 
-# def calculate_roi_projections(project_details):
-#     """Calculate realistic ROI projections"""
-#     # Get assets from project details
-#     assets = project_details.get('assets', [])
-#
-#     # Ensure there are assets provided
-#     if not assets:
-#         raise ValueError("No assets provided in project details.")
-#
-#     # Calculate total property price by summing up prices of all assets
-#     total_property_price = sum(float(asset.get('price', 0)) for asset in assets)
-#
-#     # Calculate maximum marketing budget (10% of total property value)
-#     max_marketing_budget = total_property_price * 0.1
-#
-#     # Define platforms with their English keys to avoid encoding issues
-#     platforms = {
-#         "facebook": "فيسبوك",
-#         "instagram": "انستغرام",
-#         "twitter": "تويتر",
-#         "linkedin": "لينكد_إن",
-#         "google": "جوجل"
-#     }
-#
-#     # Calculate platform budgets
-#     platform_budgets = {
-#         platforms["facebook"]: max_marketing_budget * 0.25,  # 25% of budget
-#         platforms["instagram"]: max_marketing_budget * 0.20,  # 20% of budget
-#         platforms["google"]: max_marketing_budget * 0.25,  # 25% of budget
-#         platforms["twitter"]: max_marketing_budget * 0.15,  # 15% of budget
-#         platforms["linkedin"]: max_marketing_budget * 0.15   # 15% of budget
-#     }
-#
-#     user_prompt = f"""Based on these project details:
-#     Total Property Prices: {total_property_price} SAR
-#     Maximum Marketing Budget: {max_marketing_budget} SAR
-#
-#     Generate realistic ROI projections for a real estate marketing campaign with these specific platform budgets:
-#     {platforms["facebook"]}: {platform_budgets[platforms["facebook"]]} SAR
-#     {platforms["instagram"]}: {platform_budgets[platforms["instagram"]]} SAR
-#     {platforms["google"]}: {platform_budgets[platforms["google"]]} SAR
-#     {platforms["twitter"]}: {platform_budgets[platforms["twitter"]]} SAR
-#     {platforms["linkedin"]}: {platform_budgets[platforms["linkedin"]]} SAR
-#
-#     Consider:
-#     1. Average real estate conversion rates (0.5-2%)
-#     2. Marketing costs MUST match the specified budgets
-#     3. Realistic visitor-to-lead ratios
-#     4. Standard real estate sales cycles
-#
-#     Return ONLY valid JSON with this structure and use SPECIFIC NUMBERS (not ranges):
-#     {{
-#         "ROI_Calculation": {{
-#             "{platforms["facebook"]}": {{
-#                 "إسقاط_عدد_الزوار_السنوي": "3000",
-#                 "إسقاط_عدد_المبيعات_السنوي": "15",
-#                 "إسقاط_الإيرادات_السنوي��": "{total_property_price * 2}",
-#                 "تكلفة_التسويق_السنوية": "{platform_budgets[platforms["facebook"]]}",
-#                 "صافي_الربح": "{(total_property_price * 2) - platform_budgets[platforms["facebook"]]}",
-#                 "نسبة_العائد_على_الاستثمار": "150"
-#             }},
-#             // Similar structure for other platforms
-#         }}
-#     }}"""
-#
-#     try:
-#         response = client.chat.completions.create(
-#             model="gpt-4o-mini-2024-07-18",
-#             messages=[
-#                 {"role": "system", "content": f"""You are a real estate financial analyst.
-#                 Provide realistic ROI calculations based on:
-#                 - Total marketing budget is {max_marketing_budget} SAR
-#                 - Use the exact marketing costs provided for each platform
-#                 - Conversion rates should be 0.5-2%
-#                 - Use specific numbers, not ranges
-#                 - ROI calculations should reflect realistic market conditions
-#                 - Total Property prices are {total_property_price} SAR"""},
-#                 {"role": "user", "content": user_prompt}
-#             ],
-#             response_format={"type": "json_object"},
-#             temperature=0.7
-#         )
-#
-#         result = clean_and_parse_json(response.choices[0].message.content)
-#
-#         # Validate and fix ROI calculations
-#         total_marketing_cost = 0
-#         for platform_en, platform_ar in platforms.items():
-#             if platform_ar not in result["ROI_Calculation"]:
-#                 result["ROI_Calculation"][platform_ar] = {
-#                     "إسقاط_عدد_الزوار_السنوي": "2000",
-#                     "إسقاط_عدد_المبيعات_السنوي": "1",
-#                     "إسقاط_الإيرادات_السنوية": str(int(total_property_price)),
-#                     "تكلفة_التسويق_السنوية": str(int(platform_budgets[platform_ar])),
-#                     "صافي_الربح": str(int(total_property_price - platform_budgets[platform_ar])),
-#                     "نسبة_العائد_على_الاستثمار": str(int((total_property_price - platform_budgets[platform_ar]) / platform_budgets[platform_ar] * 100))
-#                 }
-#
-#             platform_cost = float(''.join(filter(str.isdigit, result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"])))
-#             if abs(platform_cost - platform_budgets[platform_ar]) > 1:  # Allow for minor rounding differences
-#                 result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"] = str(int(platform_budgets[platform_ar]))
-#
-#             total_marketing_cost += platform_budgets[platform_ar]
-#
-#         return result
-#
-#     except Exception as e:
-#         print(f"Error in calculate_roi_projections: {str(e)}")
-#         raise
-
 def calculate_roi_projections(project_details):
-    """Calculate realistic ROI projections with precise calculations for assets with different prices."""
+    """Calculate realistic ROI projections"""
     # Get assets from project details
     assets = project_details.get('assets', [])
 
     # Ensure there are assets provided
     if not assets:
         raise ValueError("No assets provided in project details.")
+
+    # Calculate total property price by summing up (price * units) for all assets
+    total_property_price = sum(
+        float(asset.get('price', 0)) * int(asset.get('units', 1))
+        for asset in assets
+    )
+
+    # Calculate maximum marketing budget (10% of total property value)
+    max_marketing_budget = total_property_price * 0.1
 
     # Define platforms with their English keys to avoid encoding issues
     platforms = {
@@ -849,19 +748,13 @@ def calculate_roi_projections(project_details):
         "google": "جوجل"
     }
 
-    # Initialize total property price
-    total_property_price = sum(float(asset.get('price', 0)) * int(asset.get('units', 1)) for asset in assets)
-
-    # Calculate maximum marketing budget (10% of total property value)
-    max_marketing_budget = total_property_price * 0.1
-
     # Calculate platform budgets
     platform_budgets = {
         platforms["facebook"]: max_marketing_budget * 0.25,  # 25% of budget
         platforms["instagram"]: max_marketing_budget * 0.20,  # 20% of budget
-        platforms["google"]: max_marketing_budget * 0.25,  # 25% of budget
-        platforms["twitter"]: max_marketing_budget * 0.15,  # 15% of budget
-        platforms["linkedin"]: max_marketing_budget * 0.15  # 15% of budget
+        platforms["google"]: max_marketing_budget * 0.25,     # 25% of budget
+        platforms["twitter"]: max_marketing_budget * 0.15,    # 15% of budget
+        platforms["linkedin"]: max_marketing_budget * 0.15    # 15% of budget
     }
 
     user_prompt = f"""Based on these project details:
@@ -887,9 +780,9 @@ Return ONLY valid JSON with this structure and use SPECIFIC NUMBERS (not ranges)
         "{platforms["facebook"]}": {{
             "إسقاط_عدد_الزوار_السنوي": "Number of annual visitors",
             "إسقاط_عدد_المبيعات_السنوي": "Number of annual sales",
-            "إسقاط_الإيرادات_السنوية": "Annual revenue in SAR",
+            "إسقاط_الإيرادات_السنوية": "{total_property_price}",
             "تكلفة_التسويق_السنوية": "{platform_budgets[platforms["facebook"]]}",
-            "صافي_الربح": "Net profit in SAR",
+            "صافي_الربح": "{total_property_price - platform_budgets[platforms["facebook"]]}",
             "نسبة_العائد_على_الاستثمار": "ROI percentage"
         }},
         // Similar structure for other platforms
@@ -919,49 +812,24 @@ Provide realistic ROI calculations based on:
         # Validate and fix ROI calculations
         for platform_en, platform_ar in platforms.items():
             if platform_ar not in result["ROI_Calculation"]:
-                result["ROI_Calculation"][platform_ar] = {}
+                result["ROI_Calculation"][platform_ar] = {
+                    "إسقاط_عدد_الزوار_السنوي": "2000",
+                    "إسقاط_عدد_المبيعات_السنوي": "1",
+                    "إسقاط_الإيرادات_السنوية": str(int(total_property_price)),
+                    "تكلفة_التسويق_السنوية": str(int(platform_budgets[platform_ar])),
+                    "صافي_الربح": str(int(total_property_price - platform_budgets[platform_ar])),
+                    "نسبة_العائد_على_الاستثمار": str(int((total_property_price - platform_budgets[platform_ar]) / platform_budgets[platform_ar] * 100))
+                }
 
-            # Get the marketing cost for this platform
-            marketing_cost = platform_budgets[platform_ar]
-
-            # Assume conversion rate of 1%
-            conversion_rate = 0.01
-
-            # Estimate visitors and sales
-            # Assume cost per visitor is 10 SAR
-            cost_per_visitor = 10
-            estimated_visitors = marketing_cost / cost_per_visitor
-            estimated_sales = estimated_visitors * conversion_rate
-
-            # Ensure estimated sales do not exceed total units
-            total_units = sum(int(asset.get('units', 1)) for asset in assets)
-            estimated_sales = min(estimated_sales, total_units)
-
-            # Calculate revenue
-            # Assume average price per unit
-            average_price_per_unit = total_property_price / total_units if total_units else 0
-            revenue = estimated_sales * average_price_per_unit
-
-            # Calculate net profit and ROI
-            net_profit = revenue - marketing_cost
-            roi_percentage = (net_profit / marketing_cost) * 100 if marketing_cost != 0 else 0
-
-            # Update the result
-            result["ROI_Calculation"][platform_ar].update({
-                "إسقاط_عدد_الزوار_السنوي": str(int(estimated_visitors)),
-                "إسقاط_عدد_المبيعات_السنوي": str(int(estimated_sales)),
-                "إسقاط_الإيرادات_السنوية": str(int(revenue)),
-                "تكلفة_التسويق_السنوية": str(int(marketing_cost)),
-                "صافي_الربح": str(int(net_profit)),
-                "نسبة_العائد_على_الاستثمار": f"{roi_percentage:.2f}"
-            })
+            platform_cost = float(result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"])
+            if abs(platform_cost - platform_budgets[platform_ar]) > 1:  # Allow for minor rounding differences
+                result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"] = str(int(platform_budgets[platform_ar]))
 
         return result
 
     except Exception as e:
         print(f"Error in calculate_roi_projections: {str(e)}")
         raise
-
 
 # def calculate_project_summary(project_details):
 #     """Generate project summary with strictly ordered pros and cons"""
