@@ -29,7 +29,7 @@ from api.Automation_Assistant import (
     calculate_project_summary,
     ContentGenerator,
     ContentGenerationError,
-    ContentIdea
+    ContentIdea, generate_real_estate_campaign
 )
 from api.Automation_Contexts import case_study_training_context_arabic, short_content_context, \
     prompt_generator_english_context, prompt_generator_arabic_context, prompt_enhancer_english_context, \
@@ -249,7 +249,27 @@ def case_study_chat_ar():
     # Call the chat_with_ai function from the imported module
     try:
         response, parsed_ai_response, new_context = case_study_ai(user_input, context)
-        return response, 200  # Return the response without additional processing
+
+        try:
+            target_audience_response = generate_real_estate_campaign(user_input)
+
+            parsed_ai_response["Target_Audience"] = target_audience_response["Target_Audience"]
+            parsed_ai_response["Market_Strategy"] = target_audience_response["Market_Strategy"]
+            parsed_ai_response["Performance_Metrics"] = target_audience_response["Performance_Metrics"]
+            parsed_ai_response["ROI_Calculation"] = target_audience_response["ROI_Calculation"]
+            parsed_ai_response["Strategic_Insights"] = target_audience_response["Strategic_Insights"]
+            parsed_ai_response["Recommendations"] = target_audience_response["Recommendations"]
+            parsed_ai_response["Post_Frequency"] = target_audience_response["Post_Frequency"]
+
+            response = json.dumps(parsed_ai_response)
+
+            print(response)
+
+        except Exception as e:
+            print(e)
+            return jsonify({"error": str(e)}), 500
+
+        return response, 200
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)}), 500
