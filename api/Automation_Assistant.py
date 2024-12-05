@@ -630,6 +630,7 @@ def create_platform_targeting(project_details):
                 {"role": "system", "content": "You are a digital marketing expert. Respond only with valid JSON."},
                 {"role": "user", "content": user_prompt}
             ],
+            response_format={"type": "json_object"},
             temperature=0.7
         )
         return clean_and_parse_json(response.choices[0].message.content)
@@ -712,6 +713,7 @@ def generate_market_strategy(project_details):
                 {"role": "system", "content": "You are a marketing strategist. Provide realistic marketing metrics based on real estate industry standards."},
                 {"role": "user", "content": user_prompt}
             ],
+            response_format={"type": "json_object"},
             temperature=0.7
         )
         return clean_and_parse_json(response.choices[0].message.content)
@@ -721,11 +723,18 @@ def generate_market_strategy(project_details):
 
 def calculate_roi_projections(project_details):
     """Calculate realistic ROI projections"""
-    # Get property price for calculations
-    property_price = float(project_details.get('assets', {}).get('price', 500000))
-    
-    # Calculate maximum marketing budget (10% of property value)
-    max_marketing_budget = property_price * 0.1
+    # Get assets from project details
+    assets = project_details.get('assets', [])
+
+    # Ensure there are assets provided
+    if not assets:
+        raise ValueError("No assets provided in project details.")
+
+    # Calculate total property price by summing up prices of all assets
+    total_property_price = sum(float(asset.get('price', 0)) for asset in assets)
+
+    # Calculate maximum marketing budget (10% of total property value)
+    max_marketing_budget = total_property_price * 0.1
     
     # Define platforms with their English keys to avoid encoding issues
     platforms = {
@@ -746,7 +755,7 @@ def calculate_roi_projections(project_details):
     }
 
     user_prompt = f"""Based on these project details:
-    Property Price: {property_price} SAR
+    Total Property Prices: {total_property_price} SAR
     Maximum Marketing Budget: {max_marketing_budget} SAR
     
     Generate realistic ROI projections for a real estate marketing campaign with these specific platform budgets:
@@ -767,10 +776,10 @@ def calculate_roi_projections(project_details):
         "ROI_Calculation": {{
             "{platforms["facebook"]}": {{
                 "إسقاط_عدد_الزوار_السنوي": "3000",
-                "إسقاط_عدد_المبيعات_السنوي": "2",
-                "إسقاط_الإيرادات_السنوي��": "{property_price * 2}",
+                "إسقاط_عدد_المبيعات_السنوي": "15",
+                "إسقاط_الإيرادات_السنوي��": "{total_property_price * 2}",
                 "تكلفة_التسويق_السنوية": "{platform_budgets[platforms["facebook"]]}",
-                "صافي_الربح": "{(property_price * 2) - platform_budgets[platforms["facebook"]]}",
+                "صافي_الربح": "{(total_property_price * 2) - platform_budgets[platforms["facebook"]]}",
                 "نسبة_العائد_على_الاستثمار": "150"
             }},
             // Similar structure for other platforms
@@ -788,9 +797,10 @@ def calculate_roi_projections(project_details):
                 - Conversion rates should be 0.5-2%
                 - Use specific numbers, not ranges
                 - ROI calculations should reflect realistic market conditions
-                - Property price is {property_price} SAR"""},
+                - Total Property prices are {total_property_price} SAR"""},
                 {"role": "user", "content": user_prompt}
             ],
+            response_format={"type": "json_object"},
             temperature=0.7
         )
 
@@ -803,10 +813,10 @@ def calculate_roi_projections(project_details):
                 result["ROI_Calculation"][platform_ar] = {
                     "إسقاط_عدد_الزوار_السنوي": "2000",
                     "إسقاط_عدد_المبيعات_السنوي": "1",
-                    "إسقاط_الإيرادات_السنوية": str(int(property_price)),
+                    "إسقاط_الإيرادات_السنوية": str(int(total_property_price)),
                     "تكلفة_التسويق_السنوية": str(int(platform_budgets[platform_ar])),
-                    "صافي_الربح": str(int(property_price - platform_budgets[platform_ar])),
-                    "نسبة_العائد_على_الاستثمار": str(int((property_price - platform_budgets[platform_ar]) / platform_budgets[platform_ar] * 100))
+                    "صافي_الربح": str(int(total_property_price - platform_budgets[platform_ar])),
+                    "نسبة_العائد_على_الاستثمار": str(int((total_property_price - platform_budgets[platform_ar]) / platform_budgets[platform_ar] * 100))
                 }
             
             platform_cost = float(''.join(filter(str.isdigit, result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"])))
@@ -906,6 +916,7 @@ def calculate_project_summary(project_details):
                 {"role": "system", "content": "You are a real estate analyst. Provide detailed project analysis."},
                 {"role": "user", "content": user_prompt}
             ],
+            response_format={"type": "json_object"},
             temperature=0.7
         )
         
