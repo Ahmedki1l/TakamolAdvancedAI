@@ -809,6 +809,8 @@ Provide realistic ROI calculations based on:
 
         result = clean_and_parse_json(response.choices[0].message.content)
 
+        print(result)
+
         # Validate and fix ROI calculations
         for platform_en, platform_ar in platforms.items():
             if platform_ar not in result["ROI_Calculation"]:
