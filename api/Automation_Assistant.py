@@ -810,7 +810,7 @@ Provide realistic ROI calculations based on:
             temperature=0.7
         )
 
-        result = clean_and_parse_json(response.choices[0].message.content)
+        result = response.choices[0].message.content
 
         print(result)
 
