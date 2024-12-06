@@ -802,6 +802,7 @@ Provide realistic ROI calculations based on:
 - Use specific numbers, not ranges
 - ROI calculations should reflect realistic market conditions
 - All numbers must be separated by "," like: 1,000,000
+- Make sure to write the full numbers
 - if there are some numbers that contain decimal values then make it 2 decimal values at max, otherwise do nothing
 - Total Property prices are {total_property_price} SAR"""},
                 {"role": "user", "content": user_prompt}
@@ -810,7 +811,7 @@ Provide realistic ROI calculations based on:
             temperature=0.7
         )
 
-        result = response.choices[0].message.content
+        result = clean_and_parse_json(response.choices[0].message.content)
 
         print(result)
 
