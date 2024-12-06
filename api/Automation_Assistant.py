@@ -826,9 +826,11 @@ Provide realistic ROI calculations based on:
                     "نسبة_العائد_على_الاستثمار": str(int((total_property_price - platform_budgets[platform_ar]) / platform_budgets[platform_ar] * 100))
                 }
 
-            platform_cost = float(result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"])
-            if abs(platform_cost - platform_budgets[platform_ar]) > 1:  # Allow for minor rounding differences
-                result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"] = str(int(platform_budgets[platform_ar]))
+            platform_cost_str = result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"].replace(',', '')
+            platform_cost = float(platform_cost_str)
+
+            if abs(platform_cost - platform_budgets[platform_ar]) > 1:
+                result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"] = "{:,}".format(int(platform_budgets[platform_ar]))
 
         return result
 
