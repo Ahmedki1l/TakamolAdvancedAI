@@ -736,8 +736,8 @@ def calculate_roi_projections(project_details):
         for asset in assets
     )
 
-    # Calculate maximum marketing budget (10% of total property value)
-    max_marketing_budget = total_property_price * 0.1
+    # Calculate maximum marketing budget (1% of total property value)
+    max_marketing_budget = total_property_price * 0.01
 
     # Define platforms with their English keys to avoid encoding issues
     platforms = {
