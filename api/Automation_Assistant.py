@@ -780,8 +780,8 @@ Return ONLY valid JSON with this structure and use SPECIFIC NUMBERS (not ranges)
         "{platforms["facebook"]}": {{
             "إسقاط_عدد_الزوار_السنوي": "Number of annual visitors",
             "إسقاط_عدد_المبيعات_السنوي": "Number of annual sales",
-            "إسقاط_الإيرادات_السنوية": "(إجمالي اسعار الوحدات) * إسقاط_عدد_المبيعات_السنوي",
-            "تكلفة_التسويق_السنوية": "تكلفة التسويق للمنصة",
+            "إسقاط_الإيرادات_السنوية": "(total_property_price) * إسقاط_عدد_المبيعات_السنوي",
+            "تكلفة_التسويق_السنوية": "{platforms["facebook"]}",
             "صافي_الربح": " إسقاط_الإيرادات_السنوية - تكلفة_التسويق_السنوية",
             "نسبة_العائد_على_الاستثمار": "ROI percentage"
         }},
