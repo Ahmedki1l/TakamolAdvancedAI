@@ -780,9 +780,9 @@ Return ONLY valid JSON with this structure and use SPECIFIC NUMBERS (not ranges)
         "{platforms["facebook"]}": {{
             "إسقاط_عدد_الزوار_السنوي": "Number of annual visitors",
             "إسقاط_عدد_المبيعات_السنوي": "Number of annual sales",
-            "إسقاط_الإيرادات_السنوية": "{total_property_price} * إسقاط_عدد_المبيعات_السنوي",
-            "تكلفة_التسويق_السنوية": "{platform_budgets[platforms["facebook"]]}",
-            "صافي_الربح": " إسقاط_الإيرادات_السنوية - {platform_budgets[platforms["facebook"]]}",
+            "إسقاط_الإيرادات_السنوية": "(إجمالي اسعار الوحدات) * إسقاط_عدد_المبيعات_السنوي",
+            "تكلفة_التسويق_السنوية": "تكلفة التسويق للمنصة",
+            "صافي_الربح": " إسقاط_الإيرادات_السنوية - تكلفة_التسويق_السنوية",
             "نسبة_العائد_على_الاستثمار": "ROI percentage"
         }},
         // Similar structure for other platforms
@@ -796,10 +796,13 @@ Return ONLY valid JSON with this structure and use SPECIFIC NUMBERS (not ranges)
                 {"role": "system", "content": f"""You are a real estate financial analyst. 
 Provide realistic ROI calculations based on:
 - Total marketing budget is {max_marketing_budget} SAR
+- Platforms Annual Costs: {platforms}
 - Use the exact marketing costs provided for each platform
 - Conversion rates should be 0.5-2%
 - Use specific numbers, not ranges
 - ROI calculations should reflect realistic market conditions
+- All numbers must be separated by "," like: 1,000,000
+- All numbers must contain 2 decimal values at max
 - Total Property prices are {total_property_price} SAR"""},
                 {"role": "user", "content": user_prompt}
             ],
