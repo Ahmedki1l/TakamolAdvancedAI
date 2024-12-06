@@ -802,7 +802,7 @@ Provide realistic ROI calculations based on:
 - Use specific numbers, not ranges
 - ROI calculations should reflect realistic market conditions
 - All numbers must be separated by "," like: 1,000,000
-- All numbers must contain 2 decimal values at max
+- if there are some numbers that contain decimal values then make it 2 decimal values at max, otherwise do nothing
 - Total Property prices are {total_property_price} SAR"""},
                 {"role": "user", "content": user_prompt}
             ],
