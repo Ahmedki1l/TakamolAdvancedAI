@@ -804,7 +804,8 @@ Provide realistic ROI calculations based on:
                 {"role": "user", "content": user_prompt}
             ],
             response_format={"type": "json_object"},
-            temperature=0.3
+            temperature=0.3,
+            max_tokens=16384
         )
 
         print(response.choices[0].message.content)
@@ -814,22 +815,22 @@ Provide realistic ROI calculations based on:
         print(result)
 
         # Validate and fix ROI calculations
-        # for platform_en, platform_ar in platforms.items():
-        #     if platform_ar not in result["ROI_Calculation"]:
-        #         result["ROI_Calculation"][platform_ar] = {
-        #             "إسقاط_عدد_الزوار_السنوي": "2000",
-        #             "إسقاط_عدد_المبيعات_السنوي": "1",
-        #             "إسقاط_الإيرادات_السنوية": str(int(total_property_price)),
-        #             "تكلفة_التسويق_السنوية": str(int(platform_budgets[platform_ar])),
-        #             "صافي_الربح": str(int(total_property_price - platform_budgets[platform_ar])),
-        #             "نسبة_العائد_على_الاستثمار": str(int((total_property_price - platform_budgets[platform_ar]) / platform_budgets[platform_ar] * 100))
-        #         }
-        #
-        #     platform_cost_str = str(result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"]).replace(',', '')
-        #     platform_cost = float(platform_cost_str)
-        #
-        #     if abs(platform_cost - platform_budgets[platform_ar]) > 1:
-        #         result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"] = "{:,}".format(int(platform_budgets[platform_ar]))
+        for platform_en, platform_ar in platforms.items():
+            if platform_ar not in result["ROI_Calculation"]:
+                result["ROI_Calculation"][platform_ar] = {
+                    "إسقاط_عدد_الزوار_السنوي": "2000",
+                    "إسقاط_عدد_المبيعات_السنوي": "1",
+                    "إسقاط_الإيرادات_السنوية": str(int(total_property_price)),
+                    "تكلفة_التسويق_السنوية": str(int(platform_budgets[platform_ar])),
+                    "صافي_الربح": str(int(total_property_price - platform_budgets[platform_ar])),
+                    "نسبة_العائد_على_الاستثمار": str(int((total_property_price - platform_budgets[platform_ar]) / platform_budgets[platform_ar] * 100))
+                }
+
+            platform_cost_str = str(result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"]).replace(',', '')
+            platform_cost = float(platform_cost_str)
+
+            if abs(platform_cost - platform_budgets[platform_ar]) > 1:
+                result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"] = "{:,}".format(int(platform_budgets[platform_ar]))
 
         return result
 
