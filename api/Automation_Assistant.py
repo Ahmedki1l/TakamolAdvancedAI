@@ -223,9 +223,7 @@ def generate_real_estate_campaign(user_input):
 
     """}
     إرشادات: 
-    أعطني فقط البيانات بدون اسم المشروع او أي شئ آخر .. فقط اتبع الترتيب بالأعلى و اعجلها لجميع المنصات 
-
-    """
+    أعطني فقط البيانات بدون اسم المشروع او أي شئ آخر .. فقط اتبع الترتيب بالأعلى و اعجلها لجميع المنصات """
 
     system_prompt = f""" أنت أفضل media buyer متخصص. يجب عليك أن تلبي إحتياجات العميل على أكمل وجه ممكن."""
 
@@ -779,10 +777,11 @@ Return ONLY valid JSON with this structure and use SPECIFIC NUMBERS (not ranges)
     "ROI_Calculation": {{
         "{platforms["facebook"]}": {{
             "إسقاط_عدد_الزوار_السنوي": "Number of annual visitors",
-            "إسقاط_عدد_المبيعات_السنوي": "Number of annual sales",
-            "إسقاط_الإيرادات_السنوية": "(total_property_price) * إسقاط_عدد_المبيعات_السنوي",
+            "معدل_التحويل":"احسب معدل التحويل هنا",
+            "إسقاط_عدد_المبيعات_السنوي": "إسقاط_عدد_الزوار_السنوي * (معدل_التحويل / 100 )",
+            "إسقاط_الإيرادات_السنوية": "(total_property_price) * إسقاط_عدد_المبيعات_السنوي = الناتج هنا",
             "تكلفة_التسويق_السنوية": "{platforms["facebook"]}",
-            "صافي_الربح": " إسقاط_الإيرادات_السنوية - تكلفة_التسويق_السنوية",
+            "صافي_الربح": " إسقاط_الإيرادات_السنوية - تكلفة_التسويق_السنوية = الناتج هنا",
             "نسبة_العائد_على_الاستثمار": "ROI percentage"
         }},
         // Similar structure for other platforms
@@ -791,25 +790,24 @@ Return ONLY valid JSON with this structure and use SPECIFIC NUMBERS (not ranges)
 
     try:
         response = client.chat.completions.create(
-            model="gpt-4o-mini-2024-07-18",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": f"""You are a real estate financial analyst. 
 Provide realistic ROI calculations based on:
 - Total marketing budget is {max_marketing_budget} SAR
-- Platforms Annual Costs: {platforms}
 - Use the exact marketing costs provided for each platform
 - Conversion rates should be 0.5-2%
 - Use specific numbers, not ranges
 - ROI calculations should reflect realistic market conditions
 - All numbers must be separated by "," like: 1,000,000
-- Make sure to write the full numbers
-- if there are some numbers that contain decimal values then make it 2 decimal values at max, otherwise do nothing
 - Total Property prices are {total_property_price} SAR"""},
                 {"role": "user", "content": user_prompt}
             ],
             response_format={"type": "json_object"},
-            temperature=0.7
+            temperature=0.3
         )
+
+        print(response.choices[0].message.content)
 
         result = clean_and_parse_json(response.choices[0].message.content)
 
