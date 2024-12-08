@@ -800,6 +800,7 @@ Provide realistic ROI calculations based on:
 - Use specific numbers, not ranges
 - ROI calculations should reflect realistic market conditions
 - All numbers must be separated by "," like: 1,000,000
+- All Json Must be Strings only###
 - Total Property prices are {total_property_price} SAR"""},
                 {"role": "user", "content": user_prompt}
             ],
