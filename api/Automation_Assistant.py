@@ -649,7 +649,7 @@ def generate_market_strategy(project_details):
                 "التوصيات": "",
                 "النقرات اليومية": "",
                 "نسبة النقر (CTR)": "",
-                "نسبة التحول (conversion_rate)": "",
+                "نسبة التحويل (conversion_rate)": "",
                 "تكلفة التسويق الشهرية": "",
                 "التكلفة السنوية": ""
             }},
@@ -737,9 +737,6 @@ def calculate_roi_projections(project_details):
     # Calculate maximum marketing budget (1% of total property value)
     max_marketing_budget = total_property_price * 0.01
 
-    print("Total Price: ", total_property_price)
-    print("Maximum Market Budget: ", max_marketing_budget)
-
     # Define platforms with their English keys to avoid encoding issues
     platforms = {
         "facebook": "فيسبوك",
@@ -760,14 +757,10 @@ def calculate_roi_projections(project_details):
 
     user_prompt =f"""You are a real estate financial analyst. 
     Provide realistic ROI calculations based on:
-    - Total marketing budget is {max_marketing_budget} SAR
-    - Use the exact marketing costs provided for each platform
-    - Conversion rates should be 0.5-2%
-    - Use specific numbers, not ranges
-    - ROI calculations should reflect realistic market conditions
-    - All numbers must be separated by "," like: 1,000,000
-    - All Json Must be Strings only###
-    - Total Property prices are {total_property_price} SAR"""
+    - Total marketing budget is {"{:,}".format(max_marketing_budget)} SAR
+    - Total Property prices are {"{:,}".format(total_property_price)}  SAR"""
+
+    print("Prompt: ", user_prompt)
 
     try:
         response = client.chat.completions.create(
@@ -788,15 +781,23 @@ Consider:
 3. Realistic visitor-to-lead ratios
 4. Standard real estate sales cycles
 
+Important Notes###:
+- Use the exact marketing costs provided for each platform
+- Conversion rates should be 0.5-2% based on each platform
+- Use specific numbers, not ranges
+- ROI calculations should reflect realistic market conditions
+- All numbers must be separated by "," like: 1,000,000
+- All Json Must be Strings only###
+
 Return ONLY valid JSON with this structure and use SPECIFIC NUMBERS (not ranges) using these fake total price and marketing budgets examples:
 Total Property Prices: 50,000,000 SAR
 Maximum Marketing Budget: 500,000 SAR
 {{
     "ROI_Calculation": {{
         "فيسبوك": {{
-            "إسقاط_عدد_الزوار_السنوي": "50000 زائر",
+            "إسقاط_عدد_الزوار_السنوي": "50,000 زائر",
             "معدل_التحويل":"0.5",
-            "إسقاط_عدد_المبيعات_السنوي": "50000 * (0.5 / 100 ) = 25 مشتري",
+            "إسقاط_عدد_المبيعات_السنوي": "50,000 * (0.5 / 100 ) = 25 مشتري",
             "إسقاط_الإيرادات_السنوية": "50,000,000 * 25 = 1,250,000,000 ريال سعودي",
             "تكلفة_التسويق_السنوية": "125,000 ريال سعودي",
             "صافي_الربح": "1,250,000,000 - 125,000 = 1,249,875,000 ريال سعودي",
