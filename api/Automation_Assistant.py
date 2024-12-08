@@ -803,9 +803,7 @@ Provide realistic ROI calculations based on:
 - Total Property prices are {total_property_price} SAR"""},
                 {"role": "user", "content": user_prompt}
             ],
-            response_format={"type": "json_object"},
             temperature=0.3,
-            max_tokens=16384
         )
 
         print(response.choices[0].message.content)
