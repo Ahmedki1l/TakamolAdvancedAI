@@ -649,7 +649,7 @@ def generate_market_strategy(project_details):
                 "التوصيات": "",
                 "النقرات اليومية": "",
                 "نسبة النقر (CTR)": "",
-                "نسبة التحيل (conversion_rate)": "",
+                "نسبة التحول (conversion_rate)": "",
                 "تكلفة التسويق الشهرية": "",
                 "التكلفة السنوية": ""
             }},
@@ -737,6 +737,9 @@ def calculate_roi_projections(project_details):
     # Calculate maximum marketing budget (1% of total property value)
     max_marketing_budget = total_property_price * 0.01
 
+    print("Total Price: ", total_property_price)
+    print("Maximum Market Budget: ", max_marketing_budget)
+
     # Define platforms with their English keys to avoid encoding issues
     platforms = {
         "facebook": "فيسبوك",
@@ -755,9 +758,22 @@ def calculate_roi_projections(project_details):
         platforms["linkedin"]: max_marketing_budget * 0.15    # 15% of budget
     }
 
-    user_prompt = f"""Based on these project details:
-Total Property Prices: {total_property_price} SAR
-Maximum Marketing Budget: {max_marketing_budget} SAR
+    user_prompt =f"""You are a real estate financial analyst. 
+    Provide realistic ROI calculations based on:
+    - Total marketing budget is {max_marketing_budget} SAR
+    - Use the exact marketing costs provided for each platform
+    - Conversion rates should be 0.5-2%
+    - Use specific numbers, not ranges
+    - ROI calculations should reflect realistic market conditions
+    - All numbers must be separated by "," like: 1,000,000
+    - All Json Must be Strings only###
+    - Total Property prices are {total_property_price} SAR"""
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content":f"""Based on these project details:
 
 Generate realistic ROI projections for a real estate marketing campaign with these specific platform budgets:
 {platforms["facebook"]}: {platform_budgets[platforms["facebook"]]} SAR
@@ -772,39 +788,26 @@ Consider:
 3. Realistic visitor-to-lead ratios
 4. Standard real estate sales cycles
 
-Return ONLY valid JSON with this structure and use SPECIFIC NUMBERS (not ranges):
+Return ONLY valid JSON with this structure and use SPECIFIC NUMBERS (not ranges) using these fake total price and marketing budgets examples:
+Total Property Prices: 50,000,000 SAR
+Maximum Marketing Budget: 500,000 SAR
 {{
     "ROI_Calculation": {{
-        "{platforms["facebook"]}": {{
-            "إسقاط_عدد_الزوار_السنوي": "Number of annual visitors",
-            "معدل_التحويل":"احسب معدل التحويل هنا",
-            "إسقاط_عدد_المبيعات_السنوي": "إسقاط_عدد_الزوار_السنوي * (معدل_التحويل / 100 )",
-            "إسقاط_الإيرادات_السنوية": "(total_property_price) * إسقاط_عدد_المبيعات_السنوي = الناتج هنا",
-            "تكلفة_التسويق_السنوية": "{platforms["facebook"]}",
-            "صافي_الربح": " إسقاط_الإيرادات_السنوية - تكلفة_التسويق_السنوية = الناتج هنا",
-            "نسبة_العائد_على_الاستثمار": "ROI percentage"
+        "فيسبوك": {{
+            "إسقاط_عدد_الزوار_السنوي": "50000 زائر",
+            "معدل_التحويل":"0.5",
+            "إسقاط_عدد_المبيعات_السنوي": "50000 * (0.5 / 100 ) = 25 مشتري",
+            "إسقاط_الإيرادات_السنوية": "50,000,000 * 25 = 1,250,000,000 ريال سعودي",
+            "تكلفة_التسويق_السنوية": "125,000 ريال سعودي",
+            "صافي_الربح": "1,250,000,000 - 125,000 = 1,249,875,000 ريال سعودي",
+            "نسبة_العائد_على_الاستثمار": "(1,249,875,000 / 50,000,000) * 100 = 2,499.75%"
         }},
         // Similar structure for other platforms
     }}
-}}"""
-
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": f"""You are a real estate financial analyst. 
-Provide realistic ROI calculations based on:
-- Total marketing budget is {max_marketing_budget} SAR
-- Use the exact marketing costs provided for each platform
-- Conversion rates should be 0.5-2%
-- Use specific numbers, not ranges
-- ROI calculations should reflect realistic market conditions
-- All numbers must be separated by "," like: 1,000,000
-- All Json Must be Strings only###
-- Total Property prices are {total_property_price} SAR"""},
+}}""" },
                 {"role": "user", "content": user_prompt}
             ],
-            temperature=0.3,
+            temperature=0.7,
         )
 
         print(response.choices[0].message.content)
@@ -825,11 +828,11 @@ Provide realistic ROI calculations based on:
                     "نسبة_العائد_على_الاستثمار": str(int((total_property_price - platform_budgets[platform_ar]) / platform_budgets[platform_ar] * 100))
                 }
 
-            platform_cost_str = str(result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"]).replace(',', '')
-            platform_cost = float(platform_cost_str)
-
-            if abs(platform_cost - platform_budgets[platform_ar]) > 1:
-                result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"] = "{:,}".format(int(platform_budgets[platform_ar]))
+            # platform_cost_str = str(result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"]).replace(',', '')
+            # platform_cost = float(platform_cost_str)
+            #
+            # if abs(platform_cost - platform_budgets[platform_ar]) > 1:
+            #     result["ROI_Calculation"][platform_ar]["تكلفة_التسويق_السنوية"] = "{:,}".format(int(platform_budgets[platform_ar]))
 
         return result
 
