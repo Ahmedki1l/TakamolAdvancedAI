@@ -1980,7 +1980,7 @@ def generate_ideas():
         logger.error(f"JSON parsing error: {e}")
         return jsonify({"error": "Invalid JSON"}), 400
 
-    required_fields = ['platform', 'case_study']
+    required_fields = ['platform', 'case_study', 'num_ideas', 'campaign_type']
     missing_fields = [field for field in required_fields if field not in data]
     
     if missing_fields:
@@ -1993,7 +1993,8 @@ def generate_ideas():
         ideas = content_generator.generate_content_ideas(
             platform=data['platform'],
             case_study=data['case_study'],
-            num_ideas=data.get('num_ideas', 3)
+            num_ideas=data.get('num_ideas'),
+            campaign_type=data['campaign_type']
         )
         
         ideas_dict = [idea.__dict__ for idea in ideas]
@@ -2023,7 +2024,7 @@ def generate_posts():
         logger.error(f"JSON parsing error: {e}")
         return jsonify({"error": "Invalid JSON"}), 400
 
-    required_fields = ['platform', 'ideas', 'case_study']
+    required_fields = ['platform', 'ideas', 'case_study', 'post_length']
     missing_fields = [field for field in required_fields if field not in data]
     
     if missing_fields:
@@ -2049,7 +2050,7 @@ def generate_posts():
             platform=data['platform'],
             ideas=ideas,
             case_study=data['case_study'],
-            post_length=data.get('post_length', 'medium')
+            post_length=data.get('post_length')
         )
         
         posts_data = [post.__dict__ for post in posts]

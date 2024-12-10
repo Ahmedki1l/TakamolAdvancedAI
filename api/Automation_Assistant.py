@@ -313,8 +313,49 @@ class GeneratedPost:
 class ContentGenerationError(Exception):
     """Custom exception for content generation errors"""
     pass
+    def generate_content_ideas(
+            self,
+            platform: str,
+            case_study: str,
+            campaign_type: str,
+            num_ideas: int = 5,
+    ) -> List[ContentIdea]:
+        """
+        Generate interconnected content ideas for a specific platform
+
+        :param platform: Social media platform
+        :param case_study: Project details
+        :param campaign_type: The campaign type
+        :param num_ideas: Number of ideas to generate
+        :return: List of content ideas
+        """
+        self.validate_platform(platform)
+
+        try:
+            prompt_method = self.supported_platforms[platform.lower()]['idea_prompt']
+            prompt = prompt_method(case_study, num_ideas)
+
+            system_prompt = f"You are a professional real estate marketing expert. Generate exactly {num_ideas} content ideas with a narrative sequence for the {campaign_type} campaign type."
+            response = self._generate_ai_response(system_prompt, prompt)
+
+            ideas = []
+            for idx, idea_section in enumerate(response.split('\n\n'), 1):
+                if idea_section.strip() and len(ideas) < num_ideas:
+                    ideas.append(ContentIdea(
+                        id=f"{platform}_idea_{idx}",
+                        platform=platform,
+                        content=idea_section.strip(),
+                        progression_hint=f"Step {idx} of the story"
+                    ))
+
+            return ideas
+
+        except Exception as e:
+            logger.error(f"Error generating ideas for {platform}: {e}")
+            raise ContentGenerationError(f"Failed to generate content ideas: {e}")
 
 class ContentGenerator:
+
     def __init__(self, max_workers: int = 5):
         self.max_workers = max_workers
         self.post_length_config = {
@@ -357,45 +398,6 @@ class ContentGenerator:
         if platform.lower() not in self.supported_platforms:
             supported = ", ".join(self.supported_platforms.keys())
             raise ValueError(f"Unsupported platform. Supported platforms: {supported}")
-
-    def generate_content_ideas(
-        self,
-        platform: str,
-        case_study: str,
-        num_ideas: int = 5
-    ) -> List[ContentIdea]:
-        """
-        Generate interconnected content ideas for a specific platform
-
-        :param platform: Social media platform
-        :param case_study: Project details
-        :param num_ideas: Number of ideas to generate
-        :return: List of content ideas
-        """
-        self.validate_platform(platform)
-
-        try:
-            prompt_method = self.supported_platforms[platform.lower()]['idea_prompt']
-            prompt = prompt_method(case_study, num_ideas)
-
-            system_prompt = f"You are a professional real estate marketing expert. Generate exactly {num_ideas} content ideas with a narrative sequence."
-            response = self._generate_ai_response(system_prompt, prompt)
-
-            ideas = []
-            for idx, idea_section in enumerate(response.split('\n\n'), 1):
-                if idea_section.strip() and len(ideas) < num_ideas:
-                    ideas.append(ContentIdea(
-                        id=f"{platform}_idea_{idx}",
-                        platform=platform,
-                        content=idea_section.strip(),
-                        progression_hint=f"Step {idx} of the story"
-                    ))
-
-            return ideas
-
-        except Exception as e:
-            logger.error(f"Error generating ideas for {platform}: {e}")
-            raise ContentGenerationError(f"Failed to generate content ideas: {e}")
     def generate_posts_for_ideas(self, platform: str, ideas: List[ContentIdea], case_study: str, post_length: str = "medium") -> List[GeneratedPost]:
         self.validate_platform(platform)
         if post_length not in self.post_length_config:
@@ -997,46 +999,46 @@ def social_media_content_ai(project_details_json):
         print(f"Error in social_media_content_ai: {str(e)}")
         raise
 
-def generate_social_media_content(project_details: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Generate complete social media content strategy
-    
-    :param project_details: Dictionary containing project information
-    :return: Dictionary containing generated content strategy
-    """
-    try:
-        generator = ContentGenerator()
-        results = {}
-        
-        for platform in project_details.get('platforms', []):
-            # Generate ideas
-            ideas = generator.generate_content_ideas(
-                platform=platform,
-                case_study=json.dumps(project_details, ensure_ascii=False),
-                num_ideas=3
-            )
-            
-            # Generate posts from ideas
-            posts = generator.generate_posts_for_ideas(
-                platform=platform,
-                ideas=ideas,
-                case_study=json.dumps(project_details, ensure_ascii=False),
-                post_length="medium"
-            )
-            
-            results[platform] = {
-                'ideas': [asdict(idea) for idea in ideas],
-                'posts': [asdict(post) for post in posts]
-            }
-        
-        return {
-            "success": True,
-            "data": results
-        }
-        
-    except Exception as e:
-        logger.error(f"Error in content generation: {e}")
-        raise ContentGenerationError(f"Failed to generate social media content: {e}")
+# def generate_social_media_content(project_details: Dict[str, Any]) -> Dict[str, Any]:
+#     """
+#     Generate complete social media content strategy
+#
+#     :param project_details: Dictionary containing project information
+#     :return: Dictionary containing generated content strategy
+#     """
+#     try:
+#         generator = ContentGenerator()
+#         results = {}
+#
+#         for platform in project_details.get('platforms', []):
+#             # Generate ideas
+#             ideas = generator.generate_content_ideas(
+#                 platform=platform,
+#                 case_study=json.dumps(project_details, ensure_ascii=False),
+#                 num_ideas=3
+#             )
+#
+#             # Generate posts from ideas
+#             posts = generator.generate_posts_for_ideas(
+#                 platform=platform,
+#                 ideas=ideas,
+#                 case_study=json.dumps(project_details, ensure_ascii=False),
+#                 post_length="medium"
+#             )
+#
+#             results[platform] = {
+#                 'ideas': [asdict(idea) for idea in ideas],
+#                 'posts': [asdict(post) for post in posts]
+#             }
+#
+#         return {
+#             "success": True,
+#             "data": results
+#         }
+#
+#     except Exception as e:
+#         logger.error(f"Error in content generation: {e}")
+#         raise ContentGenerationError(f"Failed to generate social media content: {e}")
 
 # Example usage
 if __name__ == "__main__":
