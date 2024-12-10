@@ -303,6 +303,7 @@ class ContentIdea:
 class GeneratedPost:
     """Structured representation of a generated social media post"""
     id: str
+    title: str
     platform: str
     original_idea: str
     post_content: str
@@ -463,8 +464,14 @@ class ContentGenerator:
             Generate content between {length_config["min_chars"]} and {length_config["max_chars"]} characters.
             Do not use any emojis in the content."""
             post_content = self._generate_ai_response(system_prompt, prompt)
+
+            system_prompt_for_title = f"""You are a professional real estate marketing expert specialized in creating targeted content.
+                        Generate a tite for the provided user prompt.
+                        Do not use any emojis in the content."""
+            post_title = self._generate_ai_response(system_prompt_for_title, post_content)
             return GeneratedPost(
                 id=idea.id,
+                title= post_title,
                 platform=platform,
                 original_idea=idea.content,
                 post_content=post_content,
