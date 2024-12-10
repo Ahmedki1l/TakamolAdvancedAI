@@ -466,7 +466,7 @@ class ContentGenerator:
             post_content = self._generate_ai_response(system_prompt, prompt)
 
             system_prompt_for_title = f"""You are a professional real estate marketing expert specialized in creating targeted content.
-                        Generate a tite for the provided user prompt.
+                        Generate a very short tite for the provided user prompt.
                         Do not use any emojis in the content."""
             post_title = self._generate_ai_response(system_prompt_for_title, post_content)
             return GeneratedPost(
