@@ -398,6 +398,47 @@ class ContentGenerator:
         if platform.lower() not in self.supported_platforms:
             supported = ", ".join(self.supported_platforms.keys())
             raise ValueError(f"Unsupported platform. Supported platforms: {supported}")
+
+
+    def generate_content_ideas(
+            self,
+            platform: str,
+            case_study: str,
+            campaign_type: str,
+            num_ideas: int = 5
+    ) -> List[ContentIdea]:
+        """
+        Generate interconnected content ideas for a specific platform
+
+        :param platform: Social media platform
+        :param case_study: Project details
+        :param num_ideas: Number of ideas to generate
+        :return: List of content ideas
+        """
+        self.validate_platform(platform)
+
+        try:
+            prompt_method = self.supported_platforms[platform.lower()]['idea_prompt']
+            prompt = prompt_method(case_study, num_ideas)
+
+            system_prompt = f"You are a professional real estate marketing expert. Generate exactly {num_ideas} content ideas with a narrative sequence for the {campaign_type} campaign type."
+            response = self._generate_ai_response(system_prompt, prompt)
+
+            ideas = []
+            for idx, idea_section in enumerate(response.split('\n\n'), 1):
+                if idea_section.strip() and len(ideas) < num_ideas:
+                    ideas.append(ContentIdea(
+                        id=f"{platform}_idea_{idx}",
+                        platform=platform,
+                        content=idea_section.strip(),
+                        progression_hint=f"Step {idx} of the story"
+                    ))
+
+            return ideas
+
+        except Exception as e:
+            logger.error(f"Error generating ideas for {platform}: {e}")
+            raise ContentGenerationError(f"Failed to generate content ideas: {e}")
     def generate_posts_for_ideas(self, platform: str, ideas: List[ContentIdea], case_study: str, post_length: str = "medium") -> List[GeneratedPost]:
         self.validate_platform(platform)
         if post_length not in self.post_length_config:
