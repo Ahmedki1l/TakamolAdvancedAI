@@ -2036,6 +2036,7 @@ def generate_posts():
     try:
         # Convert JSON ideas back to ContentIdea objects
         ideas = []
+        print("data: ", data)
         for idea_data in data['ideas']:
             idea = ContentIdea(
                 id=idea_data.get('id', ''),
