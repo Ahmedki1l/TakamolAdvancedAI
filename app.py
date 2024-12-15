@@ -2056,6 +2056,8 @@ def generate_posts():
         
         posts_data = [post.__dict__ for post in posts]
 
+        print(posts_data)
+
         return jsonify({
             "success": True,
             "data": posts_data
