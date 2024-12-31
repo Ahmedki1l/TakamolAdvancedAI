@@ -40,7 +40,7 @@ from api.Investment_Contexts import investment_arabic_context_residential_buildi
     investment_arabic_context_residential_compound, investment_arabic_context_administrative_building, \
     investment_arabic_context_hotel, investment_editor_context_ar, investment_arabic_Commercial_residential_tower, \
     investment_arabic_Commercial_and_administrative_tower, investment_arabic_administrative_tower, \
-    simplified_investment_context_singleBuilding
+    simplified_investment_context_singleTower
 from api.ideogram_api_requests import generate_image_from_ideogram
 from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
     image_analyzer, investment_generator, investment_image_creator, pdf_extractor, short_content_generator, \
@@ -1409,7 +1409,7 @@ def ai_simple_investment():
         user_input += f", and the land price for sqm is {price}."
 
     try:
-        response = investment_generator(user_input, simplified_investment_context_singleBuilding)
+        response = investment_generator(user_input, simplified_investment_context_singleTower)
         # if flag == 'True':
         #     # Convert price to float, multiply by 2, and convert back to string
         #     response["سعر_البيع_للمتر"] = str(float(price) * 2)
