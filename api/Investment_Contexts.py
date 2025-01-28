@@ -1700,7 +1700,6 @@ simplified_investment_context_singleTower = """
                             }
                             
                             الأبراج يجب أن تحتوي على عدد طوابق لا يقل عن 15 طابق#
-                            
 
 """
 

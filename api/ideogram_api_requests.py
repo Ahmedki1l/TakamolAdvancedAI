@@ -16,7 +16,8 @@ def generate_image_from_ideogram(prompt):
             "aspect_ratio": "ASPECT_16_9",
             "model": "V_2",
             "style_type": "RENDER_3D",
-            "magic_prompt_option": "OFF"
+            "magic_prompt_option": "OFF",
+            "negative_prompt": "extra floors, hidden floors, partial floors, mechanical penthouse, rooftop structures, basement, mezzanine, split levels, ambiguous floor count, similar building, duplicate building, repeated architecture"
         }
     }
 
