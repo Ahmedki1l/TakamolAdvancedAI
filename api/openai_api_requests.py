@@ -433,7 +433,7 @@ def prompt_enhancer(text, sent_context):
 
 
 # Investments Website APIs
-def investment_generator(user_input, sent_context):
+def investment_generator(user_input, sent_context, main_street):
     try:
         context = [
             {
@@ -457,6 +457,11 @@ def investment_generator(user_input, sent_context):
         response = chat_completion.choices[0].message.content
         prompt = json.loads(response)
         print(prompt)
+
+        prompt['main_street'] = main_street
+
+        response = json.dumps(prompt)
+
         return response
 
     except Exception as e:

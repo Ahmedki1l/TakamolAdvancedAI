@@ -1409,7 +1409,7 @@ def ai_simple_investment():
         user_input += f", and the land price for sqm is {price}."
 
     try:
-        response = investment_generator(user_input, simplified_investment_context_singleTower)
+        response = investment_generator(user_input, simplified_investment_context_singleTower, flag)
         # if flag == 'True':
         #     # Convert price to float, multiply by 2, and convert back to string
         #     response["سعر_البيع_للمتر"] = str(float(price) * 2)
