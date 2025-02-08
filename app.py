@@ -1497,7 +1497,7 @@ def analyze_map():
 
     try:
         # Create a chat completion request
-        response = client.chat.completions.create(
+        chat_completion = client.chat.completions.create(
             model="gpt-4-turbo",
             temperature=0.7,
             messages=[
@@ -1508,7 +1508,7 @@ def analyze_map():
         )
 
         # Extract the generated recommendations
-        recommendations = response["choices"][0]["message"]["content"]
+        recommendations = chat_completion.choices[0].message.content
         print(recommendations)
 
         return jsonify({
