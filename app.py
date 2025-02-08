@@ -1418,6 +1418,112 @@ def ai_simple_investment():
         print(e)
         return jsonify({"error": str(e)}), 500
 
+from openai import OpenAI
+
+# Access the API key
+api_key = os.getenv('OPENAI_API_KEY')
+
+client = OpenAI(api_key=api_key)
+
+@app.route("/analyze-map", methods=["POST"])
+def analyze_map():
+    """
+    Expects a JSON body with a key 'mapLink'.
+    Sends a prompt to the OpenAI API to generate building recommendations
+    based on a Google Maps link.
+    """
+    data = request.get_json()
+
+    if not data or "mapLink" not in data:
+        return jsonify({
+            "success": False,
+            "message": "Map link is required"
+        }), 400
+
+    map_link = data["mapLink"]
+
+    # System prompt: long instructions for the AI (you can adjust as needed)
+    system_message = (
+        "You are a Building Recommendations Analysis assistant. I will provide you with a Google Maps link showing a specific land area. "
+        "Based on this map, analyze the land and its surroundings to recommend the most suitable types of buildings for the area.\n\n"
+        "Your response must be in valid JSON format, exactly matching the example structure below. Include all fields: "
+        '"analysisInEn", "analysisInAr", "numbersEn", "numbersAr", "populationEn", and "populationAr". Provide realistic accuracy percentages.\n\n'
+        "Additionally, determine the population of the area, describe the demographics, common occupations, and average salaries. "
+        "If the area is already populated, consider this in your building recommendations.\n\n"
+        "### Example Response:\n"
+        '{\n'
+        '  "analysisInEn": "Provide an English analysis of the area here.",\n'
+        '  "analysisInAr": "قدم تحليلًا باللغة العربية هنا.",\n'
+        '  "populationEn": {\n'
+        '    "total": 5000,\n'
+        '    "demographics": "Predominantly young families with an average age of 30.",\n'
+        '    "occupations": "Retail, education, and healthcare sectors.",\n'
+        '    "averageSalary": "EGP 5,000 per month"\n'
+        '  },\n'
+        '  "populationAr": {\n'
+        '    "total": "5000",\n'
+        '    "demographics": "غالبية الأسر شابة بمتوسط عمر 30 عامًا.",\n'
+        '    "occupations": "قطاعات البيع بالتجزئة والتعليم والرعاية الصحية.",\n'
+        '    "averageSalary": "5000 جنيه مصري شهريًا"\n'
+        '  },\n'
+        '  "numbersEn": [\n'
+        '    { "type": "Mixed-use Building", "accuracy": "90%" },\n'
+        '    { "type": "Commercial Building", "accuracy": "80%" },\n'
+        '    { "type": "Shopping Mall", "accuracy": "60%" },\n'
+        '    { "type": "Administrative Building", "accuracy": "55%" },\n'
+        '    { "type": "Residential Compound", "accuracy": "40%" },\n'
+        '    { "type": "Villas", "accuracy": "35%" }\n'
+        '  ],\n'
+        '  "numbersAr": [\n'
+        '    { "type": "مبنى متعدد الاستخدامات", "accuracy": "90%" },\n'
+        '    { "type": "مبنى تجاري", "accuracy": "80%" },\n'
+        '    { "type": "مركز تسوق", "accuracy": "60%" },\n'
+        '    { "type": "مبنى إداري", "accuracy": "55%" },\n'
+        '    { "type": "مجمع سكني", "accuracy": "40%" },\n'
+        '    { "type": "فيلات", "accuracy": "35%" }\n'
+        '  ]\n'
+        '}\n\n'
+        "### Instructions:\n"
+        "1. Include all fields without skipping any.\n"
+        "2. Ensure Arabic text fully aligns with the English content.\n"
+        "3. Use proper grammar, punctuation, and realistic accuracy percentages.\n"
+        "4. Provide detailed demographic information, common occupations, and average salaries.\n"
+        "5. Provide population and economic information in both English and Arabic.\n"
+        "6. Consider existing population in building recommendations."
+    )
+
+    # User prompt with the map link
+    user_message = f"I would like building recommendations for the area at this map link: {map_link}"
+
+    try:
+        # Create a chat completion request
+        response = client.chat.completions.create(
+            model="gpt-4-turbo",
+            temperature=0.7,
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": user_message}
+            ],
+            max_tokens=1200  # Adjust as needed
+        )
+
+        # Extract the generated recommendations
+        recommendations = response["choices"][0]["message"]["content"]
+        print(recommendations)
+
+        return jsonify({
+            "success": True,
+            "recommendations": recommendations
+        }), 200
+
+    except Exception as e:
+        print("Error with OpenAI API:", str(e))
+        return jsonify({
+            "success": False,
+            "message": "Failed to analyze the map image",
+            "error": str(e)
+        }), 500
+
 # @app.route('/ar/investment_Commercial_residential_tower', methods=['POST'])
 # def ai_investment_Commercial_residential_tower():
 #     if not request.is_json:
