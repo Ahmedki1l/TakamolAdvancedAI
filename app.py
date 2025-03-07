@@ -41,6 +41,7 @@ from api.Investment_Contexts import investment_arabic_context_residential_buildi
     investment_arabic_context_hotel, investment_editor_context_ar, investment_arabic_Commercial_residential_tower, \
     investment_arabic_Commercial_and_administrative_tower, investment_arabic_administrative_tower, \
     simplified_investment_context_singleTower
+from api.Project_Comparison import start_comparison
 from api.ideogram_api_requests import generate_image_from_ideogram
 from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
     image_analyzer, investment_generator, investment_image_creator, pdf_extractor, short_content_generator, \
@@ -1720,8 +1721,32 @@ def unreal_engine_chat_v1():
         print(e)
         return jsonify({"error": str(e)}), 500
 
+""" Comparison Section """
+@app.route('/compare-two-projects', methods=['POST'])
+def compare_two_projects():
+    # Check if the request contains JSON data
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    # Check if 'input' key exists in the JSON data
+    if 'project2' not in data:
+        print(data)
+        return jsonify({"error": "Missing 'project1' or 'project2' fields"}), 400
 
 
+    project1 = data['project1']
+    project2 = data['project2']
+
+    # Call the chat_with_ai function from the imported module
+    try:
+        response = start_comparison(project1, project2)
+        print(response)
+        return response, 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
 
 """ Publishing Endpoints """
 
