@@ -1731,13 +1731,13 @@ def compare_two_projects():
     data = request.get_json()
 
     # Check if 'input' key exists in the JSON data
-    if 'project2' not in data:
+    if 'project2' not in data['data']:
         print(data)
         return jsonify({"error": "Missing 'project1' or 'project2' fields"}), 400
 
 
-    project1 = data['project1']
-    project2 = data['project2']
+    project1 = data['data']['project1']
+    project2 = data['data']['project2']
 
     # Call the chat_with_ai function from the imported module
     try:
