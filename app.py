@@ -42,7 +42,8 @@ from api.Investment_Contexts import investment_arabic_context_residential_buildi
     investment_arabic_Commercial_and_administrative_tower, investment_arabic_administrative_tower, \
     simplified_investment_context_singleTower
 from api.Project_Comparison import start_comparison
-from api.ideogram_api_requests import generate_image_from_ideogram
+from api.ideogram_api_requests import generate_image_from_ideogram, generate_image_from_ideogram_remix, \
+    remix_image_from_remote_url
 from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
     image_analyzer, investment_generator, investment_image_creator, pdf_extractor, short_content_generator, \
     investment_editor, \
@@ -424,6 +425,33 @@ def generate_image():
 
     # Call the separate function
     result = generate_image_from_ideogram(prompt)
+
+    if result:
+        return jsonify({"data": result}), 200
+    else:
+        return jsonify({"error": "Error generating image"}), 500
+
+@app.route('/image-model-2-remix', methods=['POST'])
+def generate_image_remix():
+    # Check if the request contains JSON data
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    # Check if 'prompt' key exists in the JSON data
+    if 'prompt' not in data:
+        return jsonify({"error": "Missing 'prompt' field"}), 400
+
+    # Check if 'url' key exists in the JSON data
+    if 'url' not in data:
+        return jsonify({"error": "Missing 'url' field"}), 400
+
+    prompt = data.get('prompt')
+    image_url = data.get('url')
+
+    # Call the separate function
+    result = remix_image_from_remote_url(prompt, image_url)
 
     if result:
         return jsonify({"data": result}), 200
