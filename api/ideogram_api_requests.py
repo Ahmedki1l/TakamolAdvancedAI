@@ -263,7 +263,7 @@ def remix_image_from_remote_url(prompt, remote_image_url):
         "image_request": json.dumps({
             "prompt": prompt,
             "aspect_ratio": "ASPECT_10_16",
-            "image_weight": 40,
+            "image_weight": 50,
             "magic_prompt_option": "OFF",
             "model": "V_2",
             "style_type": "RENDER_3D",
