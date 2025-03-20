@@ -65,9 +65,8 @@ def generate_real_estate_campaign(user_input):
     10.Recommendations.
     11.Post_Frequency.
 
-    json format:
-    {"""
-        {
+    json_template = """
+    {
            "Target_Audience": {
               "فيسبوك": {
                  "الفئة_العمرية": "",
@@ -218,10 +217,10 @@ def generate_real_estate_campaign(user_input):
               "لينكد_إن": "",
               "تويتر": "",
               "جوجل": ""
-           }
+            }
         }
+    """
 
-    """}
     إرشادات: 
     أعطني فقط البيانات بدون اسم المشروع او أي شئ آخر .. فقط اتبع الترتيب بالأعلى و اعجلها لجميع المنصات """
 
