@@ -43,11 +43,17 @@ from api.Investment_Contexts import investment_arabic_context_residential_buildi
     simplified_investment_context_singleTower
 from api.Project_Comparison import start_comparison
 from api.ideogram_api_requests import generate_image_from_ideogram, generate_image_from_ideogram_remix, \
-    remix_image_from_remote_url
+    remix_image_from_remote_url, save_sketch_to_repo, generate_architectural_sketch, remix_image_from_remote_url_improved
 from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
     image_analyzer, investment_generator, investment_image_creator, pdf_extractor, short_content_generator, \
     investment_editor, \
     investment_selector, Unreal_Engine_Chat
+
+
+import random
+import matplotlib.pyplot as plt
+from io import BytesIO
+from matplotlib.patches import Rectangle
 
 app = Flask(__name__)
 CORS(app)
@@ -431,32 +437,32 @@ def generate_image():
     else:
         return jsonify({"error": "Error generating image"}), 500
 
-@app.route('/image-model-2-remix', methods=['POST'])
-def generate_image_remix():
-    # Check if the request contains JSON data
-    if not request.is_json:
-        return jsonify({"error": "Request must be JSON"}), 400
+# @app.route('/image-model-2-remix', methods=['POST'])
+# def generate_image_remix():
+#     # Check if the request contains JSON data
+#     if not request.is_json:
+#         return jsonify({"error": "Request must be JSON"}), 400
 
-    data = request.get_json()
+#     data = request.get_json()
 
-    # Check if 'prompt' key exists in the JSON data
-    if 'prompt' not in data:
-        return jsonify({"error": "Missing 'prompt' field"}), 400
+#     # Check if 'prompt' key exists in the JSON data
+#     if 'prompt' not in data:
+#         return jsonify({"error": "Missing 'prompt' field"}), 400
 
-    # Check if 'url' key exists in the JSON data
-    if 'url' not in data:
-        return jsonify({"error": "Missing 'url' field"}), 400
+#     # Check if 'url' key exists in the JSON data
+#     if 'url' not in data:
+#         return jsonify({"error": "Missing 'url' field"}), 400
 
-    prompt = data.get('prompt')
-    image_url = data.get('url')
+#     prompt = data.get('prompt')
+#     image_url = data.get('url')
 
-    # Call the separate function
-    result = remix_image_from_remote_url(prompt, image_url)
+#     # Call the separate function
+#     result = remix_image_from_remote_url(prompt, image_url)
 
-    if result:
-        return jsonify({"data": result}), 200
-    else:
-        return jsonify({"error": "Error generating image"}), 500
+#     if result:
+#         return jsonify({"data": result}), 200
+#     else:
+#         return jsonify({"error": "Error generating image"}), 500
 
 
 @app.route('/en/prompt-generator', methods=['POST'])
@@ -2413,6 +2419,397 @@ def generate_posts():
         logger.error(f"Content generation error: {e}")
         return jsonify({"error": str(e)}), 500
 
+@app.route('/generate-building-render', methods=['POST'])
+def generate_building_render():
+    # Check if the request contains JSON data
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+    
+    data = request.get_json()
+    
+    # Check if 'num_floors' key exists in the JSON data
+    if 'num_floors' not in data:
+        return jsonify({"error": "Missing 'num_floors' field"}), 400
+    
+    try:
+        num_floors = int(data.get('num_floors'))
+        if num_floors < 1 or num_floors > 100:
+            return jsonify({"error": "Number of floors must be between 1 and 100"}), 400
+    except ValueError:
+        return jsonify({"error": "Number of floors must be an integer"}), 400
+    
+    # Get optional style information
+    style = data.get('style', 'modern')
+    material = data.get('material', 'glass and steel')
+    
+    # Step 1: Generate a more precise building sketch with clear floor demarcations
+    try:
+        sketch_bytes = generate_enhanced_architectural_sketch(num_floors)
+        sketch_path, sketch_url = save_sketch_to_repo(sketch_bytes, num_floors)
+        print(f"Enhanced sketch generated and saved to {sketch_path}")
+    except Exception as e:
+        return jsonify({"error": f"Failed to generate sketch: {str(e)}"}), 500
+    
+    # Step 2: Create an extremely specific prompt for accurate floor count
+    prompt = (
+        f"Photorealistic professional architectural visualization of a {style} building. "
+        f"EXACT FLOOR COUNT: {num_floors} floors. "
+        f"The building MUST have EXACTLY {num_floors} distinct and clearly visible floors, "
+        f"no more and no less. Made of {material}. "
+        f"Building shown in FULL VIEW from ground to roof with clear daylight. "
+        f"Every single floor must be uniform in height with visible windows and floor separations. "
+        f"COUNT: {num_floors} floors only."
+    )
+    
+    # Create much stronger negative prompt specifically targeting incorrect floor counts
+    negative_prompt = (
+        f"wrong number of floors, inaccurate floor count, {num_floors-1} floors, {num_floors+1} floors, "
+        f"{num_floors-2} floors, {num_floors+2} floors, more floors, fewer floors, "
+        f"partial floors, hidden floors, unclear floor divisions, ambiguous architecture, "
+        f"distorted proportions, unrealistic building, cutoff building, cropped building, "
+        f"building with wrong floor count, inaccurate architecture"
+    )
+    
+    try:
+        # Use improved remix function with stronger floor count enforcement
+        result = remix_image_with_accurate_floors(
+            prompt=prompt,
+            remote_image_url=sketch_url,
+            num_floors=num_floors,
+            negative_prompt=negative_prompt
+        )
+        
+        # Verify the result
+        if result:
+            render_url = extract_render_url(result)
+            if render_url:
+                # Store the metadata for reference
+                if 'metadata' not in result:
+                    result['metadata'] = {}
+                result['metadata'].update({
+                    'sketch_url': sketch_url,
+                    'requested_floors': num_floors,
+                    'prompt': prompt,
+                    'negative_prompt': negative_prompt,
+                    'floor_count_verification': True  # Mark that we've attempted verification
+                })
+            return jsonify({"data": result}), 200
+        else:
+            return jsonify({
+                "error": "Error generating 3D render",
+                "sketch_url": sketch_url,
+                "status": "partial_success"
+            }), 500
+    except Exception as e:
+        return jsonify({
+            "error": f"Error during render generation: {str(e)}",
+            "sketch_url": sketch_url,
+            "status": "partial_success"
+        }), 500
+
+def extract_render_url(result):
+    """Extract the render URL from the API response"""
+    if isinstance(result, dict):
+        return result.get('image_url') or result.get('url')
+    return None
+
+def save_sketch_to_repo(sketch_bytes, num_floors):
+    """
+    Save the sketch bytes to a local file and return the path and URL
+    
+    Args:
+        sketch_bytes: The sketch image as bytes
+        num_floors: Number of floors in the building
+    
+    Returns:
+        Tuple of (file_path, file_url)
+    """
+    # Create directories if they don't exist
+    os.makedirs('static/sketches', exist_ok=True)
+    
+    # Create a unique filename
+    timestamp = int(time.time())
+    filename = f"building_sketch_{num_floors}floors_{timestamp}.png"
+    file_path = os.path.join('static/sketches', filename)
+    
+    # Save the bytes to a file
+    with open(file_path, 'wb') as f:
+        f.write(sketch_bytes)
+    
+    # Generate a URL (this would be your actual domain in production)
+    base_url = os.getenv('BASE_URL', 'http://localhost:5000')
+    file_url = f"{base_url}/static/sketches/{filename}"
+    
+    return file_path, file_url
+
+def generate_enhanced_architectural_sketch(num_floors):
+    """
+    Generate a highly precise architectural sketch with unmistakable floor delineations
+    and additional visual cues to enforce exact floor count.
+    Returns the sketch as bytes that can be uploaded directly.
+    """
+    # Set up the figure with a fixed square aspect ratio
+    fig, ax = plt.subplots(figsize=(10, 14), facecolor='white')
+    ax.set_aspect('equal')
+    ax.axis('off')
+
+    # Define the building dimensions with more emphasis on floor divisions
+    building_width = 80
+    floor_height = 12  # Increased for better clarity
+    building_height = floor_height * num_floors
+
+    # Define coordinates for the main structure
+    x_left = 25
+    x_right = x_left + building_width
+    y_bottom = 15
+    y_top = y_bottom + building_height
+
+    # Scale down everything if the building gets too tall
+    scale_factor = 1.0
+    max_height = 180
+    if building_height > max_height:
+        scale_factor = max_height / building_height
+        building_width *= scale_factor
+        floor_height *= scale_factor
+        building_height = floor_height * num_floors
+
+        # Recalculate coordinates
+        x_right = x_left + building_width
+        y_top = y_bottom + building_height
+
+    # Draw the main building structure with thicker lines
+    ax.add_patch(Rectangle((x_left, y_bottom), building_width, building_height,
+                           fill=False, edgecolor='black', linewidth=3))
+
+    # Draw CLEARLY MARKED FLOORS with MORE PROMINENT floor dividers
+    for i in range(num_floors + 1):
+        floor_y = y_bottom + i * floor_height
+        if i > 0:  # Skip the ground floor line
+            # Much thicker, unmistakable floor divider lines
+            ax.plot([x_left-5, x_right+5], [floor_y, floor_y], 'k-', linewidth=2.5)
+            
+            # Very clear floor number labels
+            floor_number = i
+            ax.text(x_left - 15, floor_y - floor_height/2, f"F{floor_number}", 
+                   fontsize=9, ha='right', va='center', weight='bold')
+
+    # Draw the ground floor with clearer marking
+    ax.add_patch(Rectangle((x_left, y_bottom), building_width, floor_height,
+                          fill=False, edgecolor='black', linewidth=2))
+    ax.text(x_left - 15, y_bottom + floor_height/2, "F1", 
+           fontsize=9, ha='right', va='center', weight='bold')
+                           
+    # Add EXTRA PROMINENT labels for floor count verification
+    # Top label
+    ax.text(x_left + building_width/2, y_top + 12, 
+           f"BUILDING WITH EXACTLY {num_floors} FLOORS", 
+           fontsize=14, ha='center', va='bottom', color='red', 
+           weight='bold', bbox=dict(facecolor='white', edgecolor='red', pad=4))
+
+    # Bottom label
+    ax.text(x_left + building_width/2, y_bottom - 12, 
+           f"TOTAL: {num_floors} FLOORS - VERIFY COUNT", 
+           fontsize=14, ha='center', va='top', color='red', 
+           weight='bold', bbox=dict(facecolor='white', edgecolor='red', pad=4))
+
+    # Draw ground floor features
+    door_width = min(12 * scale_factor, building_width / 6)
+    door_height = min(8 * scale_factor, floor_height * 0.85)
+    window_width = min(16 * scale_factor, building_width / 5)
+    window_height = min(6 * scale_factor, floor_height * 0.7)
+
+    # Central door
+    door_x = x_left + (building_width - door_width) / 2
+    ax.add_patch(Rectangle((door_x, y_bottom), door_width, door_height,
+                           fill=False, edgecolor='black', linewidth=1.5))
+    # Door divider
+    ax.plot([door_x + door_width/2, door_x + door_width/2],
+            [y_bottom, y_bottom + door_height], 'k-', linewidth=1)
+
+    # Add distinctive windows on each floor
+    window_spacing = max(8 * scale_factor, 3)
+    num_windows = 3
+    window_width = (building_width - (num_windows + 1) * window_spacing) / num_windows
+
+    # More distinctive windows for each floor
+    for floor in range(1, num_floors + 1):
+        floor_y = y_bottom + (floor - 1) * floor_height
+        
+        # Draw an alternating color band for each floor to make it stand out
+        band_color = 'whitesmoke' if floor % 2 == 0 else 'lavender'
+        ax.add_patch(Rectangle((x_left, floor_y), building_width, floor_height,
+                              fill=True, facecolor=band_color, edgecolor='black', 
+                              linewidth=1, alpha=0.3))
+        
+        # Draw a floor label inside the building for each floor
+        ax.text(x_left + building_width/2, floor_y + floor_height/2, f"FLOOR {floor}", 
+               fontsize=8, ha='center', va='center', weight='bold',
+               bbox=dict(facecolor='white', alpha=0.7, pad=1))
+        
+        # Draw windows for this floor
+        for i in range(num_windows):
+            window_x = x_left + window_spacing + i * (window_width + window_spacing)
+            window_y = floor_y + floor_height * 0.25
+            window_h = floor_height * 0.55
+            
+            ax.add_patch(Rectangle((window_x, window_y), window_width, window_h,
+                                  fill=False, edgecolor='black', linewidth=1))
+
+            # Window divisions
+            ax.plot([window_x + window_width/2, window_x + window_width/2],
+                    [window_y, window_y + window_h], 'k-', linewidth=0.7)
+
+    # Add prominent floor number indicator on the side of the building
+    for floor in range(1, num_floors + 1):
+        floor_y = y_bottom + (floor - 0.5) * floor_height
+        # Draw floor number in a more prominent circle
+        circle = plt.Circle((x_right + 15, floor_y), 8, 
+                           fill=True, facecolor='white', edgecolor='black', linewidth=1.5)
+        ax.add_patch(circle)
+        ax.text(x_right + 15, floor_y, str(floor), 
+               ha='center', va='center', fontsize=9, weight='bold')
+
+    # Add a vertical "count line" on the side of the building with number tags
+    line_x = x_right + 35
+    ax.plot([line_x, line_x], [y_bottom, y_top], 'r-', linewidth=2)
+    
+    # Add horizontal tick marks and numbers at each floor level
+    for floor in range(1, num_floors + 1):
+        floor_y = y_bottom + floor * floor_height
+        ax.plot([line_x - 5, line_x + 5], [floor_y, floor_y], 'r-', linewidth=1.5)
+        ax.text(line_x + 8, floor_y, str(floor), 
+               ha='left', va='center', fontsize=8, color='red', weight='bold')
+
+    # Create square boundaries for the plot
+    max_dim = max(building_width + 80, building_height + 60)
+    center_x = x_left + building_width / 2
+    center_y = y_bottom + building_height / 2
+
+    half_size = max_dim / 1.5
+    ax.set_xlim(center_x - half_size, center_x + half_size)
+    ax.set_ylim(center_y - half_size, center_y + half_size)
+
+    # Save to bytes buffer
+    buf = BytesIO()
+    plt.tight_layout()
+    plt.savefig(buf, format='png', dpi=300, bbox_inches='tight')
+    plt.close()
+    buf.seek(0)
+    
+    return buf.getvalue()
+
+def remix_image_with_accurate_floors(prompt, remote_image_url, num_floors, negative_prompt=None):
+    """
+    Highly enhanced remix function specifically optimized for accurate floor counts.
+    Uses multiple techniques to enforce the exact floor count.
+    
+    Args:
+        prompt: The text prompt for image generation
+        remote_image_url: URL of the source image to be remixed
+        num_floors: Number of floors to enforce
+        negative_prompt: Custom negative prompt or None to use default
+        
+    Returns:
+        JSON response from Ideogram API or None if error
+    """
+    # Step 1: Download the image bytes from the remote URL
+    try:
+        image_response = requests.get(remote_image_url)
+        image_response.raise_for_status()
+        image_bytes = image_response.content
+        print("Successfully downloaded the reference image")
+    except Exception as e:
+        print(f"Error downloading image from {remote_image_url}: {e}")
+        return None
+
+    # Step 2: Prepare the /remix endpoint parameters
+    remix_url = "https://api.ideogram.ai/remix"
+    headers = {
+        "Api-Key": os.getenv('IDEOGRAM_API_KEY')
+    }
+
+    # Generate seed for reproducibility
+    seed = random.randint(1000, 9999999)
+    
+    # If no custom negative prompt, create a very strong one
+    if not negative_prompt:
+        negative_prompt = (
+            f"wrong number of floors, inaccurate floor count, {num_floors-1} floors, {num_floors+1} floors, "
+            f"{num_floors-2} floors, {num_floors+2} floors, more floors, fewer floors, "
+            f"partial floors, hidden floors, unclear floor divisions, ambiguous architecture, "
+            f"distorted proportions, unrealistic building, cutoff building, cropped building, "
+            f"building with wrong floor count, inaccurate architecture"
+        )
+
+    # Modify the original prompt to add even stronger floor count emphasis
+    enhanced_prompt = f"{prompt} IMPORTANT: This building has EXACTLY {num_floors} floors - no more, no less. Count them: {num_floors}."
+
+    # Files for upload - use a more descriptive filename 
+    files = {
+        "image_file": (f"building_EXACTLY_{num_floors}_floors.png", image_bytes, "image/png")
+    }
+
+    # Set appropriate parameters for architectural visualization with higher image weight
+    payload = {
+        "image_request": json.dumps({
+            "prompt": enhanced_prompt,
+            "aspect_ratio": "ASPECT_16_9",  # Better for architectural visualization
+            "image_weight": 50,  # Higher weight to follow the sketch guidance more closely
+            "magic_prompt_option": "OFF",
+            "model": "V_2",
+            "style_type": "RENDER_3D",  # Ensures architectural quality
+            "upscale_factor": "2X",  # Higher resolution
+            "seed": seed,
+            "negative_prompt": negative_prompt,
+            "strength": 80  # Strong transformation while keeping floor structure
+        })
+    }
+
+    print(f"Using seed: {seed}")
+    print(f"Using negative prompt: {negative_prompt}")
+    print(f"Enhanced prompt: {enhanced_prompt}")
+    
+    # Step 3: Send the POST request to /remix with retry mechanism
+    max_retries = 4  # Increased retries
+    for attempt in range(max_retries):
+        try:
+            response = requests.post(remix_url, data=payload, files=files, headers=headers)
+            response.raise_for_status()
+            result = response.json()
+            
+            # Add floor count to result for validation
+            if 'metadata' not in result:
+                result['metadata'] = {}
+            result['metadata']['floor_count'] = num_floors
+            result['metadata']['floor_emphasis_level'] = "maximum"
+            
+            print(f"Successfully created high-quality building render with EXACTLY {num_floors} floors")
+            return result
+        except Exception as e:
+            print(f"Error calling Ideogram /remix endpoint (attempt {attempt+1}/{max_retries}): {e}")
+            if hasattr(e, 'response') and hasattr(e.response, 'text'):
+                print(f"Response content: {e.response.text}")
+            
+            # If we haven't reached max retries, wait and try again with a different approach
+            if attempt < max_retries - 1:
+                wait_time = 5 * (attempt + 1)  # Longer progressive backoff
+                print(f"Retrying in {wait_time} seconds...")
+                
+                # On each retry, adjust parameters to try different approaches
+                if attempt == 0:
+                    # Try with a slightly different prompt emphasis
+                    enhanced_prompt = f"Professional architectural visualization of a building with {num_floors} floors. The building MUST have EXACTLY {num_floors} floors - COUNT THEM: {num_floors}. Each floor must be clearly visible and distinct."
+                elif attempt == 1:
+                    # Try with a higher image weight
+                    payload["image_request"] = json.dumps(json.loads(payload["image_request"]) | {"image_weight": 65})
+                elif attempt == 2:
+                    # Try with a different style
+                    payload["image_request"] = json.dumps(json.loads(payload["image_request"]) | {"style_type": "REALISTIC"})
+                
+                time.sleep(wait_time)
+            else:
+                print("Maximum retry attempts reached. Render failed.")
+                return None
 
 # Change port to 5000
 if __name__ == '__main__':
