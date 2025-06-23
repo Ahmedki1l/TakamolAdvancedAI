@@ -469,6 +469,38 @@ def investment_generator(user_input, sent_context, main_street):
         return jsonify({"error": str(e)})
 
 
+# Arabic "why" generator for location analysis
+async def generate_location_why_ar(property_type: str, facility_counts: dict, is_good: bool) -> str:
+    """
+    توليد شرح موجز (1-2 جملة) باللغة العربية لسبب صلاحية أو عدم صلاحية الموقع
+    """
+    # صياغة وصف المرافق
+    facilities_descr = ", ".join(f"{k}: {v}" for k, v in facility_counts.items())
+    verdict = "مناسب" if is_good else "غير مناسب"
+    prompt = (
+        f"أنت خبير في تحليل العقارات.\n"
+        f"الموقع يحتوي على المرافق التالية: {facilities_descr}.\n"
+        f"نوع العقار المحدد هو '{property_type}'، والوضع الحالي: {verdict}.\n"
+        f"اكتب شرحًا موجزًا (جملة إلى جملتين) باللغة العربية يوضح لماذا هذا التقييم منطقي."
+    )
+
+    messages = [
+        {"role": "system", "content": "أنت مساعد تحليل عقاري محترف ومتقن اللغة العربية."},
+        {"role": "user", "content": prompt}
+    ]
+
+    try:
+        resp = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+            temperature=0.7,
+            max_tokens=100
+        )
+        return resp.choices[0].message.content.strip()
+    except Exception as e:
+        return "تعذّر توليد الشرح."
+
+
 
 
 # Unreal Engine APIs
