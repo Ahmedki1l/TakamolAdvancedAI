@@ -470,7 +470,7 @@ def investment_generator(user_input, sent_context, main_street):
 
 
 # Arabic "why" generator for location analysis
-async def generate_location_why_ar(property_type: str, facility_counts: dict, is_good: bool) -> str:
+def generate_location_why_ar(property_type: str, facility_counts: dict, is_good: bool) -> str:
     """
     توليد شرح موجز (1-2 جملة) باللغة العربية لسبب صلاحية أو عدم صلاحية الموقع
     """
