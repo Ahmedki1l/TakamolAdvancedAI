@@ -47,7 +47,7 @@ from api.ideogram_api_requests import generate_image_from_ideogram, generate_ima
 from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
     image_analyzer, investment_generator, investment_image_creator, pdf_extractor, short_content_generator, \
     investment_editor, \
-    investment_selector, Unreal_Engine_Chat, generate_location_why_ar
+    investment_selector, Unreal_Engine_Chat, generate_location_why_ar, group_services
 
 app = Flask(__name__)
 CORS(app)
@@ -1064,6 +1064,30 @@ def analyze_location_ar():
     why_text = generate_location_why_ar(property_type, facility_counts, is_good)
     return jsonify({"why": why_text}), 200
 
+@app.route('/group-services', methods=['POST'])
+def group_services_endpoint():
+    """
+    POST /group-services
+    { "services": [ { … your service objects … } ] }
+    → {
+        "Business Services": [ { "id": …, "name_en": …, "address": … }, … ],
+        "Restaurants and Cafes": [ … ],
+        …
+      }
+    """
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    services = data.get("services")
+    if not isinstance(services, list):
+        return jsonify({"error": "Missing or invalid 'services' field"}), 400
+
+    try:
+        raw, grouped = group_services(services)
+        return jsonify(grouped), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 """  Unreal Engine Endpoints  """
 @app.route('/unreal-engine-chat-v1', methods=['POST'])

@@ -501,6 +501,53 @@ def generate_location_why_ar(property_type: str, facility_counts: dict, is_good:
         return "تعذّر توليد الشرح."
 
 
+def group_services(services: list) -> (str, dict):
+    """
+    Uses OpenAI to group a list of services by their category.name_en.
+    Returns (raw_json_str, parsed_dict).
+    """
+    # build a short JSON payload for the model
+    payload = [
+        {
+            "id": svc.get("id"),
+            "name_en": svc.get("name_en"),
+            "address": svc.get("address"),
+            "category": svc.get("category", {}).get("name_en")
+        }
+        for svc in services
+    ]
+
+    messages = [
+        {
+            "role": "system",
+            "content": "You are a helpful assistant that groups services by category."
+        },
+        {
+            "role": "user",
+            "content": (
+                "Group the following services by their category.  "
+                "Return a JSON object where each key is the category name, "
+                "and each value is a list of objects with exactly these fields: id, name_en, address.\n\n"
+                + json.dumps(payload, ensure_ascii=False, indent=2)
+            )
+        }
+    ]
+
+    try:
+        resp = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+            temperature=0,
+            response_format={"type": "json_object"},
+            max_tokens=16384
+        )
+        raw = resp.choices[0].message.content
+        parsed = json.loads(raw)
+        return raw, parsed
+    except Exception as e:
+        print(f"[group_services] error: {e}")
+        raise
+
 
 
 # Unreal Engine APIs
