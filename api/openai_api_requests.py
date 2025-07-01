@@ -605,12 +605,12 @@ def property_type_recommendation(analysis_data):
             "reasoning": "شرح مفصل للأسباب والمنطق وراء التوصية",
             "alternatives": ["بديل 1", "بديل 2", "بديل 3"],
             "marketInsights": "رؤى سوقية وتحليل اقتصادي",
-            "zoningAnalysis": "تحليل التصنيف المطلوب وأهميته"
+            "zoningAnalysis": "تحليل رخصة الأرض وأهميتها"
         }
         
         مهمتك:
         1. تحليل البيانات المقدمة (الموقع، السكان، المرافق، الطرق، بيانات السوق)
-        2. مقارنة نوع العقار الحالي مع التصنيف المطلوب في الـ zoning
+        2. مقارنة نوع العقار الحالي مع التصنيف المطلوب في رخصة الأرض
         3. تقديم توصية ذكية لنوع العقار الأمثل
         4. شرح الأسباب والمنطق وراء التوصية
         
@@ -638,13 +638,13 @@ def property_type_recommendation(analysis_data):
         
         ملاحظات مهمة:
         - استخدم الأسماء العربية بالضبط كما هي مذكورة أعلاه
-        - إذا كان التصنيف المطلوب في الـ zoning مختلف عن نوع العقار الحالي، اشرح أهمية الـ zoning ومدى ملاءمته للموقع
+        - إذا كان التصنيف المطلوب في رخصة الأرض مختلف عن نوع العقار الحالي، اشرح أهمية رخصة الأرض ومدى ملاءمتها للموقع
         - ركز على تحليل الكثافة السكانية والمرافق المتاحة لتحديد أفضل نوع عقار
         - خذ في الاعتبار بيانات السوق والمعاملات الأخيرة في المنطقة
         
         استخدم البيانات التالية في تحليلك:
         - موقع الأرض والإحداثيات
-        - التصنيف المطلوب في الـ zoning
+        - التصنيف المطلوب في رخصة الأرض
         - نوع العقار الحالي
         - الكثافة السكانية والتركيبة الديموغرافية
         - المرافق القريبة وتوزيعها
@@ -659,20 +659,20 @@ def property_type_recommendation(analysis_data):
     user_prompt = f"""
     قم بتحليل البيانات التالية وتقديم توصية ذكية لنوع العقار الأمثل:
     
-    تحليل التصنيف المطلوب (Zoning):
-    - التصنيف المطلوب في الـ zoning: {analysis_data.get('location', {}).get('zoning')}
+    تحليل رخصة الأرض:
+    - التصنيف المطلوب في رخصة الأرض: {analysis_data.get('location', {}).get('zoning')}
     - نوع العقار الحالي: {analysis_data.get('location', {}).get('currentPropertyType')}
     
-    إذا كان التصنيف المطلوب مختلف عن النوع الحالي، قم بتحليل:
-    1. مدى أهمية التصنيف المطلوب للموقع
-    2. لماذا التصنيف المطلوب أكثر ملاءمة
-    3. الفوائد الاقتصادية والاستثمارية للتصنيف المطلوب
+    إذا كان التصنيف المطلوب في رخصة الأرض مختلف عن النوع الحالي، قم بتحليل:
+    1. مدى أهمية رخصة الأرض للموقع
+    2. لماذا رخصة الأرض أكثر ملاءمة
+    3. الفوائد الاقتصادية والاستثمارية لرخصة الأرض
     
     معلومات الموقع والأرض:
     - الإحداثيات: {analysis_data.get('location', {}).get('latitude')}, {analysis_data.get('location', {}).get('longitude')}
     - رقم القطعة: {analysis_data.get('location', {}).get('parcelNumber')}
     - رقم المخطط: {analysis_data.get('location', {}).get('planNumber')}
-    - التصنيف المطلوب: {analysis_data.get('location', {}).get('zoning')}
+    - رخصة الأرض: {analysis_data.get('location', {}).get('zoning')}
     - نوع العقار الحالي: {analysis_data.get('location', {}).get('currentPropertyType')}
     
     لوائح البناء:
@@ -734,7 +734,7 @@ def property_type_recommendation(analysis_data):
             "reasoning": "حدث خطأ في تحليل البيانات",
             "alternatives": [],
             "marketInsights": "تعذر تحليل بيانات السوق",
-            "zoningAnalysis": "تعذر تحليل التصنيف المطلوب"
+            "zoningAnalysis": "تعذر تحليل رخصة الأرض"
         }
     except Exception as e:
         print(f"An error occurred: {str(e)}")
@@ -744,7 +744,7 @@ def property_type_recommendation(analysis_data):
             "reasoning": "حدث خطأ في تحليل البيانات",
             "alternatives": [],
             "marketInsights": "تعذر تحليل بيانات السوق",
-            "zoningAnalysis": "تعذر تحليل التصنيف المطلوب"
+            "zoningAnalysis": "تعذر تحليل رخصة الأرض"
         }
 
     return full_response, parsed_ai_response, context
