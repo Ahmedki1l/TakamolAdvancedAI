@@ -586,3 +586,165 @@ def Unreal_Engine_Chat(user_input, context):
         print(f"An error occurred: {str(e)}")
 
     return full_response, parsed_ai_response, context
+
+def property_type_recommendation(analysis_data):
+    """
+    تحليل ذكي لتوصية نوع العقار الأمثل بناءً على البيانات الشاملة
+    """
+    context = []
+    context.clear()
+
+    system_prompt = {
+        "role": "system",
+        "content": """أنت خبير عقاري متخصص في تحليل المواقع وتوصية أفضل أنواع العقارات بناءً على البيانات الشاملة.
+        
+        تنسيق الرد المطلوب (JSON):
+        {
+            "recommendedType": "نوع العقار الموصى به (من القائمة أدناه)",
+            "confidence": 85,
+            "reasoning": "شرح مفصل للأسباب والمنطق وراء التوصية",
+            "alternatives": ["بديل 1", "بديل 2", "بديل 3"],
+            "marketInsights": "رؤى سوقية وتحليل اقتصادي",
+            "zoningAnalysis": "تحليل التصنيف المطلوب وأهميته"
+        }
+        
+        مهمتك:
+        1. تحليل البيانات المقدمة (الموقع، السكان، المرافق، الطرق، بيانات السوق)
+        2. مقارنة نوع العقار الحالي مع التصنيف المطلوب في الـ zoning
+        3. تقديم توصية ذكية لنوع العقار الأمثل
+        4. شرح الأسباب والمنطق وراء التوصية
+        
+        أنواع العقارات المتاحة:
+        - مبنى سكني
+        - مبنى تجاري سكني
+        - مبنى تجاري إداري
+        - مبنى تجاري
+        - مول تجاري
+        - فلل
+        - فيلا
+        - مجمع سكني
+        - مبنى إداري
+        - فندقي
+        - برج تجاري سكني
+        - برج تجاري إداري
+        - برج إداري
+        
+        يجب أن يكون ردك منظم ومهني باللغة العربية ويحتوي على:
+        - نوع العقار الموصى به (يجب أن يكون من الأنواع المذكورة أعلاه بالضبط)
+        - مستوى الثقة في التوصية (0-100)
+        - شرح مفصل للأسباب
+        - بدائل أخرى مناسبة (من الأنواع المذكورة أعلاه)
+        - رؤى سوقية
+        
+        ملاحظات مهمة:
+        - استخدم الأسماء العربية بالضبط كما هي مذكورة أعلاه
+        - إذا كان التصنيف المطلوب في الـ zoning مختلف عن نوع العقار الحالي، اشرح أهمية الـ zoning ومدى ملاءمته للموقع
+        - ركز على تحليل الكثافة السكانية والمرافق المتاحة لتحديد أفضل نوع عقار
+        - خذ في الاعتبار بيانات السوق والمعاملات الأخيرة في المنطقة
+        
+        استخدم البيانات التالية في تحليلك:
+        - موقع الأرض والإحداثيات
+        - التصنيف المطلوب في الـ zoning
+        - نوع العقار الحالي
+        - الكثافة السكانية والتركيبة الديموغرافية
+        - المرافق القريبة وتوزيعها
+        - شبكة الطرق والاتصال
+        - بيانات السوق والمعاملات
+        - درجة الملاءمة الحالية"""
+    }
+    
+    context.append(system_prompt)
+
+    # تحضير البيانات للتحليل
+    user_prompt = f"""
+    قم بتحليل البيانات التالية وتقديم توصية ذكية لنوع العقار الأمثل:
+    
+    تحليل التصنيف المطلوب (Zoning):
+    - التصنيف المطلوب في الـ zoning: {analysis_data.get('location', {}).get('zoning')}
+    - نوع العقار الحالي: {analysis_data.get('location', {}).get('currentPropertyType')}
+    
+    إذا كان التصنيف المطلوب مختلف عن النوع الحالي، قم بتحليل:
+    1. مدى أهمية التصنيف المطلوب للموقع
+    2. لماذا التصنيف المطلوب أكثر ملاءمة
+    3. الفوائد الاقتصادية والاستثمارية للتصنيف المطلوب
+    
+    معلومات الموقع والأرض:
+    - الإحداثيات: {analysis_data.get('location', {}).get('latitude')}, {analysis_data.get('location', {}).get('longitude')}
+    - رقم القطعة: {analysis_data.get('location', {}).get('parcelNumber')}
+    - رقم المخطط: {analysis_data.get('location', {}).get('planNumber')}
+    - التصنيف المطلوب: {analysis_data.get('location', {}).get('zoning')}
+    - نوع العقار الحالي: {analysis_data.get('location', {}).get('currentPropertyType')}
+    
+    لوائح البناء:
+    - نوع الاستخدام: {analysis_data.get('buildingCode', {}).get('landuse')}
+    - الارتفاع: {analysis_data.get('buildingCode', {}).get('height')}
+    - نسبة البناء: {analysis_data.get('buildingCode', {}).get('far')}
+    
+    البيانات الديموغرافية:
+    - إجمالي السكان: {analysis_data.get('demographics', {}).get('totalPopulation')}
+    - السكان الذكور: {analysis_data.get('demographics', {}).get('malePopulation')}
+    - السكان الإناث: {analysis_data.get('demographics', {}).get('femalePopulation')}
+    - المساحة بالكيلومتر المربع: {analysis_data.get('demographics', {}).get('areaKm2')}
+    
+    المرافق القريبة:
+    {json.dumps(analysis_data.get('facilities', {}), ensure_ascii=False, indent=2)}
+    
+    شبكة الطرق:
+    {json.dumps(analysis_data.get('roads', []), ensure_ascii=False, indent=2)}
+    
+    بيانات السوق:
+    {json.dumps(analysis_data.get('marketData', {}), ensure_ascii=False, indent=2)}
+    
+    درجة الملاءمة الحالية: {analysis_data.get('currentScore')}
+    
+    قم بتحليل هذه البيانات بعمق وقدم توصية شاملة ومبررة.
+    """
+
+    prompt = {
+        "role": "user",
+        "content": user_prompt
+    }
+    
+    context.append(prompt)
+    
+    full_response = ''
+    parsed_ai_response = ''
+    
+    try:
+        chat_completion = client.chat.completions.create(
+            messages=context,
+            model="gpt-4o-mini",
+            temperature=0.3,
+            response_format={"type": "json_object"},
+            max_tokens=4096
+        )
+
+        full_response = chat_completion.choices[0].message.content
+        print("Raw AI response:", full_response)
+
+        parsed_ai_response = json.loads(full_response)
+        print("Parsed AI response:", parsed_ai_response)
+
+    except json.JSONDecodeError as e:
+        print(f"Failed to decode JSON: {str(e)}")
+        # إرجاع رد افتراضي في حالة الخطأ
+        parsed_ai_response = {
+            "recommendedType": "غير محدد",
+            "confidence": 0,
+            "reasoning": "حدث خطأ في تحليل البيانات",
+            "alternatives": [],
+            "marketInsights": "تعذر تحليل بيانات السوق",
+            "zoningAnalysis": "تعذر تحليل التصنيف المطلوب"
+        }
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        parsed_ai_response = {
+            "recommendedType": "غير محدد",
+            "confidence": 0,
+            "reasoning": "حدث خطأ في تحليل البيانات",
+            "alternatives": [],
+            "marketInsights": "تعذر تحليل بيانات السوق",
+            "zoningAnalysis": "تعذر تحليل التصنيف المطلوب"
+        }
+
+    return full_response, parsed_ai_response, context

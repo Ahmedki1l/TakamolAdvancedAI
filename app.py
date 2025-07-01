@@ -1797,6 +1797,67 @@ def generate_posts():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/ar/recommend-property-type', methods=['POST'])
+def recommend_property_type():
+    """
+    تحليل ذكي لتوصية نوع العقار الأمثل بناءً على البيانات الشاملة
+    """
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    try:
+        data = request.get_json()
+        
+        # التحقق من وجود البيانات المطلوبة
+        required_fields = ['location', 'buildingCode', 'demographics', 'facilities', 'roads', 'marketData', 'currentScore']
+        missing_fields = [field for field in required_fields if field not in data]
+        
+        if missing_fields:
+            return jsonify({
+                "error": f"Missing required fields: {', '.join(missing_fields)}"
+            }), 400
+
+        # استدعاء دالة التحليل الذكي
+        from api.openai_api_requests import property_type_recommendation
+        
+        start_time = time.time()
+        full_response, parsed_response, context = property_type_recommendation(data)
+        execution_time = time.time() - start_time
+        
+        # التحقق من صحة الاستجابة
+        if not parsed_response or not isinstance(parsed_response, dict):
+            return jsonify({
+                "error": "Invalid AI response format"
+            }), 500
+        
+        # التأكد من وجود الحقول المطلوبة في الاستجابة
+        required_response_fields = ['recommendedType', 'confidence', 'reasoning']
+        for field in required_response_fields:
+            if field not in parsed_response:
+                parsed_response[field] = "غير محدد" if field == 'recommendedType' else 0 if field == 'confidence' else "لا توجد معلومات"
+        
+        # إضافة الحقول الاختيارية إذا لم تكن موجودة
+        if 'alternatives' not in parsed_response:
+            parsed_response['alternatives'] = []
+        if 'marketInsights' not in parsed_response:
+            parsed_response['marketInsights'] = "لا توجد رؤى سوقية متاحة"
+        if 'zoningAnalysis' not in parsed_response:
+            parsed_response['zoningAnalysis'] = "لا يوجد تحليل للتصنيف المطلوب"
+        
+        return jsonify({
+            "success": True,
+            "data": parsed_response,
+            "execution_time": f"{execution_time:.2f} seconds"
+        }), 200
+
+    except Exception as e:
+        print(f"Error in property type recommendation: {str(e)}")
+        return jsonify({
+            "error": "حدث خطأ في تحليل البيانات",
+            "details": str(e)
+        }), 500
+
+
 # Change port to 5000
 if __name__ == '__main__':
     print("Server starting on http://127.0.0.1:5000")
