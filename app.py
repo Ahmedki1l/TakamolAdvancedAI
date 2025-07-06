@@ -47,7 +47,8 @@ from api.ideogram_api_requests import generate_image_from_ideogram, generate_ima
 from api.openai_api_requests import case_study_ai, social_media_ai, image_creator, prompt_creator, prompt_enhancer, \
     image_analyzer, investment_generator, investment_image_creator, pdf_extractor, short_content_generator, \
     investment_editor, \
-    investment_selector, Unreal_Engine_Chat, generate_location_why_ar, group_services
+    investment_selector, Unreal_Engine_Chat, generate_location_why_ar, group_services, property_type_recommendation, \
+    land_best_use_conclusion
 
 app = Flask(__name__)
 CORS(app)
@@ -1857,6 +1858,35 @@ def recommend_property_type():
             "details": str(e)
         }), 500
 
+@app.route('/ar/land-best-use-conclusion', methods=['POST'])
+def land_best_use_conclusion_endpoint():
+    """
+    Endpoint يرجع أفضل استخدام للأرض وملخص نهائي احترافي للمطور العقاري.
+    """
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    try:
+        data = request.get_json()
+        from api.openai_api_requests import land_best_use_conclusion
+        full_response, parsed_response, context = land_best_use_conclusion(data)
+
+        if not parsed_response or not isinstance(parsed_response, dict):
+            return jsonify({
+                "error": "Invalid AI response format"
+            }), 500
+
+        # فقط best_use و conclusion
+        return jsonify({
+            "best_use": parsed_response.get("best_use", "غير محدد"),
+            "conclusion": parsed_response.get("conclusion", "لا يوجد ملخص نهائي.")
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            "error": "حدث خطأ في تحليل البيانات",
+            "details": str(e)
+        }), 500
 
 # Change port to 5000
 if __name__ == '__main__':

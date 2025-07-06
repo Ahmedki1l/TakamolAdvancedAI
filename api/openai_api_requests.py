@@ -748,3 +748,72 @@ def property_type_recommendation(analysis_data):
         }
 
     return full_response, parsed_ai_response, context
+
+def land_best_use_conclusion(analysis_data):
+    """
+    تحليل احترافي لاختيار أفضل استخدام للأرض وكتابة ملخص نهائي يخدم المطور العقاري.
+    """
+    context = []
+    context.clear()
+
+    system_prompt = {
+        "role": "system",
+        "content": """
+أنت مستشار تطوير عقاري محترف. مهمتك تحليل بيانات الأرض وتقديم توصية نهائية واضحة ومباشرة للمطور العقاري حول أفضل استخدام للأرض، مع ملخص احترافي يساعده في اتخاذ القرار. يجب أن يشمل الملخص:
+- أفضل استخدام للأرض (Best Use) بشكل محدد.
+- مبررات الاختيار (لماذا هذا النوع هو الأنسب؟).
+- تحليل السوق والطلب.
+- جدوى اقتصادية مبسطة.
+- مخاطر أو تحديات محتملة (إن وجدت).
+- توصية تنفيذية مباشرة.
+
+صيغة الرد المطلوبة (JSON):
+{
+  "best_use": "نص قصير يحدد أفضل استخدام",
+  "conclusion": "ملخص نهائي احترافي يخاطب المطور العقاري ويحتوي على جميع النقاط أعلاه"
+}
+اكتب الملخص بلغة احترافية واضحة ومقنعة.
+        """
+    }
+    context.append(system_prompt)
+
+    user_prompt = f"""
+هذه بيانات الأرض:
+{json.dumps(analysis_data, ensure_ascii=False, indent=2)}
+
+حلل البيانات وقدم الرد بالصيغة المطلوبة فقط.
+    """
+
+    prompt = {
+        "role": "user",
+        "content": user_prompt
+    }
+    context.append(prompt)
+
+    full_response = ''
+    parsed_ai_response = ''
+
+    try:
+        chat_completion = client.chat.completions.create(
+            messages=context,
+            model="gpt-4o-mini",
+            temperature=0.3,
+            response_format={"type": "json_object"},
+            max_tokens=1024
+        )
+
+        full_response = chat_completion.choices[0].message.content
+        parsed_ai_response = json.loads(full_response)
+
+    except json.JSONDecodeError as e:
+        parsed_ai_response = {
+            "best_use": "غير محدد",
+            "conclusion": "حدث خطأ في تحليل البيانات."
+        }
+    except Exception as e:
+        parsed_ai_response = {
+            "best_use": "غير محدد",
+            "conclusion": f"حدث خطأ: {str(e)}"
+        }
+
+    return full_response, parsed_ai_response, context
