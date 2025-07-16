@@ -1825,25 +1825,35 @@ def recommend_property_type():
         full_response, parsed_response, context = property_type_recommendation(data)
         execution_time = time.time() - start_time
         
-        # التحقق من صحة الاستجابة
+        # Verify AI returned proper structure
         if not parsed_response or not isinstance(parsed_response, dict):
             return jsonify({
                 "error": "Invalid AI response format"
             }), 500
         
-        # التأكد من وجود الحقول المطلوبة في الاستجابة
-        required_response_fields = ['recommendedType', 'confidence', 'reasoning']
-        for field in required_response_fields:
-            if field not in parsed_response:
-                parsed_response[field] = "غير محدد" if field == 'recommendedType' else 0 if field == 'confidence' else "لا توجد معلومات"
+        # Ensure bilingual structure for textual fields
+        def ensure_bilingual(value):
+            if isinstance(value, dict):
+                return {
+                    "ar": value.get("ar", ""),
+                    "en": value.get("en", "")
+                }
+            elif isinstance(value, str):
+                return {"ar": value, "en": ""}
+            else:
+                return value  # for numeric or other types
         
-        # إضافة الحقول الاختيارية إذا لم تكن موجودة
-        if 'alternatives' not in parsed_response:
-            parsed_response['alternatives'] = []
-        if 'marketInsights' not in parsed_response:
-            parsed_response['marketInsights'] = "لا توجد رؤى سوقية متاحة"
-        if 'zoningAnalysis' not in parsed_response:
-            parsed_response['zoningAnalysis'] = "لا يوجد تحليل للتصنيف المطلوب"
+        parsed_response["recommendedType"] = ensure_bilingual(parsed_response.get("recommendedType", "غير محدد"))
+        parsed_response["reasoning"] = ensure_bilingual(parsed_response.get("reasoning", "لا توجد معلومات"))
+        parsed_response["marketInsights"] = ensure_bilingual(parsed_response.get("marketInsights", "لا توجد رؤى سوقية متاحة"))
+        parsed_response["zoningAnalysis"] = ensure_bilingual(parsed_response.get("zoningAnalysis", "لا يوجد تحليل للتصنيف المطلوب"))
+        
+        # Ensure alternatives list bilingual
+        alternatives = parsed_response.get("alternatives", [])
+        processed_alts = []
+        for alt in alternatives:
+            processed_alts.append(ensure_bilingual(alt))
+        parsed_response["alternatives"] = processed_alts
         
         return jsonify({
             "success": True,
@@ -1876,10 +1886,32 @@ def land_best_use_conclusion_endpoint():
                 "error": "Invalid AI response format"
             }), 500
 
-        # فقط best_use و conclusion
+        # Ensure best_use and conclusion are objects with 'ar' and 'en' keys
+        best_use_data = parsed_response.get("best_use", {})
+        if isinstance(best_use_data, str):
+            best_use_data = {
+                "ar": best_use_data,
+                "en": ""
+            }
+
+        # Ensure conclusion object
+        conclusion_data = parsed_response.get("conclusion", {})
+        # If the AI returned a plain string, wrap it into Arabic slot and leave English empty
+        if isinstance(conclusion_data, str):
+            conclusion_data = {
+                "ar": conclusion_data,
+                "en": ""
+            }
+
         return jsonify({
-            "best_use": parsed_response.get("best_use", "غير محدد"),
-            "conclusion": parsed_response.get("conclusion", "لا يوجد ملخص نهائي.")
+            "best_use": {
+                "ar": best_use_data.get("ar", "غير محدد"),
+                "en": best_use_data.get("en", "Undefined")
+            },
+            "conclusion": {
+                "ar": conclusion_data.get("ar", "لا يوجد ملخص نهائي."),
+                "en": conclusion_data.get("en", "No conclusion available.")
+            }
         }), 200
 
     except Exception as e:

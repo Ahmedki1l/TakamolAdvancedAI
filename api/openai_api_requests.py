@@ -598,14 +598,17 @@ def property_type_recommendation(analysis_data):
         "role": "system",
         "content": """أنت خبير عقاري متخصص في تحليل المواقع وتوصية أفضل أنواع العقارات بناءً على البيانات الشاملة.
         
-        تنسيق الرد المطلوب (JSON):
+        تنسيق الرد المطلوب (JSON ثنائي اللغة):
         {
-            "recommendedType": "نوع العقار الموصى به (من القائمة أدناه)",
+            "recommendedType": {"ar": "نوع العقار بالعربية", "en": "Recommended type in English"},
             "confidence": 85,
-            "reasoning": "شرح مفصل للأسباب والمنطق وراء التوصية",
-            "alternatives": ["بديل 1", "بديل 2", "بديل 3"],
-            "marketInsights": "رؤى سوقية وتحليل اقتصادي",
-            "zoningAnalysis": "تحليل رخصة الأرض وأهميتها"
+            "reasoning": {"ar": "شرح عربي", "en": "English reasoning"},
+            "alternatives": [
+                {"ar": "بديل 1", "en": "Alternative 1"},
+                {"ar": "بديل 2", "en": "Alternative 2"}
+            ],
+            "marketInsights": {"ar": "رؤى سوقية", "en": "Market insights"},
+            "zoningAnalysis": {"ar": "تحليل رخصة الأرض", "en": "Zoning analysis"}
         }
         
         مهمتك:
@@ -729,22 +732,22 @@ def property_type_recommendation(analysis_data):
         print(f"Failed to decode JSON: {str(e)}")
         # إرجاع رد افتراضي في حالة الخطأ
         parsed_ai_response = {
-            "recommendedType": "غير محدد",
+            "recommendedType": {"ar": "غير محدد", "en": "Undefined"},
             "confidence": 0,
-            "reasoning": "حدث خطأ في تحليل البيانات",
+            "reasoning": {"ar": "حدث خطأ في تحليل البيانات", "en": "An error occurred while analysing the data."},
             "alternatives": [],
-            "marketInsights": "تعذر تحليل بيانات السوق",
-            "zoningAnalysis": "تعذر تحليل رخصة الأرض"
+            "marketInsights": {"ar": "تعذر تحليل بيانات السوق", "en": "Could not analyse market data."},
+            "zoningAnalysis": {"ar": "تعذر تحليل رخصة الأرض", "en": "Could not analyse zoning data."}
         }
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         parsed_ai_response = {
-            "recommendedType": "غير محدد",
+            "recommendedType": {"ar": "غير محدد", "en": "Undefined"},
             "confidence": 0,
-            "reasoning": "حدث خطأ في تحليل البيانات",
+            "reasoning": {"ar": "حدث خطأ في تحليل البيانات", "en": "An error occurred while analysing the data."},
             "alternatives": [],
-            "marketInsights": "تعذر تحليل بيانات السوق",
-            "zoningAnalysis": "تعذر تحليل رخصة الأرض"
+            "marketInsights": {"ar": "تعذر تحليل بيانات السوق", "en": "Could not analyse market data."},
+            "zoningAnalysis": {"ar": "تعذر تحليل رخصة الأرض", "en": "Could not analyse zoning data."}
         }
 
     return full_response, parsed_ai_response, context
@@ -769,8 +772,14 @@ def land_best_use_conclusion(analysis_data):
 
 صيغة الرد المطلوبة (JSON):
 {
-  "best_use": "نص قصير يحدد أفضل استخدام",
-  "conclusion": "ملخص نهائي احترافي يخاطب المطور العقاري ويحتوي على جميع النقاط أعلاه"
+  "best_use": {
+    "ar": "نص قصير يحدد أفضل استخدام",
+    "en": "A brief statement identifying the best use"
+  },
+  "conclusion": {
+    "ar": "ملخص نهائي احترافي يخاطب المطور العقاري ويحتوي على جميع النقاط أعلاه",
+    "en": "A professional final summary addressing the real-estate developer and containing all the above points"
+  }
 }
 اكتب الملخص بلغة احترافية واضحة ومقنعة.
         """
@@ -807,13 +816,25 @@ def land_best_use_conclusion(analysis_data):
 
     except json.JSONDecodeError as e:
         parsed_ai_response = {
-            "best_use": "غير محدد",
-            "conclusion": "حدث خطأ في تحليل البيانات."
+            "best_use": {
+                "ar": "غير محدد",
+                "en": "Undefined"
+            },
+            "conclusion": {
+                "ar": "حدث خطأ في تحليل البيانات.",
+                "en": "An error occurred while analysing the data."
+            }
         }
     except Exception as e:
         parsed_ai_response = {
-            "best_use": "غير محدد",
-            "conclusion": f"حدث خطأ: {str(e)}"
+            "best_use": {
+                "ar": "غير محدد",
+                "en": "Undefined"
+            },
+            "conclusion": {
+                "ar": f"حدث خطأ: {str(e)}",
+                "en": f"Error: {str(e)}"
+            }
         }
 
     return full_response, parsed_ai_response, context
